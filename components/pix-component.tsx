@@ -1,0 +1,88 @@
+"use client";
+
+import { useState } from "react";
+import { Card, CardBody } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Snippet } from "@heroui/snippet";
+import { CopyIcon, CheckIcon } from "@/components/icons";
+import { PIX_INFO } from "@/types/inscricao";
+
+export function PixComponent() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(PIX_INFO.chavePix);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Erro ao copiar:', err);
+    }
+  };
+
+  return (
+    <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-300 dark:border-green-700">
+      <CardBody className="p-6">
+        <div className="text-center mb-6">
+          <div className="bg-green-100 dark:bg-green-900 p-4 rounded-full inline-block mb-4">
+            <span className="text-3xl">💳</span>
+          </div>
+          <h3 className="text-xl font-bold text-green-800 dark:text-green-200 mb-2">
+            Pagamento via PIX
+          </h3>
+          <p className="text-green-600 dark:text-green-400">
+            Valor: <strong>R$ {PIX_INFO.valor},00</strong>
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-green-800 dark:text-green-200 mb-2">
+              Beneficiário:
+            </label>
+            <div className="bg-white/80 dark:bg-gray-800/80 rounded-lg p-3 border border-green-200 dark:border-green-800 mb-3">
+              <p className="font-semibold text-green-800 dark:text-green-200">
+                {PIX_INFO.nome}
+              </p>
+            </div>
+            
+            <label className="block text-sm font-semibold text-green-800 dark:text-green-200 mb-2">
+              Chave PIX (Copie e cole no seu app):
+            </label>
+            <Snippet
+              symbol=""
+              variant="bordered"
+              color="success"
+              className="w-full"
+            >
+              {PIX_INFO.chavePix}
+            </Snippet>
+          </div>
+
+          <div className="bg-white/80 dark:bg-gray-800/80 rounded-lg p-4 border border-green-200 dark:border-green-800">
+            <h4 className="font-semibold text-green-800 dark:text-green-200 mb-2">
+              📋 Instruções:
+            </h4>
+            <ol className="text-sm text-green-700 dark:text-green-300 space-y-1 list-decimal list-inside">
+              <li>Copie a chave PIX acima</li>
+              <li>Abra seu app bancário</li>
+              <li>Escolha "PIX" e "Pagar"</li>
+              <li>Cole a chave PIX</li>
+              <li>Confirme o valor: R$ {PIX_INFO.valor},00</li>
+              <li>Faça o pagamento</li>
+              <li>Compartilhe ou Tire print do comprovante</li>
+              <li>Envie o comprovante no campo abaixo</li>
+            </ol>
+          </div>
+
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 border border-yellow-200 dark:border-yellow-800">
+            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+              <strong>⚠️ Importante:</strong> Após o pagamento, envie o comprovante no formulário abaixo. 
+              Sua inscrição só será confirmada após a verificação do pagamento.
+            </p>
+          </div>
+        </div>
+      </CardBody>
+    </Card>
+  );
+}
