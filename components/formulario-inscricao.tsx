@@ -33,9 +33,10 @@ interface FormData {
 interface FormularioInscricaoProps {
   onSubmit: (data: any) => void;
   className?: string;
+  isSubmitting?: boolean;
 }
 
-export function FormularioInscricao({ onSubmit, className }: FormularioInscricaoProps) {
+export function FormularioInscricao({ onSubmit, className, isSubmitting: externalSubmitting = false }: FormularioInscricaoProps) {
   const [formData, setFormData] = useState<FormData>({
     nomeCompleto: '',
     cpf: '',
@@ -47,8 +48,9 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [comprovanteFile, setComprovanteFile] = useState<File | null>(null);
+  
+  const isSubmitting = externalSubmitting;
 
   const handleInputChange = (field: keyof FormData, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -101,8 +103,6 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
       return;
     }
 
-    setIsSubmitting(true);
-
     try {
       const submitData = {
         ...formData,
@@ -112,13 +112,11 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
       await onSubmit(submitData);
     } catch (error) {
       console.error('Erro ao enviar formulário:', error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className={`max-w-4xl mx-auto ${className || ''}`}>
+    <div className={`max-w-4xl mx-auto px-4 ${className || ''}`}>
       <Card className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border border-white/50 dark:border-gray-700/50">
         <CardHeader className="bg-gradient-to-r from-pink-500 to-purple-600 text-white">
           <div className="flex items-center gap-3">
@@ -126,30 +124,33 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
               <CheckIcon size={24} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold">Formulário de Inscrição</h2>
-              <p className="text-pink-100">Preencha todos os campos obrigatórios</p>
+              <h2 className="text-xl sm:text-2xl font-bold">Formulário de Inscrição</h2>
+              <p className="text-pink-100 text-sm sm:text-base">Preencha todos os campos obrigatórios</p>
             </div>
           </div>
         </CardHeader>
 
-        <CardBody className="p-8 space-y-6">
+        <CardBody className="p-4 sm:p-6 md:p-8 space-y-6">
           {/* Dados Pessoais */}
           <div>
             <h3 className="text-xl font-semibold mb-4 text-pink-600 dark:text-pink-400">
               📋 Dados Pessoais
             </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Nome Completo *"
-                placeholder="Digite seu nome completo"
-                value={formData.nomeCompleto}
-                onValueChange={(value) => handleInputChange('nomeCompleto', value)}
-                isInvalid={!!errors.nomeCompleto}
-                errorMessage={errors.nomeCompleto}
-                variant="bordered"
-                autoComplete="name"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2">
+                <Input
+                  label="Nome Completo *"
+                  placeholder="Digite seu nome completo"
+                  value={formData.nomeCompleto}
+                  onValueChange={(value) => handleInputChange('nomeCompleto', value)}
+                  isInvalid={!!errors.nomeCompleto}
+                  errorMessage={errors.nomeCompleto}
+                  variant="bordered"
+                  autoComplete="name"
+                  size="lg"
+                />
+              </div>
 
               <Input
                 label="CPF *"
@@ -160,7 +161,8 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
                 errorMessage={errors.cpf}
                 variant="bordered"
                 maxLength={14}
-              autoComplete="off"
+                autoComplete="off"
+                size="lg"
               />
 
               <Input
@@ -175,17 +177,19 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
                 min={12}
                 max={100}
                 autoComplete="age"
+                size="lg"
               />
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Sexo *</label>
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium mb-3">Sexo *</label>
                 <RadioGroup
                   value={formData.sexo}
                   onValueChange={(value) => handleInputChange('sexo', value)}
                   orientation="horizontal"
+                  className="flex gap-6"
                 >
                   {SEXO_OPTIONS.map((sexo) => (
-                    <Radio key={sexo} value={sexo}>
+                    <Radio key={sexo} value={sexo} size="lg">
                       {sexo}
                     </Radio>
                   ))}
@@ -202,7 +206,7 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
               📱 Contato
             </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Celular/WhatsApp *"
                 placeholder="(31) 99999-9999"
@@ -213,6 +217,7 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
                 variant="bordered"
                 maxLength={15}
                 autoComplete="tel"
+                size="lg"
               />
 
               <Input
@@ -223,6 +228,7 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
                 onValueChange={(value) => handleInputChange('email', value)}
                 variant="bordered"
                 autoComplete="email"
+                size="lg"
               />
             </div>
           </div>
@@ -244,7 +250,8 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
                 handleInputChange('tamanhoBlusa', selected);
               }}
               variant="bordered"
-              className="max-w-xs"
+              className="max-w-full sm:max-w-xs"
+              size="lg"
             >
               {TAMANHOS_BLUSA.map((tamanho) => (
                 <SelectItem key={tamanho}>
@@ -282,7 +289,7 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
               onPress={handleSubmit}
               isLoading={isSubmitting}
               isDisabled={!comprovanteFile}
-              className="min-w-48 font-bold"
+              className="w-full sm:w-auto sm:min-w-48 font-bold text-lg py-6"
             >
               {isSubmitting ? 'Enviando...' : 'Finalizar Inscrição'}
             </Button>
@@ -292,7 +299,7 @@ export function FormularioInscricao({ onSubmit, className }: FormularioInscricao
             </p>
             
             {!comprovanteFile && (
-              <p className="text-sm text-warning mt-2">
+              <p className="text-sm text-warning mt-2 px-4">
                 ⚠️ É necessário enviar o comprovante de pagamento
               </p>
             )}

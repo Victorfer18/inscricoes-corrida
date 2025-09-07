@@ -20,15 +20,18 @@ import {
   InstagramIcon,
   Logo,
 } from "@/components/icons";
+import { EventLogo } from "@/components/event-logo";
 
 export const Navbar = () => {
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-        <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Logo />
-            <p className="font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+        <NavbarBrand as="li" className="gap-2 max-w-fit min-w-0">
+          <NextLink className="flex justify-start items-center gap-2 min-w-0" href="/">
+            <div className="flex-shrink-0">
+              <EventLogo width={40} height={40} variant="branca" />
+            </div>
+            <p className="font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent text-sm sm:text-base truncate">
               PROJETO JAÍBA
             </p>
           </NextLink>

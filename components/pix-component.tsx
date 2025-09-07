@@ -22,15 +22,15 @@ export function PixComponent() {
 
   return (
     <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-300 dark:border-green-700">
-      <CardBody className="p-6">
+      <CardBody className="p-4 sm:p-6">
         <div className="text-center mb-6">
-          <div className="bg-green-100 dark:bg-green-900 p-4 rounded-full inline-block mb-4">
-            <span className="text-3xl">💳</span>
+          <div className="bg-green-100 dark:bg-green-900 p-3 sm:p-4 rounded-full inline-block mb-4">
+            <span className="text-2xl sm:text-3xl">💳</span>
           </div>
-          <h3 className="text-xl font-bold text-green-800 dark:text-green-200 mb-2">
+          <h3 className="text-lg sm:text-xl font-bold text-green-800 dark:text-green-200 mb-2">
             Pagamento via PIX
           </h3>
-          <p className="text-green-600 dark:text-green-400">
+          <p className="text-green-600 dark:text-green-400 text-base sm:text-lg">
             Valor: <strong>R$ {PIX_INFO.valor},00</strong>
           </p>
         </div>
@@ -41,7 +41,7 @@ export function PixComponent() {
               Beneficiário:
             </label>
             <div className="bg-white/80 dark:bg-gray-800/80 rounded-lg p-3 border border-green-200 dark:border-green-800 mb-3">
-              <p className="font-semibold text-green-800 dark:text-green-200">
+              <p className="font-semibold text-green-800 dark:text-green-200 text-sm sm:text-base break-words">
                 {PIX_INFO.nome}
               </p>
             </div>
@@ -49,25 +49,42 @@ export function PixComponent() {
             <label className="block text-sm font-semibold text-green-800 dark:text-green-200 mb-2">
               Chave PIX (Copie e cole no seu app):
             </label>
-            <Snippet
-              symbol=""
-              variant="bordered"
+            <div className="w-full overflow-hidden mb-3">
+              <Snippet
+                symbol=""
+                variant="bordered"
+                color="success"
+                className="w-full"
+                classNames={{
+                  base: "w-full max-w-full",
+                  content: "text-xs sm:text-sm break-all overflow-hidden text-ellipsis max-w-full"
+                }}
+              >
+                {PIX_INFO.chavePix}
+              </Snippet>
+            </div>
+            
+            <Button
               color="success"
-              className="w-full"
+              variant="solid"
+              size="lg"
+              onPress={handleCopy}
+              className="w-full font-semibold"
+              startContent={copied ? <CheckIcon /> : <CopyIcon />}
             >
-              {PIX_INFO.chavePix}
-            </Snippet>
+              {copied ? 'Copiado!' : 'Copiar Chave PIX'}
+            </Button>
           </div>
 
-          <div className="bg-white/80 dark:bg-gray-800/80 rounded-lg p-4 border border-green-200 dark:border-green-800">
-            <h4 className="font-semibold text-green-800 dark:text-green-200 mb-2">
+          <div className="bg-white/80 dark:bg-gray-800/80 rounded-lg p-3 sm:p-4 border border-green-200 dark:border-green-800">
+            <h4 className="font-semibold text-green-800 dark:text-green-200 mb-2 text-sm sm:text-base">
               📋 Instruções:
             </h4>
-            <ol className="text-sm text-green-700 dark:text-green-300 space-y-1 list-decimal list-inside">
-              <li>Copie a chave PIX acima</li>
+            <ol className="text-xs sm:text-sm text-green-700 dark:text-green-300 space-y-1 list-decimal list-inside leading-relaxed">
+              <li>Clique no botão "Copiar Chave PIX" acima</li>
               <li>Abra seu app bancário</li>
               <li>Escolha "PIX" e "Pagar"</li>
-              <li>Cole a chave PIX</li>
+              <li>Cole a chave PIX copiada</li>
               <li>Confirme o valor: R$ {PIX_INFO.valor},00</li>
               <li>Faça o pagamento</li>
               <li>Compartilhe ou Tire print do comprovante</li>
@@ -75,8 +92,8 @@ export function PixComponent() {
             </ol>
           </div>
 
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 border border-yellow-200 dark:border-yellow-800">
-            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3 sm:p-4 border border-yellow-200 dark:border-yellow-800">
+            <p className="text-xs sm:text-sm text-yellow-800 dark:text-yellow-200 leading-relaxed">
               <strong>⚠️ Importante:</strong> Após o pagamento, envie o comprovante no formulário abaixo. 
               Sua inscrição só será confirmada após a verificação do pagamento.
             </p>

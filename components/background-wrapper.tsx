@@ -29,10 +29,10 @@ export function BackgroundWrapper({
   const whiteOverlay = getWhiteOverlayIntensity();
 
   return (
-    <div className={`min-h-screen relative ${className}`}>
+    <div className={`min-h-screen relative overflow-x-hidden ${className}`}>
       {/* Background Image */}
       <div 
-        className={`fixed inset-0 z-0 blur-sm`}
+        className={`fixed inset-0 z-0 blur-sm overflow-hidden`}
         style={{
           backgroundImage: "url('/imagens/pessoas-correndo.png')",
           backgroundSize: "cover",
@@ -43,7 +43,7 @@ export function BackgroundWrapper({
       />
       
       {/* White Blur Overlay System */}
-      <div className="fixed inset-0 z-1">
+      <div className="fixed inset-0 z-1 overflow-hidden">
         {/* Principal White Blur Overlay */}
         <div className={`absolute inset-0 ${whiteOverlay} backdrop-blur-md`}></div>
         
@@ -55,7 +55,7 @@ export function BackgroundWrapper({
       </div>
 
       {/* Content */}
-      <div className="relative z-10">
+      <div className="relative z-10 overflow-x-hidden">
         {children}
       </div>
     </div>

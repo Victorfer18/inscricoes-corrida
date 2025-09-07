@@ -30,10 +30,6 @@ export const siteConfig = {
       label: "Regulamento",
       href: "/regulamento",
     },
-    {
-      label: "Sobre",
-      href: "/about",
-    },
   ],
   links: {
     whatsapp: "https://wa.me/5531998209915",
