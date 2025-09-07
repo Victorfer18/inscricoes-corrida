@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Next.js & HeroUI Template
 
 This is a template for creating applications using Next.js 14 (app directory) and HeroUI (v2).
@@ -51,3 +52,6 @@ After modifying the `.npmrc` file, you need to run `pnpm install` again to ensur
 ## License
 
 Licensed under the [MIT license](https://github.com/heroui-inc/next-app-template/blob/main/LICENSE).
+=======
+# inscricoes-corrida
+>>>>>>> e91d6e1d1330a1f74236fd0d9261aec696c341db
