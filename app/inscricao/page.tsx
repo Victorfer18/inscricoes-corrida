@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useInscricao } from "@/hooks/useInscricao";
 import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
@@ -15,22 +16,31 @@ import { KitSlider } from "@/components/kit-slider";
 export default function InscricaoPage() {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { submitInscricao, isLoading, error } = useInscricao();
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmitInscricao = async () => {
-    setIsSubmitting(true);
+  const handleSubmitInscricao = async (formData: any, comprovanteFile: File) => {
+    setSubmitError(null);
     
     try {
-      // Simular envio dos dados
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Mapear dados do formulário para o formato da API
+      const inscricaoData = {
+        nomeCompleto: formData.nomeCompleto,
+        cpf: formData.cpf,
+        idade: formData.idade,
+        sexo: formData.sexo,
+        celular: formData.celular,
+        email: formData.email,
+        tamanhoBlusa: formData.tamanhoBlusa,
+      };
+
+      await submitInscricao(inscricaoData, comprovanteFile);
       
       // Abrir modal de sucesso
       onOpen();
-    } catch (error) {
-      console.error('Erro ao enviar inscrição:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
+        } catch (error) {
+          setSubmitError(error instanceof Error ? error.message : 'Erro desconhecido');
+        }
   };
 
   const handleSuccessClose = () => {
@@ -287,7 +297,8 @@ export default function InscricaoPage() {
         {/* Formulário de Inscrição Completo */}
         <FormularioInscricao 
           onSubmit={handleSubmitInscricao} 
-          isSubmitting={isSubmitting}
+          isSubmitting={isLoading}
+          error={submitError}
         />
       </div>
     </BackgroundWrapper>

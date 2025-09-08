@@ -31,12 +31,13 @@ interface FormData {
 }
 
 interface FormularioInscricaoProps {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: any, file: File) => void;
   className?: string;
   isSubmitting?: boolean;
+  error?: string | null;
 }
 
-export function FormularioInscricao({ onSubmit, className, isSubmitting: externalSubmitting = false }: FormularioInscricaoProps) {
+export function FormularioInscricao({ onSubmit, className, isSubmitting: externalSubmitting = false, error: externalError }: FormularioInscricaoProps) {
   const [formData, setFormData] = useState<FormData>({
     nomeCompleto: '',
     cpf: '',
@@ -103,16 +104,15 @@ export function FormularioInscricao({ onSubmit, className, isSubmitting: externa
       return;
     }
 
-    try {
-      const submitData = {
-        ...formData,
-        comprovanteFile,
-      };
-
-      await onSubmit(submitData);
-    } catch (error) {
-      console.error('Erro ao enviar formulário:', error);
+    if (!comprovanteFile) {
+      return;
     }
+
+    try {
+      await onSubmit(formData, comprovanteFile);
+        } catch (error) {
+          // Erro tratado pelo componente pai
+        }
   };
 
   return (
@@ -283,12 +283,20 @@ export function FormularioInscricao({ onSubmit, className, isSubmitting: externa
 
           {/* Botão de Envio */}
           <div className="text-center pt-4">
+            {externalError && (
+              <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-red-700 dark:text-red-300 text-sm">
+                  <strong>❌ Erro:</strong> {externalError}
+                </p>
+              </div>
+            )}
+            
             <Button
               color="secondary"
               size="lg"
               onPress={handleSubmit}
               isLoading={isSubmitting}
-              isDisabled={!comprovanteFile}
+              isDisabled={!comprovanteFile || isSubmitting}
               className="w-full sm:w-auto sm:min-w-48 font-bold text-lg py-6"
             >
               {isSubmitting ? 'Enviando...' : 'Finalizar Inscrição'}
