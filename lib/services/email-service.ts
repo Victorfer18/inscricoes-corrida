@@ -447,7 +447,6 @@ class EmailService {
             <div class="social-links">
                 <a href="https://wa.me/5531998209915">WhatsApp</a>
                 <a href="#">Instagram</a>
-                <a href="#">Facebook</a>
             </div>
             
             <p style="margin-top: 20px; font-size: 12px; color: #999;">

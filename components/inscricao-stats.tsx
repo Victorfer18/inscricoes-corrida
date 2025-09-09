@@ -86,19 +86,6 @@ export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
         <p className="text-sm text-gray-600 dark:text-gray-400">
           {total} de {limiteVagas} vagas preenchidas
         </p>
-
-        <div className="flex justify-center gap-2 mt-2">
-          {confirmadas > 0 && (
-            <Chip color="success" size="sm" variant="flat">
-              ✅ {confirmadas} confirmadas
-            </Chip>
-          )}
-          {pendentes > 0 && (
-            <Chip color="warning" size="sm" variant="flat">
-              ⏳ {pendentes} pendentes
-            </Chip>
-          )}
-        </div>
       </div>
 
       <div className="mt-4 space-y-2">

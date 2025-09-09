@@ -6,7 +6,7 @@ import { Button } from "@heroui/button";
 
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
-import { RunnerIcon, WhatsAppIcon, InstagramIcon, FacebookIcon } from "@/components/icons";
+import { RunnerIcon, WhatsAppIcon, InstagramIcon } from "@/components/icons";
 import { EventLogo } from "../components/event-logo";
 import { KitSlider } from "@/components/kit-slider";
 import { BackgroundWrapper } from "@/components/background-wrapper";

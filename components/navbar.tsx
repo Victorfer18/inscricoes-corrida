@@ -14,7 +14,7 @@ import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { WhatsAppIcon, FacebookIcon, InstagramIcon } from "@/components/icons";
+import { WhatsAppIcon, InstagramIcon } from "@/components/icons";
 import { EventLogo } from "@/components/event-logo";
 
 export const Navbar = () => {
@@ -71,13 +71,6 @@ export const Navbar = () => {
           >
             <InstagramIcon className="text-pink-500 hover:text-pink-600" />
           </Link>
-          <Link
-            isExternal
-            aria-label="Facebook"
-            href={siteConfig.links.facebook}
-          >
-            <FacebookIcon className="text-blue-500 hover:text-blue-600" />
-          </Link>
           <ThemeSwitch />
         </NavbarItem>
       </NavbarContent>
@@ -122,13 +115,6 @@ export const Navbar = () => {
               href={siteConfig.links.instagram}
             >
               <InstagramIcon className="text-pink-500" size={24} />
-            </Link>
-            <Link
-              isExternal
-              aria-label="Facebook"
-              href={siteConfig.links.facebook}
-            >
-              <FacebookIcon className="text-blue-500" size={24} />
             </Link>
           </div>
         </div>

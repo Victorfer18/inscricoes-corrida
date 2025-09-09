@@ -36,7 +36,6 @@ export const siteConfig = {
     whatsapp: "https://wa.me/5531998209915",
     instagram:
       "https://www.instagram.com/projetofitnesns2?igsh=Nmp5NmVmZjRramMy&utm_source=qr",
-    facebook: "https://facebook.com/projetojaiba",
     docs: "https://heroui.com",
     sponsor:
       "https://wa.me/5531998209915?text=Gostaria%20de%20apoiar%20o%20Projeto%20Jaíba",
