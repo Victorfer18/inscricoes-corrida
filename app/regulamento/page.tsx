@@ -149,7 +149,7 @@ export default function RegulamentoPage() {
 
             <div>
               <h3 className="font-semibold mb-2">Valor da Inscrição:</h3>
-              <p>R$ 25,00 (vinte e cinco reais) para ambas as modalidades</p>
+              <p>R$ 79,90 (setenta e nove reais e noventa centavos) para ambas as modalidades</p>
             </div>
 
             <div>
@@ -214,12 +214,23 @@ export default function RegulamentoPage() {
           <CardBody className="p-6 space-y-4">
             <div>
               <h3 className="font-semibold mb-2">Caráter do Evento:</h3>
-              <p>A Corrida Solidária tem caráter participativo e não competitivo.</p>
+              <p>A Corrida Solidária tem caráter competitivo com premiação para os primeiros colocados.</p>
             </div>
 
             <div>
               <h3 className="font-semibold mb-2">Premiação:</h3>
-              <p>Todos os participantes que concluírem o percurso receberão medalha simbólica de participação.</p>
+              <div className="space-y-2">
+                <p><strong>Classificação e Premiação:</strong> Será premiados do 1º ao 5º lugar geral, ao cruzar a faixa de chegada.</p>
+                <div className="ml-4 space-y-1">
+                  <p>🥇 <strong>1º lugar:</strong> R$ 500,00 + Troféu 🏆</p>
+                  <p>🥈 <strong>2º lugar:</strong> R$ 400,00 + Troféu 🏆</p>
+                  <p>🥉 <strong>3º lugar:</strong> R$ 300,00 + Troféu 🏆</p>
+                  <p>🏅 <strong>4º lugar:</strong> R$ 200,00 + Troféu 🏆</p>
+                  <p>🏅 <strong>5º lugar:</strong> R$ 150,00 + Troféu 🏆</p>
+                </div>
+                <p><strong>Brindes e Sorteios:</strong> Haverá diversos brindes e sorteios especiais durante o evento.</p>
+                <p><strong>Medalha de Participação:</strong> Todos os participantes que concluírem o percurso receberão medalha simbólica de participação.</p>
+              </div>
             </div>
           </CardBody>
         </Card>

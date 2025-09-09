@@ -185,8 +185,8 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div className="space-y-6">
                   <div className="text-center">
-                    <div className="text-6xl font-bold text-green-600 mb-2">R$ 25</div>
-                    <p className="text-lg text-gray-600 dark:text-gray-400">Valor único para ambas modalidades</p>
+                    <div className="text-6xl font-bold text-green-600 mb-2">R$ 79,90</div>
+                    <p className="text-lg text-gray-600 dark:text-gray-400">1º Lote - Kit completo incluso na inscrição</p>
                   </div>
                   
                   <div className="space-y-3">
@@ -228,6 +228,24 @@ export default function Home() {
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       130 de 200 vagas preenchidas
                     </p>
+                    <div className="mt-4 space-y-2">
+                      <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
+                        <p className="text-sm text-green-700 dark:text-green-300 font-semibold">
+                          🎁 1º Lote - R$ 79,90 e concorre a uma cesta básica!
+                        </p>
+                        <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                          Já foram preenchidos 65% das vagas, corra e garanta o seu!
+                        </p>
+                      </div>
+                      <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <p className="text-sm text-blue-700 dark:text-blue-300 font-semibold">
+                          🔔 2º Lote - Será divulgado em breve
+                        </p>
+                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                          Assim que preencherem as vagas do primeiro lote. Não fiquem de fora, são muitas novidades por esta causa!
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex flex-col gap-4">
@@ -274,6 +292,107 @@ export default function Home() {
         </div>
         
         <KitSlider />
+      </section>
+
+      <Divider className="my-12" />
+
+      {/* Seção de Premiação */}
+      <section className="py-12">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className={title({ size: "lg", color: "yellow", class: "mb-4" })}>
+              🏆 Classificação e Premiação
+            </h2>
+            <p className={subtitle({ class: "text-default-600 max-w-3xl mx-auto" })}>
+              Será premiados do 1º ao 5º lugar geral, ao cruzar a faixa de chegada
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {/* 1º Lugar */}
+            <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border-2 border-yellow-300 dark:border-yellow-700 hover:scale-105 transition-transform duration-300">
+              <CardHeader className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white text-center">
+                <div className="w-full">
+                  <div className="text-4xl mb-2">🥇</div>
+                  <h3 className="text-xl font-bold">1º Lugar</h3>
+                </div>
+              </CardHeader>
+              <CardBody className="text-center p-6">
+                <div className="text-3xl font-bold text-yellow-600 mb-2">R$ 500</div>
+                <div className="text-lg">🏆 Troféu</div>
+              </CardBody>
+            </Card>
+
+            {/* 2º Lugar */}
+            <Card className="bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20 border-2 border-gray-300 dark:border-gray-700 hover:scale-105 transition-transform duration-300">
+              <CardHeader className="bg-gradient-to-r from-gray-500 to-slate-600 text-white text-center">
+                <div className="w-full">
+                  <div className="text-4xl mb-2">🥈</div>
+                  <h3 className="text-xl font-bold">2º Lugar</h3>
+                </div>
+              </CardHeader>
+              <CardBody className="text-center p-6">
+                <div className="text-3xl font-bold text-gray-600 mb-2">R$ 400</div>
+                <div className="text-lg">🏆 Troféu</div>
+              </CardBody>
+            </Card>
+
+            {/* 3º Lugar */}
+            <Card className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-2 border-orange-300 dark:border-orange-700 hover:scale-105 transition-transform duration-300">
+              <CardHeader className="bg-gradient-to-r from-orange-500 to-red-600 text-white text-center">
+                <div className="w-full">
+                  <div className="text-4xl mb-2">🥉</div>
+                  <h3 className="text-xl font-bold">3º Lugar</h3>
+                </div>
+              </CardHeader>
+              <CardBody className="text-center p-6">
+                <div className="text-3xl font-bold text-orange-600 mb-2">R$ 300</div>
+                <div className="text-lg">🏆 Troféu</div>
+              </CardBody>
+            </Card>
+          </div>
+
+          {/* 4º e 5º Lugar */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-4xl mx-auto">
+            <Card className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-2 border-purple-300 dark:border-purple-700 hover:scale-105 transition-transform duration-300">
+              <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-center">
+                <div className="w-full">
+                  <div className="text-3xl mb-2">🏅</div>
+                  <h3 className="text-lg font-bold">4º Lugar</h3>
+                </div>
+              </CardHeader>
+              <CardBody className="text-center p-6">
+                <div className="text-2xl font-bold text-purple-600 mb-2">R$ 200</div>
+                <div className="text-base">🏆 Troféu</div>
+              </CardBody>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-900/20 dark:to-cyan-900/20 border-2 border-teal-300 dark:border-teal-700 hover:scale-105 transition-transform duration-300">
+              <CardHeader className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white text-center">
+                <div className="w-full">
+                  <div className="text-3xl mb-2">🏅</div>
+                  <h3 className="text-lg font-bold">5º Lugar</h3>
+                </div>
+              </CardHeader>
+              <CardBody className="text-center p-6">
+                <div className="text-2xl font-bold text-teal-600 mb-2">R$ 150</div>
+                <div className="text-base">🏆 Troféu</div>
+              </CardBody>
+            </Card>
+          </div>
+
+          {/* Brindes e Sorteios */}
+          <Card className="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 border border-pink-300 dark:border-pink-700 max-w-4xl mx-auto">
+            <CardBody className="p-6 text-center">
+              <h3 className="text-xl font-bold text-pink-600 dark:text-pink-400 mb-4">
+                🎁 Brindes e Sorteios
+              </h3>
+              <p className="text-gray-700 dark:text-gray-300">
+                Além da premiação principal, haverá diversos brindes e sorteios especiais durante o evento!
+              </p>
+            </CardBody>
+          </Card>
+        </div>
       </section>
 
       <Divider className="my-12" />

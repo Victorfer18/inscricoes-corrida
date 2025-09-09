@@ -32,7 +32,7 @@ export const Navbar = () => {
               <EventLogo width={40} height={40} variant="branca" />
             </div>
             <p className="font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent text-sm sm:text-base truncate">
-              PROJETO JAÍBA
+              CORRIDA SOLIDÁRIA
             </p>
           </NextLink>
         </NavbarBrand>

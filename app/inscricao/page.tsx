@@ -194,7 +194,7 @@ export default function InscricaoPage() {
               ⚠️ Informações Importantes
             </h3>
             <div className="space-y-2 text-xs sm:text-sm">
-              <p>• <strong>Valor da inscrição:</strong> R$ 25,00</p>
+              <p>• <strong>Valor da inscrição:</strong> R$ 79,90</p>
               <p>• <strong>Pagamento:</strong> Apenas via PIX</p>
               <p>• <strong>Comprovante:</strong> Obrigatório upload da imagem no formulário</p>
               <p>• <strong>Confirmação:</strong> Será feita via WhatsApp em até 24 horas</p>

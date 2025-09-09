@@ -195,7 +195,7 @@ export function KitSlider() {
               Todos os {kitItems.length} itens acima + hidratação durante o percurso + apoio médico
             </p>
             <div className="text-2xl sm:text-3xl font-bold text-green-600 mt-2">
-              Tudo por apenas R$ 25,00
+              Tudo por apenas R$ 79,90
             </div>
           </CardBody>
         </Card>
