@@ -14,12 +14,7 @@ import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  WhatsAppIcon,
-  FacebookIcon,
-  InstagramIcon,
-  Logo,
-} from "@/components/icons";
+import { WhatsAppIcon, FacebookIcon, InstagramIcon } from "@/components/icons";
 import { EventLogo } from "@/components/event-logo";
 
 export const Navbar = () => {
@@ -27,9 +22,12 @@ export const Navbar = () => {
     <HeroUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-2 max-w-fit min-w-0">
-          <NextLink className="flex justify-start items-center gap-2 min-w-0" href="/">
+          <NextLink
+            className="flex justify-start items-center gap-2 min-w-0"
+            href="/"
+          >
             <div className="flex-shrink-0">
-              <EventLogo width={40} height={40} variant="branca" />
+              <EventLogo height={40} variant="branca" width={40} />
             </div>
             <p className="font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent text-sm sm:text-base truncate">
               CORRIDA SOLIDÁRIA
@@ -59,13 +57,25 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2">
-          <Link isExternal aria-label="WhatsApp" href={siteConfig.links.whatsapp}>
+          <Link
+            isExternal
+            aria-label="WhatsApp"
+            href={siteConfig.links.whatsapp}
+          >
             <WhatsAppIcon className="text-green-500 hover:text-green-600" />
           </Link>
-          <Link isExternal aria-label="Instagram" href={siteConfig.links.instagram}>
+          <Link
+            isExternal
+            aria-label="Instagram"
+            href={siteConfig.links.instagram}
+          >
             <InstagramIcon className="text-pink-500 hover:text-pink-600" />
           </Link>
-          <Link isExternal aria-label="Facebook" href={siteConfig.links.facebook}>
+          <Link
+            isExternal
+            aria-label="Facebook"
+            href={siteConfig.links.facebook}
+          >
             <FacebookIcon className="text-blue-500 hover:text-blue-600" />
           </Link>
           <ThemeSwitch />
@@ -96,16 +106,28 @@ export const Navbar = () => {
               </NextLink>
             </NavbarMenuItem>
           ))}
-          
+
           {/* Links sociais no menu mobile */}
           <div className="flex gap-4 mt-4 justify-center">
-            <Link isExternal aria-label="WhatsApp" href={siteConfig.links.whatsapp}>
+            <Link
+              isExternal
+              aria-label="WhatsApp"
+              href={siteConfig.links.whatsapp}
+            >
               <WhatsAppIcon className="text-green-500" size={24} />
             </Link>
-            <Link isExternal aria-label="Instagram" href={siteConfig.links.instagram}>
+            <Link
+              isExternal
+              aria-label="Instagram"
+              href={siteConfig.links.instagram}
+            >
               <InstagramIcon className="text-pink-500" size={24} />
             </Link>
-            <Link isExternal aria-label="Facebook" href={siteConfig.links.facebook}>
+            <Link
+              isExternal
+              aria-label="Facebook"
+              href={siteConfig.links.facebook}
+            >
               <FacebookIcon className="text-blue-500" size={24} />
             </Link>
           </div>

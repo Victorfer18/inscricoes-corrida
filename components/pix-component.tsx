@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Snippet } from "@heroui/snippet";
+
 import { CopyIcon, CheckIcon } from "@/components/icons";
 import { PIX_INFO } from "@/types/inscricao";
 
@@ -16,7 +17,7 @@ export function PixComponent() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Erro ao copiar:', err);
+      console.error("Erro ao copiar:", err);
     }
   };
 
@@ -37,42 +38,43 @@ export function PixComponent() {
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-green-800 dark:text-green-200 mb-2">
+            <span className="block text-sm font-semibold text-green-800 dark:text-green-200 mb-2">
               Beneficiário:
-            </label>
+            </span>
             <div className="bg-white/80 dark:bg-gray-800/80 rounded-lg p-3 border border-green-200 dark:border-green-800 mb-3">
               <p className="font-semibold text-green-800 dark:text-green-200 text-sm sm:text-base break-words">
                 {PIX_INFO.nome}
               </p>
             </div>
-            
-            <label className="block text-sm font-semibold text-green-800 dark:text-green-200 mb-2">
+
+            <span className="block text-sm font-semibold text-green-800 dark:text-green-200 mb-2">
               Chave PIX (Copie e cole no seu app):
-            </label>
+            </span>
             <div className="w-full overflow-hidden mb-3">
               <Snippet
-                symbol=""
-                variant="bordered"
-                color="success"
                 className="w-full"
                 classNames={{
                   base: "w-full max-w-full",
-                  content: "text-xs sm:text-sm break-all overflow-hidden text-ellipsis max-w-full"
+                  content:
+                    "text-xs sm:text-sm break-all overflow-hidden text-ellipsis max-w-full",
                 }}
+                color="success"
+                symbol=""
+                variant="bordered"
               >
                 {PIX_INFO.chavePix}
               </Snippet>
             </div>
-            
+
             <Button
-              color="success"
-              variant="solid"
-              size="lg"
-              onPress={handleCopy}
               className="w-full font-semibold"
+              color="success"
+              size="lg"
               startContent={copied ? <CheckIcon /> : <CopyIcon />}
+              variant="solid"
+              onPress={handleCopy}
             >
-              {copied ? 'Copiado!' : 'Copiar Chave PIX'}
+              {copied ? "Copiado!" : "Copiar Chave PIX"}
             </Button>
           </div>
 
@@ -81,9 +83,9 @@ export function PixComponent() {
               📋 Instruções:
             </h4>
             <ol className="text-xs sm:text-sm text-green-700 dark:text-green-300 space-y-1 list-decimal list-inside leading-relaxed">
-              <li>Clique no botão "Copiar Chave PIX" acima</li>
+              <li>Clique no botão &ldquo;Copiar Chave PIX&rdquo; acima</li>
               <li>Abra seu app bancário</li>
-              <li>Escolha "PIX" e "Pagar"</li>
+              <li>Escolha &ldquo;PIX&rdquo; e &ldquo;Pagar&rdquo;</li>
               <li>Cole a chave PIX copiada</li>
               <li>Confirme o valor: R$ {PIX_INFO.valor},00</li>
               <li>Faça o pagamento</li>
@@ -94,8 +96,9 @@ export function PixComponent() {
 
           <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3 sm:p-4 border border-yellow-200 dark:border-yellow-800">
             <p className="text-xs sm:text-sm text-yellow-800 dark:text-yellow-200 leading-relaxed">
-              <strong>⚠️ Importante:</strong> Após o pagamento, envie o comprovante no formulário abaixo. 
-              Sua inscrição só será confirmada após a verificação do pagamento.
+              <strong>⚠️ Importante:</strong> Após o pagamento, envie o
+              comprovante no formulário abaixo. Sua inscrição só será confirmada
+              após a verificação do pagamento.
             </p>
           </div>
         </div>

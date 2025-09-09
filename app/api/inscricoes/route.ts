@@ -1,44 +1,62 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
-import { fileStorageService } from '@/lib/services/file-storage';
-import { emailService } from '@/lib/services/email-service';
-import { ApiResponse, InscricaoData, InscricaoCreateResponse } from '@/types/database';
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest): Promise<NextResponse<InscricaoCreateResponse>> {
+import { supabaseAdmin } from "@/lib/supabase";
+import { fileStorageService } from "@/lib/services/file-storage";
+import { emailService } from "@/lib/services/email-service";
+import {
+  ApiResponse,
+  InscricaoData,
+  InscricaoCreateResponse,
+} from "@/types/database";
+
+export async function POST(
+  request: NextRequest,
+): Promise<NextResponse<InscricaoCreateResponse>> {
   try {
     const formData = await request.formData();
-    
+
     // Extrair dados do formulário
     const inscricaoData = {
-      nome_completo: formData.get('nome_completo') as string,
-      cpf: formData.get('cpf') as string,
-      idade: parseInt(formData.get('idade') as string),
-      sexo: formData.get('sexo') as 'Masculino' | 'Feminino',
-      celular: formData.get('celular') as string,
-      email: formData.get('email') as string || null,
-      tamanho_blusa: formData.get('tamanho_blusa') as string,
+      nome_completo: formData.get("nome_completo") as string,
+      cpf: formData.get("cpf") as string,
+      idade: parseInt(formData.get("idade") as string),
+      sexo: formData.get("sexo") as "Masculino" | "Feminino",
+      celular: formData.get("celular") as string,
+      email: (formData.get("email") as string) || null,
+      tamanho_blusa: formData.get("tamanho_blusa") as string,
     };
 
-    const file = formData.get('comprovante') as File;
+    const file = formData.get("comprovante") as File;
 
-    if (!inscricaoData.nome_completo || !inscricaoData.cpf || !inscricaoData.celular || !file) {
-      return NextResponse.json({
-        success: false,
-        error: 'Dados obrigatórios não fornecidos'
-      }, { status: 400 });
+    if (
+      !inscricaoData.nome_completo ||
+      !inscricaoData.cpf ||
+      !inscricaoData.celular ||
+      !file
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Dados obrigatórios não fornecidos",
+        },
+        { status: 400 },
+      );
     }
 
     const { data: existingInscricao } = await supabaseAdmin
-      .from('inscricoes')
-      .select('id')
-      .eq('cpf', inscricaoData.cpf)
+      .from("inscricoes")
+      .select("id")
+      .eq("cpf", inscricaoData.cpf)
       .single();
 
     if (existingInscricao) {
-      return NextResponse.json({
-        success: false,
-        error: 'CPF já cadastrado'
-      }, { status: 409 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "CPF já cadastrado",
+        },
+        { status: 409 },
+      );
     }
 
     const arrayBuffer = await file.arrayBuffer();
@@ -49,15 +67,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<Inscricao
     const uploadResult = await fileStorageService.uploadFile(
       buffer,
       fileName,
-      file.type
+      file.type,
     );
 
     const { data: inscricao, error: inscricaoError } = await supabaseAdmin
-      .from('inscricoes')
+      .from("inscricoes")
       .insert({
         ...inscricaoData,
         comprovante_file_id: uploadResult.fileId,
-        status: 'pendente'
+        status: "pendente",
       })
       .select()
       .single();
@@ -76,9 +94,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<Inscricao
     if (inscricao && inscricao.email) {
       try {
         await emailService.sendConfirmationEmail(inscricao);
-        console.log('Email de confirmação enviado para:', inscricao.email);
+        console.log("Email de confirmação enviado para:", inscricao.email);
       } catch (emailError) {
-        console.error('Erro ao enviar email de confirmação:', emailError);
+        console.error("Erro ao enviar email de confirmação:", emailError);
         // Não falhar a inscrição por causa do email
       }
     }
@@ -87,36 +105,42 @@ export async function POST(request: NextRequest): Promise<NextResponse<Inscricao
       success: true,
       data: {
         inscricao,
-        fileUpload: uploadResult
+        fileUpload: uploadResult,
       },
-      message: 'Inscrição realizada com sucesso'
+      message: "Inscrição realizada com sucesso",
     });
-
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      error: 'Erro interno do servidor'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Erro interno do servidor",
+      },
+      { status: 500 },
+    );
   }
 }
 
-export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<InscricaoData[]>>> {
+export async function GET(
+  request: NextRequest,
+): Promise<NextResponse<ApiResponse<InscricaoData[]>>> {
   try {
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status');
-    const cpf = searchParams.get('cpf');
+    const status = searchParams.get("status");
+    const cpf = searchParams.get("cpf");
 
-    let query = supabaseAdmin.from('inscricoes').select('*');
+    let query = supabaseAdmin.from("inscricoes").select("*");
 
     if (status) {
-      query = query.eq('status', status);
+      query = query.eq("status", status);
     }
 
     if (cpf) {
-      query = query.eq('cpf', cpf);
+      query = query.eq("cpf", cpf);
     }
 
-    const { data: inscricoes, error } = await query.order('created_at', { ascending: false });
+    const { data: inscricoes, error } = await query.order("created_at", {
+      ascending: false,
+    });
 
     if (error) {
       throw error;
@@ -124,13 +148,15 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 
     return NextResponse.json({
       success: true,
-      data: inscricoes
+      data: inscricoes,
     });
-
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      error: 'Erro interno do servidor'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Erro interno do servidor",
+      },
+      { status: 500 },
+    );
   }
 }

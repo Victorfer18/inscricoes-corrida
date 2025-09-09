@@ -1,10 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
-import { config } from './config';
+import { createClient } from "@supabase/supabase-js";
+
+import { config } from "./config";
 
 // Cliente público (para uso no frontend)
 export const supabase = createClient(
   config.supabase.url,
-  config.supabase.anonKey
+  config.supabase.anonKey,
 );
 
 // Cliente administrativo (para uso no backend)
@@ -14,9 +15,9 @@ export const supabaseAdmin = createClient(
   {
     auth: {
       autoRefreshToken: false,
-      persistSession: false
-    }
-  }
+      persistSession: false,
+    },
+  },
 );
 
 export type Database = {
@@ -28,12 +29,12 @@ export type Database = {
           nome_completo: string;
           cpf: string;
           idade: number;
-          sexo: 'Masculino' | 'Feminino';
+          sexo: "Masculino" | "Feminino";
           celular: string;
           email: string | null;
           tamanho_blusa: string;
           comprovante_file_id: string;
-          status: 'pendente' | 'confirmado' | 'cancelado';
+          status: "pendente" | "confirmado" | "cancelado";
           created_at: string;
           updated_at: string;
         };
@@ -42,12 +43,12 @@ export type Database = {
           nome_completo: string;
           cpf: string;
           idade: number;
-          sexo: 'Masculino' | 'Feminino';
+          sexo: "Masculino" | "Feminino";
           celular: string;
           email?: string | null;
           tamanho_blusa: string;
           comprovante_file_id: string;
-          status?: 'pendente' | 'confirmado' | 'cancelado';
+          status?: "pendente" | "confirmado" | "cancelado";
           created_at?: string;
           updated_at?: string;
         };
@@ -56,12 +57,12 @@ export type Database = {
           nome_completo?: string;
           cpf?: string;
           idade?: number;
-          sexo?: 'Masculino' | 'Feminino';
+          sexo?: "Masculino" | "Feminino";
           celular?: string;
           email?: string | null;
           tamanho_blusa?: string;
           comprovante_file_id?: string;
-          status?: 'pendente' | 'confirmado' | 'cancelado';
+          status?: "pendente" | "confirmado" | "cancelado";
           created_at?: string;
           updated_at?: string;
         };

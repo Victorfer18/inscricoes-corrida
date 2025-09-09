@@ -3,12 +3,12 @@ export interface InscricaoData {
   nome_completo: string;
   cpf: string;
   idade: number;
-  sexo: 'Masculino' | 'Feminino';
+  sexo: "Masculino" | "Feminino";
   celular: string;
   email?: string;
   tamanho_blusa: string;
   comprovante_file_id: string; // Referência do arquivo, não URL completa
-  status: 'pendente' | 'confirmado' | 'cancelado';
+  status: "pendente" | "confirmado" | "cancelado";
   created_at?: string;
   updated_at?: string;
 }
@@ -29,7 +29,10 @@ export interface ApiResponse<T = any> {
 }
 
 export interface InscricaoCreateRequest {
-  formData: Omit<InscricaoData, 'id' | 'comprovante_file_id' | 'status' | 'created_at' | 'updated_at'>;
+  formData: Omit<
+    InscricaoData,
+    "id" | "comprovante_file_id" | "status" | "created_at" | "updated_at"
+  >;
   file: File;
 }
 

@@ -18,38 +18,42 @@ const kitItems: KitItem[] = [
   {
     id: "camiseta",
     name: "Camiseta Oficial",
-    description: "Camiseta exclusiva do evento com design Outubro Rosa em tecido dry-fit de alta qualidade",
+    description:
+      "Camiseta exclusiva do evento com design Outubro Rosa em tecido dry-fit de alta qualidade",
     image: "/kit/camiseta.png",
-    icon: "👕"
+    icon: "👕",
   },
   {
     id: "medalha",
     name: "Medalha de Participação",
-    description: "Medalha comemorativa personalizada para todos os participantes da corrida",
+    description:
+      "Medalha comemorativa personalizada para todos os participantes da corrida",
     image: "/kit/medalha.png",
-    icon: "🏅"
+    icon: "🏅",
   },
   {
     id: "bolsa",
     name: "Bolsa Esportiva",
-    description: "Bolsa prática e resistente para carregar seus pertences durante o evento",
+    description:
+      "Bolsa prática e resistente para carregar seus pertences durante o evento",
     image: "/kit/bolsa.png",
-    icon: "🎒"
+    icon: "🎒",
   },
   {
     id: "garrafa",
     name: "Garrafa de Água",
-    description: "Garrafa reutilizável com logo do evento para hidratação durante a corrida",
+    description:
+      "Garrafa reutilizável com logo do evento para hidratação durante a corrida",
     image: "/kit/garrafa.png",
-    icon: "💧"
+    icon: "💧",
   },
   {
     id: "barra",
     name: "Barra Energética",
     description: "Barra nutritiva para dar energia antes ou depois da corrida",
     image: "/kit/barra.png",
-    icon: "🍫"
-  }
+    icon: "🍫",
+  },
 ];
 
 export function KitSlider() {
@@ -91,16 +95,16 @@ export function KitSlider() {
               {/* Imagem do Item */}
               <div className="flex justify-center order-1 md:order-none">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-500 rounded-2xl blur-lg opacity-20 animate-pulse"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-500 rounded-2xl blur-lg opacity-20 animate-pulse" />
                   <div className="relative bg-white/90 dark:bg-gray-800/90 p-4 sm:p-6 rounded-2xl shadow-xl backdrop-blur-sm border border-pink-200/50 dark:border-pink-700/50">
                     <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 flex items-center justify-center">
                       <Image
-                        src={kitItems[currentIndex].image}
                         alt={kitItems[currentIndex].name}
-                        width={180}
-                        height={180}
                         className="object-contain w-full h-full"
                         fallbackSrc={`data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180"><rect width="180" height="180" fill="%23f3f4f6"/><text x="90" y="110" text-anchor="middle" font-size="60">${kitItems[currentIndex].icon}</text></svg>`}
+                        height={180}
+                        src={kitItems[currentIndex].image}
+                        width={180}
                       />
                     </div>
                   </div>
@@ -109,14 +113,16 @@ export function KitSlider() {
 
               {/* Informações do Item */}
               <div className="text-center md:text-left space-y-3 sm:space-y-4 order-2 md:order-none">
-                <div className="text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-4">{kitItems[currentIndex].icon}</div>
+                <div className="text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-4">
+                  {kitItems[currentIndex].icon}
+                </div>
                 <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-pink-600 dark:text-pink-400">
                   {kitItems[currentIndex].name}
                 </h3>
                 <p className="text-sm sm:text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed px-2 md:px-0">
                   {kitItems[currentIndex].description}
                 </p>
-                
+
                 {/* Indicador de Item */}
                 <div className="flex items-center justify-center md:justify-start gap-2 mt-4 sm:mt-6">
                   <span className="text-xs sm:text-sm font-semibold text-pink-600 dark:text-pink-400">
@@ -127,9 +133,9 @@ export function KitSlider() {
                       <div
                         key={index}
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                          index === currentIndex 
-                            ? 'bg-pink-500 w-4 sm:w-6' 
-                            : 'bg-pink-200 dark:bg-pink-800'
+                          index === currentIndex
+                            ? "bg-pink-500 w-4 sm:w-6"
+                            : "bg-pink-200 dark:bg-pink-800"
                         }`}
                       />
                     ))}
@@ -142,9 +148,9 @@ export function KitSlider() {
           {/* Botões de Navegação */}
           <Button
             isIconOnly
-            variant="flat"
-            size="sm"
             className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-pink-200 dark:border-pink-700 hover:bg-pink-50 dark:hover:bg-pink-900/20 z-10"
+            size="sm"
+            variant="flat"
             onPress={prevSlide}
           >
             <ChevronLeftIcon className="w-4 h-4 sm:w-5 sm:h-5 text-pink-600" />
@@ -152,9 +158,9 @@ export function KitSlider() {
 
           <Button
             isIconOnly
-            variant="flat"
-            size="sm"
             className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-pink-200 dark:border-pink-700 hover:bg-pink-50 dark:hover:bg-pink-900/20 z-10"
+            size="sm"
+            variant="flat"
             onPress={nextSlide}
           >
             <ChevronRightIcon className="w-4 h-4 sm:w-5 sm:h-5 text-pink-600" />
@@ -166,20 +172,22 @@ export function KitSlider() {
           {kitItems.map((item, index) => (
             <button
               key={item.id}
-              onClick={() => goToSlide(index)}
               className={`p-2 sm:p-3 rounded-lg sm:rounded-xl transition-all duration-300 border-2 ${
                 index === currentIndex
-                  ? 'bg-pink-100 dark:bg-pink-900/30 border-pink-400 dark:border-pink-600 scale-105 sm:scale-110'
-                  : 'bg-white/60 dark:bg-gray-800/60 border-pink-200 dark:border-pink-800 hover:bg-pink-50 dark:hover:bg-pink-900/20'
+                  ? "bg-pink-100 dark:bg-pink-900/30 border-pink-400 dark:border-pink-600 scale-105 sm:scale-110"
+                  : "bg-white/60 dark:bg-gray-800/60 border-pink-200 dark:border-pink-800 hover:bg-pink-50 dark:hover:bg-pink-900/20"
               }`}
+              onClick={() => goToSlide(index)}
             >
               <div className="text-lg sm:text-2xl">{item.icon}</div>
-              <div className={`text-xs font-semibold mt-1 hidden sm:block ${
-                index === currentIndex 
-                  ? 'text-pink-600 dark:text-pink-400' 
-                  : 'text-gray-600 dark:text-gray-400'
-              }`}>
-                {item.name.split(' ')[0]}
+              <div
+                className={`text-xs font-semibold mt-1 hidden sm:block ${
+                  index === currentIndex
+                    ? "text-pink-600 dark:text-pink-400"
+                    : "text-gray-600 dark:text-gray-400"
+                }`}
+              >
+                {item.name.split(" ")[0]}
               </div>
             </button>
           ))}
@@ -192,7 +200,8 @@ export function KitSlider() {
               🎁 Kit Completo Incluso na Inscrição
             </h4>
             <p className="text-sm sm:text-base text-green-600 dark:text-green-400 font-semibold px-2">
-              Todos os {kitItems.length} itens acima + hidratação durante o percurso + apoio médico
+              Todos os {kitItems.length} itens acima + hidratação durante o
+              percurso + apoio médico
             </p>
             <div className="text-2xl sm:text-3xl font-bold text-green-600 mt-2">
               Tudo por apenas R$ 79,90

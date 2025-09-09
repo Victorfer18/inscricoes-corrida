@@ -22,7 +22,7 @@ const kitItems: KitItem[] = [
     description: "Camiseta exclusiva do evento com design Outubro Rosa",
     image: "/kit/barra.png",
     fallbackImage: "/kit/barra.png",
-    icon: "🎽"
+    icon: "🎽",
   },
   {
     id: "medalha",
@@ -30,8 +30,8 @@ const kitItems: KitItem[] = [
     description: "Medalha comemorativa para todos os participantes",
     image: "/kit/medalha.png",
     fallbackImage: "/kit/medalha.png",
-    icon: "🏅"
-  }
+    icon: "🏅",
+  },
 ];
 
 interface KitShowcaseProps {
@@ -40,10 +40,10 @@ interface KitShowcaseProps {
   size?: "small" | "medium" | "large";
 }
 
-export function KitShowcase({ 
-  showTitle = true, 
+export function KitShowcase({
+  showTitle = true,
   layout = "grid",
-  size = "medium" 
+  size = "medium",
 }: KitShowcaseProps) {
   const [selectedItem, setSelectedItem] = useState<KitItem | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -55,9 +55,12 @@ export function KitShowcase({
 
   const getImageSize = () => {
     switch (size) {
-      case "small": return { width: 120, height: 120 };
-      case "large": return { width: 200, height: 200 };
-      default: return { width: 150, height: 150 };
+      case "small":
+        return { width: 120, height: 120 };
+      case "large":
+        return { width: 200, height: 200 };
+      default:
+        return { width: 150, height: 150 };
     }
   };
 
@@ -68,37 +71,36 @@ export function KitShowcase({
       <div className="w-full">
         {showTitle && (
           <div className="text-center mb-6">
-            <h3 className="text-2xl font-bold mb-2">
-              🎁 O que você recebe
-            </h3>
+            <h3 className="text-2xl font-bold mb-2">🎁 O que você recebe</h3>
             <p className="text-default-600">
               Kit completo de participação incluso na inscrição
             </p>
           </div>
         )}
 
-        <div className={`
-          ${layout === "grid" 
-            ? "grid grid-cols-1 md:grid-cols-3 gap-6" 
-            : "flex flex-wrap justify-center gap-4"
+        <div
+          className={`
+          ${
+            layout === "grid"
+              ? "grid grid-cols-1 md:grid-cols-3 gap-6"
+              : "flex flex-wrap justify-center gap-4"
           }
-        `}>
+        `}
+        >
           {kitItems.map((item) => (
-            <Card 
+            <Card
               key={item.id}
               className="cursor-pointer hover:scale-105 transition-transform duration-200 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border border-pink-200 dark:border-pink-800"
               onPress={() => handleItemClick(item)}
             >
               <CardBody className="text-center p-4">
                 <div className="flex justify-center mb-3">
-                  <KitItemImage 
-                    item={item} 
-                    width={width} 
-                    height={height}
-                  />
+                  <KitItemImage height={height} item={item} width={width} />
                 </div>
                 <h4 className="font-semibold text-lg mb-1">{item.name}</h4>
-                <p className="text-small text-default-600">{item.description}</p>
+                <p className="text-small text-default-600">
+                  {item.description}
+                </p>
               </CardBody>
             </Card>
           ))}
@@ -124,7 +126,7 @@ export function KitShowcase({
       </div>
 
       {/* Modal para visualização ampliada */}
-      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
+      <Modal isOpen={isOpen} size="2xl" onClose={onClose}>
         <ModalContent>
           <ModalHeader className="bg-gradient-to-r from-pink-500 to-purple-600 text-white">
             <div className="flex items-center gap-2">
@@ -135,11 +137,7 @@ export function KitShowcase({
           <ModalBody className="p-6">
             {selectedItem && (
               <div className="text-center">
-                <KitItemImage 
-                  item={selectedItem} 
-                  width={300} 
-                  height={300}
-                />
+                <KitItemImage height={300} item={selectedItem} width={300} />
                 <div className="mt-4">
                   <p className="text-default-600">{selectedItem.description}</p>
                 </div>
@@ -153,7 +151,15 @@ export function KitShowcase({
 }
 
 // Componente para imagem individual do kit
-function KitItemImage({ item, width, height }: { item: KitItem; width: number; height: number }) {
+function KitItemImage({
+  item,
+  width,
+  height,
+}: {
+  item: KitItem;
+  width: number;
+  height: number;
+}) {
   const [imageError, setImageError] = useState(false);
 
   const handleImageError = () => {
@@ -162,7 +168,7 @@ function KitItemImage({ item, width, height }: { item: KitItem; width: number; h
 
   if (imageError) {
     return (
-      <div 
+      <div
         className="flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 dark:from-pink-800 dark:to-purple-800 rounded-lg border-2 border-dashed border-pink-300 dark:border-pink-600"
         style={{ width, height }}
       >
@@ -178,12 +184,12 @@ function KitItemImage({ item, width, height }: { item: KitItem; width: number; h
 
   return (
     <Image
-      src={item.image}
       alt={item.name}
-      width={width}
-      height={height}
       className="rounded-lg object-cover"
       fallbackSrc={item.fallbackImage}
+      height={height}
+      src={item.image}
+      width={width}
       onError={handleImageError}
     />
   );
@@ -215,15 +221,15 @@ function KitCompleteImage() {
 
   return (
     <div className="relative max-w-md mx-auto">
-      <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-500 rounded-xl blur-sm opacity-20"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-500 rounded-xl blur-sm opacity-20" />
       <div className="relative bg-white/90 dark:bg-gray-800/90 p-2 rounded-xl shadow-lg">
         <Image
-          src="/kit/kit-all.png"
           alt="Kit Completo de Participação - Camiseta Rosa, Medalha e Extras"
-          width={400}
-          height={250}
           className="rounded-lg object-contain w-full h-auto"
           fallbackSrc="/kit/kit-all.png"
+          height={250}
+          src="/kit/kit-all.png"
+          width={400}
           onError={handleImageError}
         />
       </div>

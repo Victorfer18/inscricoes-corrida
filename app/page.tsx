@@ -52,7 +52,7 @@ export default function Home() {
                 </Chip>
               </div>
               <h3 className={title({ color: "pink", size: "sm", class: "text-center font-semibold text-lg sm:text-xl md:text-2xl" })}>
-                "Eles e Elas Correndo Pela Vida"
+&ldquo;Eles e Elas Correndo Pela Vida&rdquo;
               </h3>
               </div>
             </div>
@@ -461,19 +461,6 @@ export default function Home() {
                   startContent={<InstagramIcon />}
                 >
                   Instagram
-                </Button>
-                
-                <Button
-                  as={Link}
-                  href={siteConfig.links.facebook}
-          isExternal
-                  color="primary"
-                  variant="shadow"
-                  size="lg"
-                  startContent={<FacebookIcon />}
-                  className="font-semibold"
-                >
-                  Facebook
                 </Button>
       </div>
 

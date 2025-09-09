@@ -2,6 +2,7 @@
 
 import { Progress } from "@heroui/progress";
 import { Chip } from "@heroui/chip";
+
 import { useInscricaoStats } from "@/hooks/useInscricaoStats";
 
 interface InscricaoStatsProps {
@@ -9,18 +10,26 @@ interface InscricaoStatsProps {
 }
 
 export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
-  const { total, pendentes, confirmadas, porcentagem, limiteVagas, loading, error } = useInscricaoStats();
+  const {
+    total,
+    pendentes,
+    confirmadas,
+    porcentagem,
+    limiteVagas,
+    loading,
+    error,
+  } = useInscricaoStats();
 
   if (loading) {
     return (
       <div className={`text-center ${className}`}>
-        <Progress 
-          value={65} 
-          color="success" 
-          size="lg"
-          className="mb-2"
-          showValueLabel={true}
+        <Progress
           isIndeterminate
+          className="mb-2"
+          color="success"
+          showValueLabel={true}
+          size="lg"
+          value={65}
         />
         <p className="text-sm text-gray-600 dark:text-gray-400">
           Carregando estatísticas...
@@ -32,12 +41,12 @@ export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
   if (error) {
     return (
       <div className={`text-center ${className}`}>
-        <Progress 
-          value={65} 
-          color="success" 
-          size="lg"
+        <Progress
           className="mb-2"
+          color="success"
           showValueLabel={true}
+          size="lg"
+          value={65}
         />
         <p className="text-sm text-gray-600 dark:text-gray-400">
           {total || 130} de {limiteVagas} vagas preenchidas (estimativa)
@@ -52,6 +61,7 @@ export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
   const getProgressColor = () => {
     if (porcentagem >= 90) return "danger";
     if (porcentagem >= 70) return "warning";
+
     return "success";
   };
 
@@ -59,31 +69,32 @@ export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
     if (porcentagem >= 95) return "🔥 Últimas vagas disponíveis!";
     if (porcentagem >= 80) return "⚡ Vagas se esgotando rapidamente!";
     if (porcentagem >= 60) return "🏃‍♀️ Garante já sua vaga!";
+
     return "📝 Inscrições abertas!";
   };
 
   return (
     <div className={`text-center ${className}`}>
       <div className="mb-4">
-        <Progress 
-          value={porcentagem} 
-          color={getProgressColor()} 
-          size="lg"
+        <Progress
           className="mb-2"
+          color={getProgressColor()}
           showValueLabel={true}
+          size="lg"
+          value={porcentagem}
         />
         <p className="text-sm text-gray-600 dark:text-gray-400">
           {total} de {limiteVagas} vagas preenchidas
         </p>
-        
+
         <div className="flex justify-center gap-2 mt-2">
           {confirmadas > 0 && (
-            <Chip size="sm" color="success" variant="flat">
+            <Chip color="success" size="sm" variant="flat">
               ✅ {confirmadas} confirmadas
             </Chip>
           )}
           {pendentes > 0 && (
-            <Chip size="sm" color="warning" variant="flat">
+            <Chip color="warning" size="sm" variant="flat">
               ⏳ {pendentes} pendentes
             </Chip>
           )}
@@ -99,14 +110,15 @@ export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
             {getStatusMessage()}
           </p>
         </div>
-        
+
         {porcentagem < 90 && (
           <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
             <p className="text-sm text-blue-700 dark:text-blue-300 font-semibold">
               🔔 2º Lote - Será divulgado em breve
             </p>
             <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-              Assim que preencherem as vagas do primeiro lote. Não fiquem de fora, são muitas novidades por esta causa!
+              Assim que preencherem as vagas do primeiro lote. Não fiquem de
+              fora, são muitas novidades por esta causa!
             </p>
           </div>
         )}

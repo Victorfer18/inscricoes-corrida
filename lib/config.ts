@@ -11,14 +11,15 @@ export const config = {
     folderId: process.env.GOOGLE_DRIVE_FOLDER_ID!,
   },
   fileStorage: {
-    provider: process.env.FILE_STORAGE_PROVIDER || 'google_drive',
-    baseUrl: process.env.FILE_STORAGE_BASE_URL || 'https://drive.google.com/uc?id=',
+    provider: process.env.FILE_STORAGE_PROVIDER || "google_drive",
+    baseUrl:
+      process.env.FILE_STORAGE_BASE_URL || "https://drive.google.com/uc?id=",
     externalApiUrl: process.env.EXTERNAL_API_URL,
   },
   app: {
     nextAuthSecret: process.env.NEXTAUTH_SECRET!,
-    nextAuthUrl: process.env.NEXTAUTH_URL || 'http://localhost:3000',
+    nextAuthUrl: process.env.NEXTAUTH_URL || "http://localhost:3000",
   },
 } as const;
 
-export type FileStorageProvider = 'google_drive' | 'supabase' | 'external';
+export type FileStorageProvider = "google_drive" | "supabase" | "external";

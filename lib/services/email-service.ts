@@ -1,5 +1,6 @@
-import nodemailer from 'nodemailer';
-import { InscricaoData } from '@/types/database';
+import nodemailer from "nodemailer";
+
+import { InscricaoData } from "@/types/database";
 
 interface EmailConfig {
   host: string;
@@ -24,12 +25,12 @@ class EmailService {
 
   constructor() {
     this.config = {
-      host: 'smtp.gmail.com',
+      host: "smtp.gmail.com",
       port: 587,
       secure: false, // true for 465, false for other ports
       auth: {
-        user: process.env.GMAIL_USER || '',
-        pass: process.env.GMAIL_APP_PASSWORD || '', // App Password, não a senha normal
+        user: process.env.GMAIL_USER || "",
+        pass: process.env.GMAIL_APP_PASSWORD || "", // App Password, não a senha normal
       },
     };
 
@@ -40,7 +41,7 @@ class EmailService {
     try {
       this.transporter = nodemailer.createTransport(this.config);
     } catch (error) {
-      console.error('Erro ao inicializar transporter de email:', error);
+      console.error("Erro ao inicializar transporter de email:", error);
     }
   }
 
@@ -51,29 +52,39 @@ class EmailService {
 
     try {
       await this.transporter.verify();
+
       return true;
     } catch (error) {
-      console.error('Erro na verificação da conexão de email:', error);
+      console.error("Erro na verificação da conexão de email:", error);
+
       return false;
     }
   }
 
-  async sendEmail({ to, subject, html, text }: SendEmailParams): Promise<boolean> {
+  async sendEmail({
+    to,
+    subject,
+    html,
+    text,
+  }: SendEmailParams): Promise<boolean> {
     if (!this.transporter) {
-      console.error('Transporter de email não inicializado');
+      console.error("Transporter de email não inicializado");
+
       return false;
     }
 
     const isConnected = await this.verifyConnection();
+
     if (!isConnected) {
-      console.error('Não foi possível conectar ao servidor de email');
+      console.error("Não foi possível conectar ao servidor de email");
+
       return false;
     }
 
     try {
       const mailOptions = {
         from: {
-          name: 'Corrida Solidária Outubro Rosa',
+          name: "Corrida Solidária Outubro Rosa",
           address: this.config.auth.user,
         },
         to,
@@ -83,25 +94,33 @@ class EmailService {
       };
 
       const result = await this.transporter.sendMail(mailOptions);
-      console.log('Email enviado com sucesso:', result.messageId);
+
+      console.log("Email enviado com sucesso:", result.messageId);
+
       return true;
     } catch (error) {
-      console.error('Erro ao enviar email:', error);
+      console.error("Erro ao enviar email:", error);
+
       return false;
     }
   }
 
   private stripHtml(html: string): string {
-    return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    return html
+      .replace(/<[^>]*>/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   async sendConfirmationEmail(inscricaoData: InscricaoData): Promise<boolean> {
     if (!inscricaoData.email) {
-      console.log('Email não fornecido para a inscrição:', inscricaoData.cpf);
+      console.log("Email não fornecido para a inscrição:", inscricaoData.cpf);
+
       return false;
     }
 
-    const subject = '✅ Confirmação de Inscrição - Corrida Solidária Outubro Rosa';
+    const subject =
+      "✅ Confirmação de Inscrição - Corrida Solidária Outubro Rosa";
     const html = this.generateConfirmationEmailTemplate(inscricaoData);
 
     return await this.sendEmail({
@@ -112,10 +131,10 @@ class EmailService {
   }
 
   private generateConfirmationEmailTemplate(inscricao: InscricaoData): string {
-    const dataEvento = '26 de Outubro de 2025';
-    const horaEvento = '06h00 (Concentração)';
-    const localEvento = 'Trevo do Eltinho - Projeto Jaíba/NS2';
-    
+    const dataEvento = "26 de Outubro de 2025";
+    const horaEvento = "06h00 (Concentração)";
+    const localEvento = "Trevo do Eltinho - Projeto Jaíba/NS2";
+
     return `
 <!DOCTYPE html>
 <html lang="pt-BR">
