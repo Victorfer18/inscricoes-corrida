@@ -2,15 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fileStorageService } from '@/lib/services/file-storage';
 import { ApiResponse } from '@/types/database';
 
-interface RouteParams {
-  params: {
-    fileId: string;
-  };
-}
-
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { fileId: string } }
 ): Promise<NextResponse<ApiResponse<{ url: string }>>> {
   try {
     const { fileId } = params;
@@ -40,7 +34,7 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { fileId: string } }
 ): Promise<NextResponse<ApiResponse>> {
   try {
     const { fileId } = params;
