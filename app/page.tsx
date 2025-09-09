@@ -3,7 +3,6 @@ import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { Divider } from "@heroui/divider";
 import { Button } from "@heroui/button";
-import { Progress } from "@heroui/progress";
 
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
@@ -11,6 +10,7 @@ import { RunnerIcon, WhatsAppIcon, InstagramIcon, FacebookIcon } from "@/compone
 import { EventLogo } from "../components/event-logo";
 import { KitSlider } from "@/components/kit-slider";
 import { BackgroundWrapper } from "@/components/background-wrapper";
+import { InscricaoStats } from "@/components/inscricao-stats";
 
 export default function Home() {
   return (
@@ -218,34 +218,7 @@ export default function Home() {
                     <h3 className="text-xl font-bold mb-4 text-green-700 dark:text-green-300">
                       📊 Progresso das Inscrições
                     </h3>
-                    <Progress 
-                      value={65} 
-                      color="success" 
-                      size="lg"
-                      className="mb-2"
-                      showValueLabel={true}
-                    />
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      130 de 200 vagas preenchidas
-                    </p>
-                    <div className="mt-4 space-y-2">
-                      <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
-                        <p className="text-sm text-green-700 dark:text-green-300 font-semibold">
-                          🎁 1º Lote - R$ 79,90 e concorre a uma cesta básica!
-                        </p>
-                        <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-                          Já foram preenchidos 65% das vagas, corra e garanta o seu!
-                        </p>
-                      </div>
-                      <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <p className="text-sm text-blue-700 dark:text-blue-300 font-semibold">
-                          🔔 2º Lote - Será divulgado em breve
-                        </p>
-                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                          Assim que preencherem as vagas do primeiro lote. Não fiquem de fora, são muitas novidades por esta causa!
-                        </p>
-                      </div>
-                    </div>
+                    <InscricaoStats />
                   </div>
 
                   <div className="flex flex-col gap-4">

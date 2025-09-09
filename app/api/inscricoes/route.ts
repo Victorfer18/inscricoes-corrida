@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { fileStorageService } from '@/lib/services/file-storage';
+import { emailService } from '@/lib/services/email-service';
 import { ApiResponse, InscricaoData, InscricaoCreateResponse } from '@/types/database';
 
 export async function POST(request: NextRequest): Promise<NextResponse<InscricaoCreateResponse>> {
@@ -69,6 +70,17 @@ export async function POST(request: NextRequest): Promise<NextResponse<Inscricao
       }
 
       throw inscricaoError;
+    }
+
+    // Enviar email de confirmação (não bloquear o processo se falhar)
+    if (inscricao && inscricao.email) {
+      try {
+        await emailService.sendConfirmationEmail(inscricao);
+        console.log('Email de confirmação enviado para:', inscricao.email);
+      } catch (emailError) {
+        console.error('Erro ao enviar email de confirmação:', emailError);
+        // Não falhar a inscrição por causa do email
+      }
     }
 
     return NextResponse.json({
