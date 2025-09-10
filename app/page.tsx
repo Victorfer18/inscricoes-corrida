@@ -11,6 +11,8 @@ import { EventLogo } from "../components/event-logo";
 import { KitSlider } from "@/components/kit-slider";
 import { BackgroundWrapper } from "@/components/background-wrapper";
 import { InscricaoStats } from "@/components/inscricao-stats";
+import { PIX_INFO } from "@/types/inscricao";
+import { formatarMoeda } from "@/lib/utils";
 
 export default function Home() {
   return (
@@ -185,7 +187,7 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div className="space-y-6">
                   <div className="text-center">
-                    <div className="text-6xl font-bold text-green-600 mb-2">R$ 79,90</div>
+                    <div className="text-6xl font-bold text-green-600 mb-2">{formatarMoeda(PIX_INFO.valor)}</div>
                     <p className="text-lg text-gray-600 dark:text-gray-400">1º Lote - Kit completo incluso na inscrição</p>
                   </div>
                   
@@ -470,8 +472,7 @@ export default function Home() {
                 </h3>
                 <p className="text-blue-700 dark:text-blue-300">
                   <strong>WhatsApp:</strong> (31) 99820-9915 - Gil<br />
-                  <strong>Organização:</strong> Projeto Jaíba - NS2<br />
-                  <strong>E-mail:</strong> contato@projetojaiba.com.br
+                  <strong>Organização:</strong> Projeto Fitness - NS2<br />
                 </p>
               </div>
             </CardBody>

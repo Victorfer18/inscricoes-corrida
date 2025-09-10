@@ -1,6 +1,8 @@
 import nodemailer from "nodemailer";
 
 import { InscricaoData } from "@/types/database";
+import { formatarCPF, formatarCelular, formatarMoeda } from "@/lib/utils";
+import { PIX_INFO } from "@/types/inscricao";
 
 interface EmailConfig {
   host: string;
@@ -358,7 +360,7 @@ class EmailService {
                 </div>
                 <div class="info-row">
                     <span class="info-label">CPF:</span>
-                    <span class="info-value">${inscricao.cpf}</span>
+                    <span class="info-value">${formatarCPF(inscricao.cpf)}</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Idade:</span>
@@ -370,7 +372,7 @@ class EmailService {
                 </div>
                 <div class="info-row">
                     <span class="info-label">Celular:</span>
-                    <span class="info-value">${inscricao.celular}</span>
+                    <span class="info-value">${formatarCelular(inscricao.celular)}</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Tamanho da Camiseta:</span>
@@ -394,7 +396,7 @@ class EmailService {
                 </div>
                 <div class="info-row">
                     <span class="info-label">💰 Valor Pago:</span>
-                    <span class="info-value">R$ 79,90</span>
+                    <span class="info-value">${formatarMoeda(PIX_INFO.valor)}</span>
                 </div>
             </div>
             

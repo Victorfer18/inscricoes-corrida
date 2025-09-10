@@ -19,6 +19,8 @@ import { BackgroundWrapper } from "@/components/background-wrapper";
 import { title, subtitle } from "@/components/primitives";
 import { FormularioInscricao } from "@/components/formulario-inscricao";
 import { KitSlider } from "@/components/kit-slider";
+import { formatarMoeda } from "@/lib/utils";
+import { PIX_INFO } from "@/types/inscricao";
 
 export default function InscricaoPage() {
   const router = useRouter();
@@ -93,7 +95,7 @@ export default function InscricaoPage() {
                   ✅ Parabéns! Sua inscrição foi enviada com sucesso!
                 </h3>
                 <p className="text-green-600 dark:text-green-400 text-sm">
-                  Você receberá a confirmação via WhatsApp em até 24 horas.
+                  Você receberá a confirmação via E-mail em até 24 horas.
                 </p>
               </div>
 
@@ -163,7 +165,7 @@ export default function InscricaoPage() {
                 <div className="text-left text-sm space-y-2 text-blue-600 dark:text-blue-400">
                   <div className="flex items-center gap-2">
                     <span>⏳</span>
-                    <span>Aguarde confirmação via WhatsApp</span>
+                    <span>Aguarde confirmação via E-mail</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span>📖</span>
@@ -225,7 +227,7 @@ export default function InscricaoPage() {
               </h3>
               <div className="space-y-2 text-xs sm:text-sm">
                 <p>
-                  • <strong>Valor da inscrição:</strong> R$ 79,90
+                  • <strong>Valor da inscrição:</strong> {formatarMoeda(PIX_INFO.valor)}
                 </p>
                 <p>
                   • <strong>Pagamento:</strong> Apenas via PIX
@@ -235,7 +237,7 @@ export default function InscricaoPage() {
                   no formulário
                 </p>
                 <p>
-                  • <strong>Confirmação:</strong> Será feita via WhatsApp em até
+                  • <strong>Confirmação:</strong> Será feita via E-mail em até
                   24 horas
                 </p>
                 <p>

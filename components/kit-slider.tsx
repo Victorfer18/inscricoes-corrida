@@ -5,6 +5,8 @@ import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Image } from "@heroui/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { PIX_INFO } from "@/types/inscricao";
+import { formatarMoeda } from "@/lib/utils";
 
 interface KitItem {
   id: string;
@@ -204,7 +206,7 @@ export function KitSlider() {
               percurso + apoio médico
             </p>
             <div className="text-2xl sm:text-3xl font-bold text-green-600 mt-2">
-              Tudo por apenas R$ 79,90
+              Tudo por apenas {formatarMoeda(PIX_INFO.valor)}
             </div>
           </CardBody>
         </Card>

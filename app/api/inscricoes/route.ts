@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { fileStorageService } from "@/lib/services/file-storage";
 import { emailService } from "@/lib/services/email-service";
+import { limparCPF, limparCelular } from "@/lib/utils";
 import {
   ApiResponse,
   InscricaoData,
@@ -18,10 +19,10 @@ export async function POST(
     // Extrair dados do formulário
     const inscricaoData = {
       nome_completo: formData.get("nome_completo") as string,
-      cpf: formData.get("cpf") as string,
+      cpf: limparCPF(formData.get("cpf") as string), // Remove formatação do CPF
       idade: parseInt(formData.get("idade") as string),
       sexo: formData.get("sexo") as "Masculino" | "Feminino",
-      celular: formData.get("celular") as string,
+      celular: limparCelular(formData.get("celular") as string), // Remove formatação do celular
       email: (formData.get("email") as string) || null,
       tamanho_blusa: formData.get("tamanho_blusa") as string,
     };
@@ -46,7 +47,7 @@ export async function POST(
     const { data: existingInscricao } = await supabaseAdmin
       .from("inscricoes")
       .select("id")
-      .eq("cpf", inscricaoData.cpf)
+      .eq("cpf", inscricaoData.cpf) // CPF já está limpo
       .single();
 
     if (existingInscricao) {
@@ -56,6 +57,39 @@ export async function POST(
           error: "CPF já cadastrado",
         },
         { status: 409 },
+      );
+    }
+
+    // Buscar lote vigente (status = true)
+    const { data: loteVigente, error: loteError } = await supabaseAdmin
+      .from("lotes")
+      .select("*")
+      .eq("status", true)
+      .single();
+
+    if (loteError || !loteVigente) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Nenhum lote vigente encontrado",
+        },
+        { status: 400 },
+      );
+    }
+
+    // Verificar se ainda há vagas no lote vigente
+    const { count: inscricoesNoLote } = await supabaseAdmin
+      .from("inscricoes")
+      .select("*", { count: "exact", head: true })
+      .eq("lote_id", loteVigente.id);
+
+    if (inscricoesNoLote && inscricoesNoLote >= loteVigente.total_vagas) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Lote ${loteVigente.nome} esgotado. Aguarde o próximo lote.`,
+        },
+        { status: 400 },
       );
     }
 
@@ -75,6 +109,7 @@ export async function POST(
       .insert({
         ...inscricaoData,
         comprovante_file_id: uploadResult.fileId,
+        lote_id: loteVigente.id, // Vincular ao lote vigente
         status: "pendente",
       })
       .select()
@@ -94,7 +129,6 @@ export async function POST(
     if (inscricao && inscricao.email) {
       try {
         await emailService.sendConfirmationEmail(inscricao);
-        console.log("Email de confirmação enviado para:", inscricao.email);
       } catch (emailError) {
         console.error("Erro ao enviar email de confirmação:", emailError);
         // Não falhar a inscrição por causa do email
@@ -135,7 +169,7 @@ export async function GET(
     }
 
     if (cpf) {
-      query = query.eq("cpf", cpf);
+      query = query.eq("cpf", limparCPF(cpf)); // Limpa CPF para busca
     }
 
     const { data: inscricoes, error } = await query.order("created_at", {

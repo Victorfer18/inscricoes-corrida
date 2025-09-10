@@ -7,6 +7,7 @@ import { Snippet } from "@heroui/snippet";
 
 import { CopyIcon, CheckIcon } from "@/components/icons";
 import { PIX_INFO } from "@/types/inscricao";
+import { formatarMoeda } from "@/lib/utils";
 
 export function PixComponent() {
   const [copied, setCopied] = useState(false);
@@ -32,7 +33,7 @@ export function PixComponent() {
             Pagamento via PIX
           </h3>
           <p className="text-green-600 dark:text-green-400 text-base sm:text-lg">
-            Valor: <strong>R$ {PIX_INFO.valor},00</strong>
+            Valor: <strong>{formatarMoeda(PIX_INFO.valor)}</strong>
           </p>
         </div>
 
@@ -87,7 +88,7 @@ export function PixComponent() {
               <li>Abra seu app bancário</li>
               <li>Escolha &ldquo;PIX&rdquo; e &ldquo;Pagar&rdquo;</li>
               <li>Cole a chave PIX copiada</li>
-              <li>Confirme o valor: R$ {PIX_INFO.valor},00</li>
+              <li>Confirme o valor: {formatarMoeda(PIX_INFO.valor)}</li>
               <li>Faça o pagamento</li>
               <li>Compartilhe ou Tire print do comprovante</li>
               <li>Envie o comprovante no campo abaixo</li>

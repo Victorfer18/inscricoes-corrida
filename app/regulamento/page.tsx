@@ -5,6 +5,8 @@ import { Chip } from "@heroui/chip";
 import { BackgroundWrapper } from "@/components/background-wrapper";
 import { title, subtitle } from "@/components/primitives";
 import { DocumentIcon } from "@/components/icons";
+import { PIX_INFO } from "@/types/inscricao";
+import { formatarMoeda } from "@/lib/utils";
 
 export default function RegulamentoPage() {
   return (
@@ -206,7 +208,7 @@ export default function RegulamentoPage() {
             <div>
               <h3 className="font-semibold mb-2">Valor da Inscrição:</h3>
               <p>
-                R$ 79,90 (setenta e nove reais e noventa centavos) para ambas as
+                {formatarMoeda(PIX_INFO.valor)} para ambas as
                 modalidades
               </p>
             </div>
@@ -223,8 +225,7 @@ export default function RegulamentoPage() {
               <h3 className="font-semibold mb-2">Confirmação:</h3>
               <p>
                 A inscrição só será efetivada após a confirmação do pagamento.
-                Deverá ser encaminhado o comprovante de pagamento no WhatsApp{" "}
-                <strong>(31) 99820-9915 - Gil</strong>
+                Deverá ser encaminhado o comprovante de pagamento no preenchimento do formulário.
               </p>
             </div>
 

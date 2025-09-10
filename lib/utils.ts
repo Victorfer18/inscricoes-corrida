@@ -67,6 +67,24 @@ export async function copiarParaClipboard(texto: string): Promise<boolean> {
   }
 }
 
+// Limpar CPF (remover formatação)
+export function limparCPF(cpf: string): string {
+  return cpf.replace(/[^\d]/g, "");
+}
+
+// Limpar celular (remover formatação)
+export function limparCelular(celular: string): string {
+  return celular.replace(/[^\d]/g, "");
+}
+
+// Formatação de moeda (Real brasileiro)
+export function formatarMoeda(valor: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(valor);
+}
+
 // Formatação de arquivo para preview
 export function formatarTamanhoArquivo(bytes: number): string {
   if (bytes === 0) return "0 Bytes";

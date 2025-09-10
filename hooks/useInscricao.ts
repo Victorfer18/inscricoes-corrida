@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { InscricaoCreateResponse, ApiResponse } from "@/types/database";
+import { limparCPF, limparCelular } from "@/lib/utils";
 
 interface InscricaoFormData {
   nomeCompleto: string;
@@ -82,8 +83,9 @@ export function useInscricao() {
 
   const checkInscricaoByCpf = async (cpf: string) => {
     try {
+      const cpfLimpo = limparCPF(cpf); // Limpa CPF antes da busca
       const response = await fetch(
-        `/api/inscricoes?cpf=${encodeURIComponent(cpf)}`,
+        `/api/inscricoes?cpf=${encodeURIComponent(cpfLimpo)}`,
       );
       const result = await response.json();
 

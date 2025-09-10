@@ -4,6 +4,8 @@ import { Progress } from "@heroui/progress";
 import { Chip } from "@heroui/chip";
 
 import { useInscricaoStats } from "@/hooks/useInscricaoStats";
+import { PIX_INFO } from "@/types/inscricao";
+import { formatarMoeda } from "@/lib/utils";
 
 interface InscricaoStatsProps {
   className?: string;
@@ -12,10 +14,11 @@ interface InscricaoStatsProps {
 export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
   const {
     total,
-    pendentes,
-    confirmadas,
     porcentagem,
-    limiteVagas,
+    vagasRestantes,
+    loteAtual,
+    isUltimoLote,
+    proximoLote,
     loading,
     error,
   } = useInscricaoStats();
@@ -27,9 +30,7 @@ export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
           isIndeterminate
           className="mb-2"
           color="success"
-          showValueLabel={true}
           size="lg"
-          value={65}
         />
         <p className="text-sm text-gray-600 dark:text-gray-400">
           Carregando estatísticas...
@@ -41,19 +42,14 @@ export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
   if (error) {
     return (
       <div className={`text-center ${className}`}>
-        <Progress
-          className="mb-2"
-          color="success"
-          showValueLabel={true}
-          size="lg"
-          value={65}
-        />
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          {total || 130} de {limiteVagas} vagas preenchidas (estimativa)
-        </p>
-        <p className="text-xs text-red-500 mt-1">
-          Erro ao carregar dados em tempo real
-        </p>
+        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+          <p className="text-sm text-red-700 dark:text-red-300">
+            ⚠️ Erro ao carregar informações das inscrições
+          </p>
+          <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+            Tente recarregar a página
+          </p>
+        </div>
       </div>
     );
   }
@@ -84,27 +80,53 @@ export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
           value={porcentagem}
         />
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          {total} de {limiteVagas} vagas preenchidas
+          {total} de {loteAtual?.total_vagas || 0} vagas preenchidas no {loteAtual?.nome || "lote atual"}
         </p>
       </div>
 
       <div className="mt-4 space-y-2">
         <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
           <p className="text-sm text-green-700 dark:text-green-300 font-semibold">
-            🎁 1º Lote - R$ 79,90 e concorre a uma cesta básica!
+            🎁 {loteAtual?.nome || "Lote Atual"} - {formatarMoeda(PIX_INFO.valor)} e concorre a uma cesta básica!
           </p>
           <p className="text-xs text-green-600 dark:text-green-400 mt-1">
             {getStatusMessage()}
           </p>
         </div>
 
-        {porcentagem < 90 && (
+        {/* Mostrar aviso sobre próximo lote se não for o último */}
+        {!isUltimoLote && proximoLote && porcentagem >= 80 && (
           <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
             <p className="text-sm text-blue-700 dark:text-blue-300 font-semibold">
-              🔔 2º Lote - Será divulgado em breve
+              🔔 {proximoLote.nome} - Será divulgado em breve
             </p>
             <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-              Assim que preencherem as vagas do primeiro lote. Não fiquem de
+              Assim que preencherem as vagas do {loteAtual?.nome}. Não fiquem de
+              fora, são muitas novidades por esta causa!
+            </p>
+          </div>
+        )}
+
+        {/* Mostrar aviso de último lote */}
+        {isUltimoLote && (
+          <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border border-purple-200 dark:border-purple-800">
+            <p className="text-sm text-purple-700 dark:text-purple-300 font-semibold">
+              🚀 Último Lote - Últimas vagas!
+            </p>
+            <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+              Esta é sua última chance de participar da corrida!
+            </p>
+          </div>
+        )}
+
+        {/* Mostrar aviso sobre próximo lote se ainda não estiver próximo do fim */}
+        {!isUltimoLote && proximoLote && porcentagem < 80 && (
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+            <p className="text-sm text-blue-700 dark:text-blue-300 font-semibold">
+              🔔 {proximoLote.nome} - Será divulgado em breve
+            </p>
+            <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+              Assim que preencherem as vagas do {loteAtual?.nome}. Não fiquem de
               fora, são muitas novidades por esta causa!
             </p>
           </div>

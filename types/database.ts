@@ -8,6 +8,7 @@ export interface InscricaoData {
   email?: string;
   tamanho_blusa: string;
   comprovante_file_id: string; // Referência do arquivo, não URL completa
+  lote_id?: string; // UUID do lote vinculado
   status: "pendente" | "confirmado" | "cancelado";
   created_at?: string;
   updated_at?: string;
