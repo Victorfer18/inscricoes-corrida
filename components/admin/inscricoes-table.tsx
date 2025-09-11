@@ -133,7 +133,9 @@ export function InscricoesTable({
           <TableColumn>LOTE</TableColumn>
           <TableColumn>COMPROVANTE</TableColumn>
           <TableColumn>DATA</TableColumn>
-          {canEdit ? <TableColumn>AÇÕES</TableColumn> : null}
+          <>
+            {canEdit && <TableColumn>AÇÕES</TableColumn>}
+          </>
         </TableHeader>
         <TableBody>
           {inscricoes.map((inscricao) => (
@@ -177,20 +179,22 @@ export function InscricoesTable({
               <TableCell>
                 {new Date(inscricao.created_at).toLocaleDateString("pt-BR")}
               </TableCell>
-              {canEdit && (
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      isIconOnly
-                      size="sm"
-                      variant="light"
-                      onPress={() => onEdit?.(inscricao)}
-                    >
-                      <PencilIcon className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              )}
+              <>
+                {canEdit && (
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        onPress={() => onEdit?.(inscricao)}
+                      >
+                        <PencilIcon className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                )}
+              </>
             </TableRow>
           ))}
         </TableBody>
