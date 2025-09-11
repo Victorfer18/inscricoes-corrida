@@ -17,6 +17,10 @@ export const siteConfig = {
       label: "Regulamento",
       href: "/regulamento",
     },
+    {
+      label: "Admin",
+      href: "/admin/login",
+    },
   ],
   navMenuItems: [
     {
@@ -30,6 +34,10 @@ export const siteConfig = {
     {
       label: "Regulamento",
       href: "/regulamento",
+    },
+    {
+      label: "Admin",
+      href: "/admin/login",
     },
   ],
   links: {

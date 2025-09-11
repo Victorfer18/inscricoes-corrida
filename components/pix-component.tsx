@@ -98,7 +98,7 @@ export function PixComponent() {
           <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3 sm:p-4 border border-yellow-200 dark:border-yellow-800">
             <p className="text-xs sm:text-sm text-yellow-800 dark:text-yellow-200 leading-relaxed">
               <strong>⚠️ Importante:</strong> Após o pagamento, envie o
-              comprovante no formulário abaixo. Sua inscrição só será confirmada
+              comprovante no formulário abaixo. Sua inscrição só será confirmado
               após a verificação do pagamento.
             </p>
           </div>

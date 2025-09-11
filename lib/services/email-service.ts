@@ -348,7 +348,7 @@ class EmailService {
         
         <div class="content">
             <div class="success-badge">
-                <h2>🎉 Inscrição Confirmada!</h2>
+                <h2>🎉 Inscrição confirmada!</h2>
                 <p>Parabéns! Sua inscrição foi realizada com sucesso</p>
             </div>
             

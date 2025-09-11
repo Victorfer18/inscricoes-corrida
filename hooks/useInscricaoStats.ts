@@ -10,7 +10,7 @@ const supabase = createClient(
 interface InscricaoStats {
   total: number;
   pendentes: number;
-  confirmadas: number;
+  confirmados: number;
   porcentagem: number;
   vagasRestantes: number;
   loteAtual: Lote | null;
@@ -25,7 +25,7 @@ export function useInscricaoStats() {
   const [stats, setStats] = useState<InscricaoStats>({
     total: 0,
     pendentes: 0,
-    confirmadas: 0,
+    confirmados: 0,
     porcentagem: 0,
     vagasRestantes: 0,
     loteAtual: null,
@@ -81,7 +81,7 @@ export function useInscricaoStats() {
       const total = totalCount || 0;
       const pendentes =
         statusData?.filter((item) => item.status === "pendente").length || 0;
-      const confirmadas =
+      const confirmados =
         statusData?.filter((item) => item.status === "confirmado").length || 0;
       const porcentagem = Math.round((total / loteVigente.total_vagas) * 100);
       const vagasRestantes = Math.max(0, loteVigente.total_vagas - total);
@@ -89,7 +89,7 @@ export function useInscricaoStats() {
       setStats({
         total,
         pendentes,
-        confirmadas,
+        confirmados,
         porcentagem: Math.min(porcentagem, 100), // Não passar de 100%
         vagasRestantes,
         loteAtual: loteVigente,
@@ -106,7 +106,7 @@ export function useInscricaoStats() {
         ...prev,
         total: 0,
         pendentes: 0,
-        confirmadas: 0,
+        confirmados: 0,
         porcentagem: 0,
         vagasRestantes: 0,
         loteAtual: null,
