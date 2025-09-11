@@ -187,7 +187,9 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div className="space-y-6">
                   <div className="text-center">
-                    <div className="text-6xl font-bold text-green-600 mb-2">{formatarMoeda(PIX_INFO.valor)}</div>
+                    <div className="text-3xl sm:text-4xl md:text-6xl font-bold text-green-600 mb-2 break-words leading-tight">
+                      {formatarMoeda(PIX_INFO.valor)}
+                    </div>
                     <p className="text-lg text-gray-600 dark:text-gray-400">1º Lote - Kit completo incluso na inscrição</p>
                   </div>
                   

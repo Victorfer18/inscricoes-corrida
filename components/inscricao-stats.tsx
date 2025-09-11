@@ -86,8 +86,10 @@ export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
 
       <div className="mt-4 space-y-2">
         <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
-          <p className="text-sm text-green-700 dark:text-green-300 font-semibold">
-            🎁 {loteAtual?.nome || "Lote Atual"} - {formatarMoeda(PIX_INFO.valor)} e concorre a uma cesta básica!
+          <p className="text-sm text-green-700 dark:text-green-300 font-semibold break-words leading-relaxed">
+            🎁 <span className="inline-block">{loteAtual?.nome || "Lote Atual"}</span> -{" "}
+            <span className="inline-block font-bold">{formatarMoeda(PIX_INFO.valor)}</span>{" "}
+            e concorre a uma cesta básica!
           </p>
           <p className="text-xs text-green-600 dark:text-green-400 mt-1">
             {getStatusMessage()}
