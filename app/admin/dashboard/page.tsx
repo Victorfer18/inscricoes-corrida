@@ -340,9 +340,11 @@ export default function AdminDashboardPage() {
                 className="w-full md:w-48"
               >
                 <SelectItem key="todos">Todos os Lotes</SelectItem>
-                {lotes.map((lote) => (
-                  <SelectItem key={lote.id}>{lote.nome}</SelectItem>
-                ))}
+                <>
+                  {lotes.map((lote) => (
+                    <SelectItem key={lote.id}>{lote.nome}</SelectItem>
+                  ))}
+                </>
               </Select>
 
               {permissions?.can_export_data && (

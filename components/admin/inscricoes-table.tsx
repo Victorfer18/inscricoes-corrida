@@ -133,7 +133,7 @@ export function InscricoesTable({
           <TableColumn>LOTE</TableColumn>
           <TableColumn>COMPROVANTE</TableColumn>
           <TableColumn>DATA</TableColumn>
-          {canEdit && <TableColumn>AÇÕES</TableColumn>}
+          {canEdit ? <TableColumn>AÇÕES</TableColumn> : null}
         </TableHeader>
         <TableBody>
           {inscricoes.map((inscricao) => (

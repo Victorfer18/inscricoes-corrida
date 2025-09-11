@@ -67,9 +67,14 @@ async function handleUpdateComprovante(
     }
 
     // Upload do novo arquivo
-    const uploadResult = await fileStorageService.uploadFile(file);
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    const uploadResult = await fileStorageService.uploadFile(
+      fileBuffer,
+      file.name,
+      file.type
+    );
 
-    if (!uploadResult.success || !uploadResult.data) {
+    if (!uploadResult || !uploadResult.fileId) {
       return NextResponse.json(
         { success: false, error: "Erro ao fazer upload do arquivo" },
         { status: 500 }
@@ -80,7 +85,7 @@ async function handleUpdateComprovante(
     const { data: updatedInscricao, error: updateError } = await supabaseAdmin
       .from("inscricoes")
       .update({
-        comprovante_file_id: uploadResult.data.fileId,
+        comprovante_file_id: uploadResult.fileId,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
@@ -89,8 +94,8 @@ async function handleUpdateComprovante(
 
     if (updateError) {
       // Se falhou ao atualizar, deletar o arquivo que foi feito upload
-      if (uploadResult.data.fileId) {
-        await fileStorageService.deleteFile(uploadResult.data.fileId);
+      if (uploadResult.fileId) {
+        await fileStorageService.deleteFile(uploadResult.fileId);
       }
       throw new Error(updateError.message);
     }
@@ -109,7 +114,7 @@ async function handleUpdateComprovante(
       success: true,
       data: {
         inscricao: updatedInscricao,
-        comprovante_url: `/api/files/${uploadResult.data.fileId}`,
+        comprovante_url: `/api/files/${uploadResult.fileId}`,
       },
       message: "Comprovante atualizado com sucesso",
     });
