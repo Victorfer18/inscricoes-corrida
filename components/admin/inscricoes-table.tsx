@@ -95,7 +95,7 @@ export function InscricoesTable({
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "confirmado":
-        return "confirmado";
+        return "Confirmado";
       case "pendente":
         return "Pendente";
       case "cancelada":
@@ -162,16 +162,18 @@ export function InscricoesTable({
               <TableCell>{inscricao.lote_nome}</TableCell>
               <TableCell>
                 {inscricao.comprovante_url ? (
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    variant="light"
-                    color="primary"
-                    onPress={() => handleViewComprovante(inscricao.comprovante_url!, inscricao.nome_completo)}
-                    title="Visualizar comprovante"
-                  >
-                    <EyeIcon className="w-4 h-4" />
-                  </Button>
+                  <div className="flex justify-center">
+                    <Button
+                      isIconOnly
+                      size="md"
+                      variant="light"
+                      color="primary"
+                      onPress={() => handleViewComprovante(inscricao.comprovante_url!, inscricao.nome_completo)}
+                      title="Visualizar comprovante"
+                    >
+                      <EyeIcon className="w-5 h-5" />
+                    </Button>
+                  </div>
                 ) : (
                   <span className="text-gray-400">Sem arquivo</span>
                 )}

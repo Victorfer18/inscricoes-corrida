@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAuth } from "@/lib/auth-middleware";
 import { AdminUser, ROLE_PERMISSIONS } from "@/types/admin";
@@ -116,6 +118,79 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
       return new NextResponse(csv, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
+          "Content-Disposition": `attachment; filename="${fileName}"`,
+        },
+      });
+    } else if (format === "pdf") {
+      // Criar PDF
+      const doc = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+
+      // Título
+      doc.setFontSize(16);
+      doc.text("Relatório de Inscrições - Corrida Solidária Outubro Rosa", 14, 20);
+      
+      // Data de geração
+      doc.setFontSize(10);
+      doc.text(`Gerado em: ${new Date().toLocaleString("pt-BR")}`, 14, 30);
+      doc.text(`Total de registros: ${exportData.length}`, 14, 35);
+
+      // Preparar dados para a tabela
+      const tableData = exportData.map(item => [
+        item["Nome Completo"],
+        item["CPF"],
+        item["Email"],
+        item["Celular"],
+        item["Idade"].toString(),
+        item["Sexo"],
+        item["Tamanho da Blusa"],
+        item["Status"],
+        item["Lote"],
+        item["Data de Inscrição"],
+      ]);
+
+      // Criar tabela
+      autoTable(doc, {
+        head: [["Nome", "CPF", "Email", "Celular", "Idade", "Sexo", "Tamanho", "Status", "Lote", "Data"]],
+        body: tableData,
+        startY: 45,
+        styles: {
+          fontSize: 8,
+          cellPadding: 2,
+        },
+        headStyles: {
+          fillColor: [220, 20, 60], // Rosa
+          textColor: 255,
+          fontStyle: "bold",
+        },
+        alternateRowStyles: {
+          fillColor: [245, 245, 245],
+        },
+        columnStyles: {
+          0: { cellWidth: 35 }, // Nome
+          1: { cellWidth: 25 }, // CPF
+          2: { cellWidth: 40 }, // Email
+          3: { cellWidth: 25 }, // Celular
+          4: { cellWidth: 15 }, // Idade
+          5: { cellWidth: 20 }, // Sexo
+          6: { cellWidth: 20 }, // Tamanho
+          7: { cellWidth: 20 }, // Status
+          8: { cellWidth: 20 }, // Lote
+          9: { cellWidth: 35 }, // Data
+        },
+        margin: { top: 45, left: 14, right: 14 },
+      });
+
+      // Gerar buffer do PDF
+      const pdfBuffer = Buffer.from(doc.output("arraybuffer"));
+      const fileName = `inscricoes_${new Date().toISOString().split("T")[0]}.pdf`;
+
+      return new NextResponse(pdfBuffer, {
+        headers: {
+          "Content-Type": "application/pdf",
           "Content-Disposition": `attachment; filename="${fileName}"`,
         },
       });

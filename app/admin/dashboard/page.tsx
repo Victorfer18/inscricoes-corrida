@@ -30,10 +30,12 @@ import {
   ArrowRightOnRectangleIcon,
   DocumentIcon,
   PhotoIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useAdminStats } from "@/hooks/useAdminStats";
 import { title } from "@/components/primitives";
 import { formatarCPF, formatarCelular } from "@/lib/utils";
 import { AdminGuard } from "@/components/admin-guard";
@@ -44,6 +46,7 @@ type PaginationInfo = PaginationData;
 
 export default function AdminDashboardPage() {
   const { user, permissions, isAuthenticated, isLoading, logout } = useAuth();
+  const { stats, loading: statsLoading, error: statsError, refetch: refetchStats } = useAdminStats();
   const router = useRouter();
 
   console.log("Dashboard carregado - user:", user?.email, "isAuthenticated:", isAuthenticated);
@@ -156,39 +159,6 @@ export default function AdminDashboardPage() {
     setSelectedFile(file || null);
   };
 
-  const handleUploadComprovante = async () => {
-    if (!selectedInscricao || !selectedFile) return;
-
-    try {
-      setUploadingFile(true);
-      const token = JSON.parse(localStorage.getItem("admin_session") || "{}").token;
-      
-      const formData = new FormData();
-      formData.append("comprovante", selectedFile);
-
-      const response = await fetch(`/api/admin/inscricoes/${selectedInscricao.id}/comprovante`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (response.ok) {
-        fetchInscricoes(pagination.page);
-        setSelectedFile(null);
-        // Reset file input
-        const fileInput = document.getElementById("file-input") as HTMLInputElement;
-        if (fileInput) fileInput.value = "";
-      } else {
-        throw new Error("Erro ao fazer upload");
-      }
-    } catch (error) {
-      console.error("Erro no upload:", error);
-    } finally {
-      setUploadingFile(false);
-    }
-  };
 
   const handleUpdateStatus = async () => {
     if (!selectedInscricao) return;
@@ -196,6 +166,60 @@ export default function AdminDashboardPage() {
     try {
       const token = JSON.parse(localStorage.getItem("admin_session") || "{}").token;
       
+      // Validar se está tentando confirmar sem comprovante
+      if (editingStatus === "confirmado") {
+        const hasExistingComprovante = selectedInscricao.comprovante_url && selectedInscricao.comprovante_url.trim() !== "";
+        const hasNewFile = selectedFile !== null;
+        
+        if (!hasExistingComprovante && !hasNewFile) {
+          // Usar uma notificação mais elegante
+          const notification = document.createElement('div');
+          notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 max-w-md';
+          notification.innerHTML = `
+            <div class="flex items-center gap-3">
+              <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              <div>
+                <p class="font-semibold">Comprovante necessário</p>
+                <p class="text-sm">Para confirmar a inscrição é necessário ter um comprovante anexado.</p>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(notification);
+          
+          // Remover após 5 segundos
+          setTimeout(() => {
+            if (document.body.contains(notification)) {
+              document.body.removeChild(notification);
+            }
+          }, 5000);
+          
+          return;
+        }
+      }
+      
+      // Se há arquivo selecionado, fazer upload primeiro
+      if (selectedFile) {
+        setUploadingFile(true);
+        
+        const formData = new FormData();
+        formData.append("comprovante", selectedFile);
+
+        const uploadResponse = await fetch(`/api/admin/inscricoes/${selectedInscricao.id}/comprovante`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error("Erro ao fazer upload do arquivo");
+        }
+      }
+      
+      // Atualizar status
       const response = await fetch(`/api/admin/inscricoes/${selectedInscricao.id}`, {
         method: "PUT",
         headers: {
@@ -210,15 +234,22 @@ export default function AdminDashboardPage() {
       if (response.ok) {
         onClose();
         fetchInscricoes(pagination.page);
+        refetchStats(); // Atualizar estatísticas globais
+        setSelectedFile(null);
+        // Reset file input
+        const fileInput = document.getElementById("file-input") as HTMLInputElement;
+        if (fileInput) fileInput.value = "";
       } else {
         throw new Error("Erro ao atualizar status");
       }
     } catch (error) {
       console.error("Erro ao atualizar:", error);
+    } finally {
+      setUploadingFile(false);
     }
   };
 
-  const handleExport = async (format: "xlsx" | "csv") => {
+  const handleExport = async (format: "xlsx" | "csv" | "pdf") => {
     try {
       const token = JSON.parse(localStorage.getItem("admin_session") || "{}").token;
       const params = new URLSearchParams({ format });
@@ -279,14 +310,16 @@ export default function AdminDashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <Card>
             <CardBody className="text-center">
-              <p className="text-2xl font-bold text-blue-600">{pagination.total}</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {statsLoading ? "..." : stats?.total || 0}
+              </p>
               <p className="text-sm text-gray-600">Total de Inscrições</p>
             </CardBody>
           </Card>
           <Card>
             <CardBody className="text-center">
               <p className="text-2xl font-bold text-green-600">
-                {inscricoes.filter(i => i.status === "confirmado").length}
+                {statsLoading ? "..." : stats?.confirmados || 0}
               </p>
               <p className="text-sm text-gray-600">Confirmados</p>
             </CardBody>
@@ -294,7 +327,7 @@ export default function AdminDashboardPage() {
           <Card>
             <CardBody className="text-center">
               <p className="text-2xl font-bold text-yellow-600">
-                {inscricoes.filter(i => i.status === "pendente").length}
+                {statsLoading ? "..." : stats?.pendentes || 0}
               </p>
               <p className="text-sm text-gray-600">Pendentes</p>
             </CardBody>
@@ -302,7 +335,7 @@ export default function AdminDashboardPage() {
           <Card>
             <CardBody className="text-center">
               <p className="text-2xl font-bold text-red-600">
-                {inscricoes.filter(i => i.status === "cancelada").length}
+                {statsLoading ? "..." : stats?.canceladas || 0}
               </p>
               <p className="text-sm text-gray-600">Canceladas</p>
             </CardBody>
@@ -347,6 +380,20 @@ export default function AdminDashboardPage() {
                 </>
               </Select>
 
+              <Button
+                color="default"
+                variant="bordered"
+                startContent={<ArrowPathIcon className="w-4 h-4" />}
+                onPress={() => {
+                  fetchInscricoes(pagination.page);
+                  refetchStats();
+                }}
+                isLoading={loading}
+                disabled={loading}
+              >
+                Recarregar
+              </Button>
+
               {permissions?.can_export_data && (
                 <Dropdown>
                   <DropdownTrigger>
@@ -363,6 +410,9 @@ export default function AdminDashboardPage() {
                     </DropdownItem>
                     <DropdownItem key="csv" onPress={() => handleExport("csv")}>
                       CSV (.csv)
+                    </DropdownItem>
+                    <DropdownItem key="pdf" onPress={() => handleExport("pdf")}>
+                      PDF (.pdf)
                     </DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
@@ -403,15 +453,28 @@ export default function AdminDashboardPage() {
                         <p className="text-sm text-gray-500">CPF: {formatarCPF(selectedInscricao.cpf)}</p>
                       </div>
                       
-                      <Select
-                        label="Status"
-                        selectedKeys={[editingStatus]}
-                        onSelectionChange={(keys) => setEditingStatus(Array.from(keys)[0] as string)}
-                      >
-                        <SelectItem key="pendente">Pendente</SelectItem>
-                        <SelectItem key="confirmado">Confirmado</SelectItem>
-                        <SelectItem key="cancelada">Cancelada</SelectItem>
-                      </Select>
+                      <div className="space-y-2">
+                        <Select
+                          label="Status"
+                          selectedKeys={[editingStatus]}
+                          onSelectionChange={(keys) => setEditingStatus(Array.from(keys)[0] as string)}
+                        >
+                          <SelectItem key="pendente">Pendente</SelectItem>
+                          <SelectItem key="confirmado">Confirmado</SelectItem>
+                          <SelectItem key="cancelada">Cancelada</SelectItem>
+                        </Select>
+                        
+                        {editingStatus === "confirmado" && 
+                         !selectedInscricao?.comprovante_url && 
+                         !selectedFile && (
+                          <div className="flex items-center gap-2 text-amber-600 text-xs bg-amber-50 p-2 rounded-lg">
+                            <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                            <span>⚠️ Para confirmar é necessário anexar um comprovante</span>
+                          </div>
+                        )}
+                      </div>
 
                       <div className="space-y-2">
                         <p className="text-sm font-medium">Comprovante Atual:</p>
@@ -444,18 +507,9 @@ export default function AdminDashboardPage() {
                         />
                         {selectedFile && (
                           <div className="flex items-center gap-2 mt-2">
-                            <span className="text-sm text-gray-600">
-                              Arquivo selecionado: {selectedFile.name}
+                            <span className="text-sm text-green-600">
+                              ✓ Arquivo selecionado: {selectedFile.name}
                             </span>
-                            <Button
-                              size="sm"
-                              color="primary"
-                              onPress={handleUploadComprovante}
-                              isLoading={uploadingFile}
-                              disabled={uploadingFile}
-                            >
-                              {uploadingFile ? "Enviando..." : "Enviar"}
-                            </Button>
                           </div>
                         )}
                       </div>
@@ -463,11 +517,16 @@ export default function AdminDashboardPage() {
                   )}
                 </ModalBody>
                 <ModalFooter>
-                  <Button variant="light" onPress={onClose}>
+                  <Button variant="light" onPress={onClose} disabled={uploadingFile}>
                     Cancelar
                   </Button>
-                  <Button color="primary" onPress={handleUpdateStatus}>
-                    Salvar
+                  <Button 
+                    color="primary" 
+                    onPress={handleUpdateStatus}
+                    isLoading={uploadingFile}
+                    disabled={uploadingFile}
+                  >
+                    {uploadingFile ? "Salvando..." : "Salvar"}
                   </Button>
                 </ModalFooter>
               </>
