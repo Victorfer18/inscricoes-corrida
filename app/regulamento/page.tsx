@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Chip } from "@heroui/chip";
@@ -5,14 +7,16 @@ import { Chip } from "@heroui/chip";
 import { BackgroundWrapper } from "@/components/background-wrapper";
 import { title, subtitle } from "@/components/primitives";
 import { DocumentIcon } from "@/components/icons";
-import { PIX_INFO } from "@/types/inscricao";
 import { formatarMoeda } from "@/lib/utils";
+import { useLoteVigente } from "@/hooks/useLoteVigente";
+import { useInscricoesStats } from "@/hooks/useInscricoesStats";
 
 export default function RegulamentoPage() {
+  const { valor, loading, loteVigente } = useLoteVigente();
+  const { total: totalInscricoes, loading: loadingStats } = useInscricoesStats();
   return (
     <BackgroundWrapper intensity="strong" showAnimation={false}>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-6 rounded-full shadow-lg">
@@ -208,9 +212,19 @@ export default function RegulamentoPage() {
             <div>
               <h3 className="font-semibold mb-2">Valor da Inscrição:</h3>
               <p>
-                {formatarMoeda(PIX_INFO.valor)} para ambas as
+                {loading ? "Carregando..." : formatarMoeda(valor)} para ambas as
                 modalidades
               </p>
+              {loteVigente && (
+                <p className="text-sm text-default-600 mt-1">
+                  <strong>{loteVigente.nome}</strong> - {loteVigente.total_vagas} vagas disponíveis
+                </p>
+              )}
+              {loteVigente?.requisitos_especiais && (
+                <p className="text-sm text-orange-600 dark:text-orange-400 mt-2 font-medium">
+                  ⚠️ <strong>Requisito especial:</strong> {loteVigente.requisitos_especiais}
+                </p>
+              )}
             </div>
 
             <div>
@@ -233,10 +247,14 @@ export default function RegulamentoPage() {
               <h3 className="font-semibold mb-2">Limite de Vagas:</h3>
               <p>
                 O número de vagas será limitado a{" "}
-                <strong>200 participantes</strong>, respeitando a ordem de
+                <strong>
+                  {loteVigente?.total_vagas || 200} participantes
+                </strong>{" "}
+                no {loteVigente?.nome || "lote atual"}, respeitando a ordem de
                 inscrição.
               </p>
             </div>
+
           </CardBody>
         </Card>
 

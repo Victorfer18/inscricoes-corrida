@@ -34,6 +34,7 @@ export interface InscricaoTableData {
   status: string;
   comprovante_url?: string;
   lote_nome?: string;
+  lote_valor?: number;
   created_at: string;
   updated_at: string;
 }
@@ -131,6 +132,7 @@ export function InscricoesTable({
           <TableColumn>EMAIL</TableColumn>
           <TableColumn>STATUS</TableColumn>
           <TableColumn>LOTE</TableColumn>
+          <TableColumn>VALOR</TableColumn>
           <TableColumn>COMPROVANTE</TableColumn>
           <TableColumn>DATA</TableColumn>
           <>
@@ -160,6 +162,15 @@ export function InscricoesTable({
                 </Chip>
               </TableCell>
               <TableCell>{inscricao.lote_nome}</TableCell>
+              <TableCell>
+                {inscricao.lote_valor ? (
+                  <span className="font-semibold text-green-600">
+                    R$ {inscricao.lote_valor.toFixed(2).replace('.', ',')}
+                  </span>
+                ) : (
+                  <span className="text-gray-400">N/A</span>
+                )}
+              </TableCell>
               <TableCell>
                 {inscricao.comprovante_url ? (
                   <div className="flex justify-center">

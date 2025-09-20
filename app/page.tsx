@@ -1,3 +1,5 @@
+"use client";
+
 import { Link } from "@heroui/link";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
@@ -11,10 +13,12 @@ import { EventLogo } from "../components/event-logo";
 import { KitSlider } from "@/components/kit-slider";
 import { BackgroundWrapper } from "@/components/background-wrapper";
 import { InscricaoStats } from "@/components/inscricao-stats";
-import { PIX_INFO } from "@/types/inscricao";
 import { formatarMoeda } from "@/lib/utils";
+import { useLoteVigente } from "@/hooks/useLoteVigente";
 
 export default function Home() {
+  const { valor, loading, loteVigente } = useLoteVigente();
+  
   return (
     <BackgroundWrapper intensity="medium" showAnimation={true}>
       {/* Hero Section */}
@@ -188,9 +192,9 @@ export default function Home() {
                 <div className="space-y-6">
                   <div className="text-center">
                     <div className="text-3xl sm:text-4xl md:text-6xl font-bold text-green-600 mb-2 break-words leading-tight">
-                      {formatarMoeda(PIX_INFO.valor)}
+                      {loading ? "Carregando..." : formatarMoeda(valor)}
                     </div>
-                    <p className="text-lg text-gray-600 dark:text-gray-400">1º Lote - Kit completo incluso na inscrição</p>
+                    <p className="text-lg text-gray-600 dark:text-gray-400">{loteVigente?.nome || "Lote Atual"} - Kit completo incluso na inscrição</p>
                   </div>
                   
                   <div className="space-y-3">
@@ -215,6 +219,23 @@ export default function Home() {
                       <span>Apoio médico e segurança</span>
                     </div>
                   </div>
+                  
+                  {/* Requisitos Especiais */}
+                  {loteVigente?.requisitos_especiais && (
+                    <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
+                      <div className="flex items-start gap-3">
+                        <span className="text-orange-500 text-xl">⚠️</span>
+                        <div>
+                          <p className="font-semibold text-orange-700 dark:text-orange-300 mb-1">
+                            Requisito Especial:
+                          </p>
+                          <p className="text-sm text-orange-600 dark:text-orange-400">
+                            {loteVigente.requisitos_especiais}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-6">

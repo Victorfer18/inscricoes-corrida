@@ -20,9 +20,10 @@ import { title, subtitle } from "@/components/primitives";
 import { FormularioInscricao } from "@/components/formulario-inscricao";
 import { KitSlider } from "@/components/kit-slider";
 import { formatarMoeda } from "@/lib/utils";
-import { PIX_INFO } from "@/types/inscricao";
+import { useLoteVigente } from "@/hooks/useLoteVigente";
 
 export default function InscricaoPage() {
+  const { valor, loading, loteVigente } = useLoteVigente();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { submitInscricao, isLoading, error } = useInscricao();
@@ -227,7 +228,7 @@ export default function InscricaoPage() {
             </h3>
             <div className="space-y-2 text-xs sm:text-sm">
                 <p>
-                  • <strong>Valor da inscrição:</strong> {formatarMoeda(PIX_INFO.valor)}
+                  • <strong>Valor da inscrição:</strong> {loading ? "Carregando..." : formatarMoeda(valor)}
                 </p>
                 <p>
                   • <strong>Pagamento:</strong> Apenas via PIX
@@ -244,6 +245,11 @@ export default function InscricaoPage() {
                   • <strong>Kit:</strong> Inclui camiseta oficial, medalha e
                   mais itens
                 </p>
+                {loteVigente?.requisitos_especiais && (
+                  <p className="text-orange-700 dark:text-orange-300 font-semibold">
+                    • <strong>⚠️ IMPORTANTE:</strong> {loteVigente.requisitos_especiais}
+                  </p>
+                )}
             </div>
           </CardBody>
         </Card>

@@ -39,7 +39,8 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
         created_at,
         updated_at,
         lotes (
-          nome
+          nome,
+          valor
         )
       `);
 
@@ -70,6 +71,7 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
       "Tamanho da Blusa": inscricao.tamanho_blusa,
       "Status": inscricao.status,
       "Lote": inscricao.lotes?.nome || "N/A",
+      "Valor": inscricao.lotes?.valor ? `R$ ${inscricao.lotes.valor.toFixed(2).replace('.', ',')}` : "N/A",
       "Data de Inscrição": new Date(inscricao.created_at).toLocaleString("pt-BR"),
       "Última Atualização": new Date(inscricao.updated_at).toLocaleString("pt-BR"),
     })) || [];
@@ -92,6 +94,7 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
         { wch: 15 }, // Tamanho
         { wch: 12 }, // Status
         { wch: 15 }, // Lote
+        { wch: 12 }, // Valor
         { wch: 20 }, // Data Inscrição
         { wch: 20 }, // Última Atualização
       ];
@@ -149,12 +152,13 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
         item["Tamanho da Blusa"],
         item["Status"],
         item["Lote"],
+        item["Valor"],
         item["Data de Inscrição"],
       ]);
 
       // Criar tabela
       autoTable(doc, {
-        head: [["Nome", "CPF", "Email", "Celular", "Idade", "Sexo", "Tamanho", "Status", "Lote", "Data"]],
+        head: [["Nome", "CPF", "Email", "Celular", "Idade", "Sexo", "Tamanho", "Status", "Lote", "Valor", "Data"]],
         body: tableData,
         startY: 45,
         styles: {
@@ -179,7 +183,8 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
           6: { cellWidth: 20 }, // Tamanho
           7: { cellWidth: 20 }, // Status
           8: { cellWidth: 20 }, // Lote
-          9: { cellWidth: 35 }, // Data
+          9: { cellWidth: 15 }, // Valor
+          10: { cellWidth: 35 }, // Data
         },
         margin: { top: 45, left: 14, right: 14 },
       });

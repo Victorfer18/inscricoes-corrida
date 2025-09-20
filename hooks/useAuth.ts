@@ -29,15 +29,6 @@ export function useAuthProvider() {
   const permissions = user ? ROLE_PERMISSIONS[user.role] : null;
   const isAuthenticated = !!user;
 
-  // Debug logs
-  useEffect(() => {
-    console.log("useAuth - Estado atual:", {
-      isLoading,
-      isAuthenticated,
-      user: user?.email,
-      hasSession: !!localStorage.getItem("admin_session")
-    });
-  }, [isLoading, isAuthenticated, user]);
 
   // Verificar se há sessão salva
   useEffect(() => {
@@ -68,7 +59,6 @@ export function useAuthProvider() {
           }
         }
       } catch (error) {
-        console.error("Erro ao verificar sessão:", error);
         localStorage.removeItem("admin_session");
       } finally {
         setIsLoading(false);
@@ -81,7 +71,6 @@ export function useAuthProvider() {
   const login = async (credentials: LoginCredentials): Promise<boolean> => {
     try {
       setIsLoading(true);
-      console.log("Tentando fazer login...");
       
       const response = await fetch("/api/admin/login", {
         method: "POST",
@@ -91,11 +80,8 @@ export function useAuthProvider() {
         body: JSON.stringify(credentials),
       });
 
-      console.log("Response status:", response.status);
-
       if (response.ok) {
         const session: AdminSession = await response.json();
-        console.log("Login bem-sucedido:", session.user.email);
         
         // Salvar sessão no localStorage
         localStorage.setItem("admin_session", JSON.stringify(session));
@@ -103,12 +89,9 @@ export function useAuthProvider() {
         
         return true;
       } else {
-        const error = await response.json().catch(() => ({ message: "Erro desconhecido" }));
-        console.error("Erro no login:", error.message);
         return false;
       }
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
       return false;
     } finally {
       setIsLoading(false);

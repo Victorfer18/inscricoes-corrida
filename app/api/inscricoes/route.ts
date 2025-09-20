@@ -128,10 +128,8 @@ export async function POST(
     // Enviar email de confirmação (não bloquear o processo se falhar)
     if (inscricao && inscricao.email) {
       try {
-        await emailService.sendConfirmationEmail(inscricao);
+        await emailService.sendConfirmationEmail(inscricao, loteVigente.valor);
       } catch (emailError) {
-        console.error("Erro ao enviar email de confirmação:", emailError);
-        // Não falhar a inscrição por causa do email
       }
     }
 

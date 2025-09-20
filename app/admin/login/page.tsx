@@ -20,11 +20,8 @@ export default function AdminLoginPage() {
   const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
-  // Redirecionar se já estiver autenticado
   useEffect(() => {
-    console.log("Login page - authLoading:", authLoading, "isAuthenticated:", isAuthenticated);
     if (!authLoading && isAuthenticated) {
-      console.log("Login page - Já autenticado, redirecionando...");
       router.push("/admin/dashboard");
     }
   }, [isAuthenticated, authLoading, router]);
@@ -34,21 +31,15 @@ export default function AdminLoginPage() {
     setError("");
     setIsLoading(true);
 
-    console.log("Formulário submetido");
-
     try {
       const success = await login({ email, password });
-      console.log("Resultado do login:", success);
       
       if (success) {
-        console.log("Redirecionando para dashboard...");
-        // Usar replace ao invés de push para evitar voltar
         router.replace("/admin/dashboard");
       } else {
         setError("Email ou senha incorretos");
       }
     } catch (error) {
-      console.error("Erro no handleSubmit:", error);
       setError("Erro ao fazer login. Tente novamente.");
     } finally {
       setIsLoading(false);

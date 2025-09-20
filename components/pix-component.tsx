@@ -8,9 +8,11 @@ import { Snippet } from "@heroui/snippet";
 import { CopyIcon, CheckIcon } from "@/components/icons";
 import { PIX_INFO } from "@/types/inscricao";
 import { formatarMoeda } from "@/lib/utils";
+import { useLoteVigente } from "@/hooks/useLoteVigente";
 
 export function PixComponent() {
   const [copied, setCopied] = useState(false);
+  const { valor, loading } = useLoteVigente();
 
   const handleCopy = async () => {
     try {
@@ -18,7 +20,6 @@ export function PixComponent() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Erro ao copiar:", err);
     }
   };
 
@@ -33,7 +34,7 @@ export function PixComponent() {
             Pagamento via PIX
           </h3>
           <p className="text-green-600 dark:text-green-400 text-base sm:text-lg">
-            Valor: <strong>{formatarMoeda(PIX_INFO.valor)}</strong>
+            Valor: <strong>{loading ? "Carregando..." : formatarMoeda(valor)}</strong>
           </p>
         </div>
 
@@ -88,7 +89,7 @@ export function PixComponent() {
               <li>Abra seu app bancário</li>
               <li>Escolha &ldquo;PIX&rdquo; e &ldquo;Pagar&rdquo;</li>
               <li>Cole a chave PIX copiada</li>
-              <li>Confirme o valor: {formatarMoeda(PIX_INFO.valor)}</li>
+              <li>Confirme o valor: {loading ? "Carregando..." : formatarMoeda(valor)}</li>
               <li>Faça o pagamento</li>
               <li>Compartilhe ou Tire print do comprovante</li>
               <li>Envie o comprovante no campo abaixo</li>

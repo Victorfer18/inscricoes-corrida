@@ -2,7 +2,6 @@ import nodemailer from "nodemailer";
 
 import { InscricaoData } from "@/types/database";
 import { formatarCPF, formatarCelular, formatarMoeda } from "@/lib/utils";
-import { PIX_INFO } from "@/types/inscricao";
 
 interface EmailConfig {
   host: string;
@@ -43,7 +42,6 @@ class EmailService {
     try {
       this.transporter = nodemailer.createTransport(this.config);
     } catch (error) {
-      console.error("Erro ao inicializar transporter de email:", error);
     }
   }
 
@@ -57,8 +55,6 @@ class EmailService {
 
       return true;
     } catch (error) {
-      console.error("Erro na verificação da conexão de email:", error);
-
       return false;
     }
   }
@@ -70,16 +66,12 @@ class EmailService {
     text,
   }: SendEmailParams): Promise<boolean> {
     if (!this.transporter) {
-      console.error("Transporter de email não inicializado");
-
       return false;
     }
 
     const isConnected = await this.verifyConnection();
 
     if (!isConnected) {
-      console.error("Não foi possível conectar ao servidor de email");
-
       return false;
     }
 
@@ -96,13 +88,8 @@ class EmailService {
       };
 
       const result = await this.transporter.sendMail(mailOptions);
-
-      console.log("Email enviado com sucesso:", result.messageId);
-
       return true;
     } catch (error) {
-      console.error("Erro ao enviar email:", error);
-
       return false;
     }
   }
@@ -114,16 +101,14 @@ class EmailService {
       .trim();
   }
 
-  async sendConfirmationEmail(inscricaoData: InscricaoData): Promise<boolean> {
+  async sendConfirmationEmail(inscricaoData: InscricaoData, valor?: number): Promise<boolean> {
     if (!inscricaoData.email) {
-      console.log("Email não fornecido para a inscrição:", inscricaoData.cpf);
-
       return false;
     }
 
     const subject =
       "✅ Confirmação de Inscrição - Corrida Solidária Outubro Rosa";
-    const html = this.generateConfirmationEmailTemplate(inscricaoData);
+    const html = this.generateConfirmationEmailTemplate(inscricaoData, valor);
 
     return await this.sendEmail({
       to: inscricaoData.email,
@@ -132,7 +117,7 @@ class EmailService {
     });
   }
 
-  private generateConfirmationEmailTemplate(inscricao: InscricaoData): string {
+  private generateConfirmationEmailTemplate(inscricao: InscricaoData, valor?: number): string {
     const dataEvento = "26 de Outubro de 2025";
     const horaEvento = "06h00 (Concentração)";
     const localEvento = "Trevo do Eltinho - Projeto Jaíba/NS2";
@@ -396,7 +381,7 @@ class EmailService {
                 </div>
                 <div class="info-row">
                     <span class="info-label">💰 Valor Pago:</span>
-                    <span class="info-value">${formatarMoeda(PIX_INFO.valor)}</span>
+                    <span class="info-value">${formatarMoeda(valor || 79.9)}</span>
                 </div>
             </div>
             

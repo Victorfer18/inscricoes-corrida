@@ -14,16 +14,11 @@ export function AdminGuard({ children, requiredPermissions = [] }: AdminGuardPro
   const router = useRouter();
 
   useEffect(() => {
-    console.log("AdminGuard - isLoading:", isLoading, "isAuthenticated:", isAuthenticated, "user:", user?.email);
-    
     if (!isLoading) {
       if (!isAuthenticated) {
-        console.log("AdminGuard - Não autenticado, redirecionando para login");
         router.push("/admin/login");
         return;
       }
-
-      console.log("AdminGuard - Usuário autenticado:", user?.email);
 
       // Verificar permissões específicas se necessário
       if (requiredPermissions.length > 0 && permissions) {
@@ -32,7 +27,6 @@ export function AdminGuard({ children, requiredPermissions = [] }: AdminGuardPro
         );
 
         if (!hasPermission) {
-          console.log("AdminGuard - Sem permissão, redirecionando para login");
           router.push("/admin/login");
           return;
         }

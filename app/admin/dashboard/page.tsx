@@ -49,7 +49,6 @@ export default function AdminDashboardPage() {
   const { stats, loading: statsLoading, error: statsError, refetch: refetchStats } = useAdminStats();
   const router = useRouter();
 
-  console.log("Dashboard carregado - user:", user?.email, "isAuthenticated:", isAuthenticated);
 
   const [inscricoes, setInscricoes] = useState<InscricaoAdmin[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
@@ -93,7 +92,6 @@ export default function AdminDashboardPage() {
           setLotes(data.data.lotes || []);
         }
       } catch (error) {
-        console.error("Erro ao buscar lotes:", error);
       }
     };
 
@@ -131,7 +129,6 @@ export default function AdminDashboardPage() {
       }
     } catch (error) {
       setError("Erro ao carregar inscrições");
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -243,7 +240,6 @@ export default function AdminDashboardPage() {
         throw new Error("Erro ao atualizar status");
       }
     } catch (error) {
-      console.error("Erro ao atualizar:", error);
     } finally {
       setUploadingFile(false);
     }
@@ -276,7 +272,6 @@ export default function AdminDashboardPage() {
         document.body.removeChild(a);
       }
     } catch (error) {
-      console.error("Erro ao exportar:", error);
     }
   };
 

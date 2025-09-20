@@ -100,7 +100,6 @@ export function useInscricaoStats() {
         error: null,
       });
     } catch (error) {
-      console.error("Erro ao buscar estatísticas:", error);
       // Apenas definir estado de erro, sem dados hardcoded
       setStats((prev) => ({
         ...prev,

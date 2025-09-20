@@ -54,7 +54,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ user });
   } catch (error) {
-    console.error("Erro na validação da sessão:", error);
     return NextResponse.json(
       { message: "Erro interno do servidor" },
       { status: 500 }

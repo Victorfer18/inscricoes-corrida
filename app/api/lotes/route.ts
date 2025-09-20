@@ -1,28 +1,32 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ApiResponse } from "@/types/database";
-import { Lote } from "@/types/inscricao";
 
-export async function GET(): Promise<NextResponse<ApiResponse<{ lotes: Lote[]; loteVigente: Lote | null }>>> {
+interface LoteBasico {
+  id: string;
+  nome: string;
+  total_vagas: number;
+  status: boolean;
+  valor: number;
+}
+
+export async function GET(): Promise<NextResponse<ApiResponse<{ lotes: LoteBasico[]; loteVigente: LoteBasico | null }>>> {
   try {
-    // Buscar todos os lotes ordenados por nome (ou outro campo disponível)
     const { data: lotes, error: lotesError } = await supabaseAdmin
       .from("lotes")
-      .select("*")
+      .select("id, nome, total_vagas, status, valor")
       .order("nome", { ascending: true });
 
     if (lotesError) {
       throw new Error(lotesError.message);
     }
 
-    // Buscar lote vigente
     const { data: loteVigente, error: loteVigenteError } = await supabaseAdmin
       .from("lotes")
-      .select("*")
+      .select("id, nome, total_vagas, status, valor")
       .eq("status", true)
       .single();
 
-    // Não é erro se não há lote vigente, apenas retorna null
     const loteVizenteResult = loteVigenteError ? null : loteVigente;
 
     return NextResponse.json({
@@ -33,7 +37,6 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ lotes: Lote[]; l
       },
     });
   } catch (error) {
-    console.error("Erro ao buscar lotes:", error);
     return NextResponse.json(
       {
         success: false,

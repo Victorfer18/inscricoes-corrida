@@ -83,7 +83,8 @@ async function handleGetInscricao(
         *,
         lotes (
           nome,
-          total_vagas
+          total_vagas,
+          valor
         )
       `)
       .eq("id", id)

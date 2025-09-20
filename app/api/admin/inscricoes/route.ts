@@ -14,6 +14,7 @@ interface InscricaoAdmin {
   status: string;
   comprovante_url?: string;
   lote_nome?: string;
+  lote_valor?: number;
   created_at: string;
   updated_at: string;
 }
@@ -29,7 +30,6 @@ async function handleGetInscricoes(request: NextRequest) {
 
     const offset = (page - 1) * limit;
 
-    // Construir query base
     let query = supabaseAdmin
       .from("inscricoes")
       .select(`
@@ -46,11 +46,11 @@ async function handleGetInscricoes(request: NextRequest) {
         created_at,
         updated_at,
         lotes (
-          nome
+          nome,
+          valor
         )
       `, { count: "exact" });
 
-    // Aplicar filtros
     if (status && status !== "todos") {
       query = query.eq("status", status);
     }
@@ -63,7 +63,6 @@ async function handleGetInscricoes(request: NextRequest) {
       query = query.or(`nome_completo.ilike.%${search}%,email.ilike.%${search}%,cpf.ilike.%${search}%`);
     }
 
-    // Aplicar paginação e ordenação
     const { data: inscricoes, error, count } = await query
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
@@ -72,7 +71,6 @@ async function handleGetInscricoes(request: NextRequest) {
       throw new Error(error.message);
     }
 
-    // Formatar dados
     const formattedInscricoes: InscricaoAdmin[] = inscricoes?.map((inscricao: any) => ({
       id: inscricao.id,
       nome_completo: inscricao.nome_completo,
@@ -87,6 +85,7 @@ async function handleGetInscricoes(request: NextRequest) {
         ? `/api/files/${inscricao.comprovante_file_id}`
         : undefined,
       lote_nome: inscricao.lotes?.nome || "N/A",
+      lote_valor: inscricao.lotes?.valor || undefined,
       created_at: inscricao.created_at,
       updated_at: inscricao.updated_at,
     })) || [];
@@ -108,7 +107,6 @@ async function handleGetInscricoes(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Erro ao buscar inscrições:", error);
     return NextResponse.json(
       {
         success: false,
