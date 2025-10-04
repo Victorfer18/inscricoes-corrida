@@ -62,18 +62,18 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
     // Formatar dados para exportação
     const exportData = inscricoes?.map((inscricao: any) => ({
       "ID": inscricao.id,
-      "Nome Completo": inscricao.nome_completo,
+      "Nome Completo": inscricao.nome_completo || "",
       "CPF": formatarCPF(inscricao.cpf),
-      "Email": inscricao.email,
+      "Email": inscricao.email || "",
       "Celular": formatarCelular(inscricao.celular),
-      "Idade": inscricao.idade,
-      "Sexo": inscricao.sexo,
-      "Tamanho da Blusa": inscricao.tamanho_blusa,
-      "Status": inscricao.status,
+      "Idade": inscricao.idade || 0,
+      "Sexo": inscricao.sexo || "",
+      "Tamanho da Blusa": inscricao.tamanho_blusa || "",
+      "Status": inscricao.status || "",
       "Lote": inscricao.lotes?.nome || "N/A",
       "Valor": inscricao.lotes?.valor ? `R$ ${inscricao.lotes.valor.toFixed(2).replace('.', ',')}` : "N/A",
-      "Data de Inscrição": new Date(inscricao.created_at).toLocaleString("pt-BR"),
-      "Última Atualização": new Date(inscricao.updated_at).toLocaleString("pt-BR"),
+      "Data de Inscrição": inscricao.created_at ? new Date(inscricao.created_at).toLocaleString("pt-BR") : "",
+      "Última Atualização": inscricao.updated_at ? new Date(inscricao.updated_at).toLocaleString("pt-BR") : "",
     })) || [];
 
     if (format === "xlsx") {
@@ -151,17 +151,17 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
 
       // Preparar dados para a tabela
       const tableData = exportData.map(item => [
-        item["Nome Completo"],
-        item["CPF"],
-        item["Email"],
-        item["Celular"],
-        item["Idade"].toString(),
-        item["Sexo"],
-        item["Tamanho da Blusa"],
-        item["Status"],
-        item["Lote"],
-        item["Valor"],
-        item["Data de Inscrição"],
+        item["Nome Completo"] || "",
+        item["CPF"] || "",
+        item["Email"] || "",
+        item["Celular"] || "",
+        (item["Idade"] || 0).toString(),
+        item["Sexo"] || "",
+        item["Tamanho da Blusa"] || "",
+        item["Status"] || "",
+        item["Lote"] || "",
+        item["Valor"] || "",
+        item["Data de Inscrição"] || "",
       ]);
 
       // Criar tabela
