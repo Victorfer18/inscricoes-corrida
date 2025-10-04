@@ -259,19 +259,76 @@ export default function AdminDashboardPage() {
         },
       });
 
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        a.download = `inscricoes_${new Date().toISOString().split("T")[0]}.${format}`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Erro ${response.status}: ${response.statusText}`);
       }
+
+      const blob = await response.blob();
+      
+      // Verificar se o blob não está vazio
+      if (blob.size === 0) {
+        throw new Error("Arquivo gerado está vazio");
+      }
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = url;
+      a.download = `inscricoes_${new Date().toISOString().split("T")[0]}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      // Mostrar notificação de sucesso
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 max-w-md';
+      notification.innerHTML = `
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          <div>
+            <p class="font-semibold">Exportação concluída</p>
+            <p class="text-sm">Arquivo ${format.toUpperCase()} baixado com sucesso.</p>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(notification);
+      
+      // Remover após 3 segundos
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 3000);
+
     } catch (error) {
+      console.error('Erro na exportação:', error);
+      
+      // Mostrar notificação de erro
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 max-w-md';
+      notification.innerHTML = `
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+          <div>
+            <p class="font-semibold">Erro na exportação</p>
+            <p class="text-sm">${error instanceof Error ? error.message : 'Erro desconhecido'}</p>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(notification);
+      
+      // Remover após 5 segundos
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 5000);
     }
   };
 

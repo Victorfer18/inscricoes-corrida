@@ -90,10 +90,16 @@ export function ComprovanteViewer({
     }
   }, [setLoading, setError, setActualUrl]);
 
-  // Buscar URL quando o modal abrir
+  // Buscar URL quando o modal abrir e limpar quando fechar
   useEffect(() => {
     if (isOpen && comprovanteUrl) {
       fetchActualUrl(comprovanteUrl);
+    } else if (!isOpen) {
+      // Limpar estado quando modal é fechado
+      setActualUrl("");
+      setLoading(true);
+      setError(false);
+      setIsMaximized(false);
     }
   }, [isOpen, comprovanteUrl, fetchActualUrl]);
 

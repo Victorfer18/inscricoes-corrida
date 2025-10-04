@@ -132,6 +132,14 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
         format: "a4",
       });
 
+      // Verificar se há dados para exportar
+      if (!exportData || exportData.length === 0) {
+        return NextResponse.json(
+          { success: false, error: "Nenhum dado encontrado para exportar" },
+          { status: 404 }
+        );
+      }
+
       // Título
       doc.setFontSize(16);
       doc.text("Relatório de Inscrições - Corrida Solidária Outubro Rosa", 14, 20);
