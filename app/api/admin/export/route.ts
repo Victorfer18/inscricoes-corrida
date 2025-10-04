@@ -36,6 +36,7 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
         sexo,
         tamanho_blusa,
         status,
+        number_shirt,
         created_at,
         updated_at,
         lotes (
@@ -62,6 +63,7 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
     // Formatar dados para exportação
     const exportData = inscricoes?.map((inscricao: any) => ({
       "ID": inscricao.id,
+      "Número da Camisa": inscricao.number_shirt || "",
       "Nome Completo": inscricao.nome_completo || "",
       "CPF": formatarCPF(inscricao.cpf),
       "Email": inscricao.email || "",
@@ -85,6 +87,7 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
       // Ajustar largura das colunas
       const colWidths = [
         { wch: 10 }, // ID
+        { wch: 12 }, // Número da Camisa
         { wch: 25 }, // Nome
         { wch: 15 }, // CPF
         { wch: 25 }, // Email
@@ -152,6 +155,7 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
       // Preparar dados para a tabela
       const tableData = exportData.map(item => [
         item["Nome Completo"] || "",
+        item["Número da Camisa"] || "",
         item["CPF"] || "",
         item["Email"] || "",
         item["Celular"] || "",
@@ -166,7 +170,7 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
 
       // Criar tabela
       autoTable(doc, {
-        head: [["Nome", "CPF", "Email", "Celular", "Idade", "Sexo", "Tamanho", "Status", "Lote", "Valor", "Data"]],
+        head: [["Nome", "Nº Camisa", "CPF", "Email", "Celular", "Idade", "Sexo", "Tamanho", "Status", "Lote", "Valor", "Data"]],
         body: tableData,
         startY: 45,
         styles: {
@@ -182,23 +186,24 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
           fillColor: [245, 245, 245],
         },
         columnStyles: {
-          0: { cellWidth: 35 }, // Nome
-          1: { cellWidth: 25 }, // CPF
-          2: { cellWidth: 40 }, // Email
-          3: { cellWidth: 25 }, // Celular
-          4: { cellWidth: 15 }, // Idade
-          5: { cellWidth: 20 }, // Sexo
-          6: { cellWidth: 20 }, // Tamanho
-          7: { cellWidth: 20 }, // Status
-          8: { cellWidth: 20 }, // Lote
-          9: { cellWidth: 15 }, // Valor
-          10: { cellWidth: 35 }, // Data
+          0: { cellWidth: 30 }, // Nome
+          1: { cellWidth: 15 }, // Nº Camisa
+          2: { cellWidth: 20 }, // CPF
+          3: { cellWidth: 35 }, // Email
+          4: { cellWidth: 20 }, // Celular
+          5: { cellWidth: 12 }, // Idade
+          6: { cellWidth: 15 }, // Sexo
+          7: { cellWidth: 15 }, // Tamanho
+          8: { cellWidth: 15 }, // Status
+          9: { cellWidth: 15 }, // Lote
+          10: { cellWidth: 12 }, // Valor
+          11: { cellWidth: 30 }, // Data
         },
         margin: { top: 45, left: 14, right: 14 },
       });
 
       // Gerar buffer do PDF
-      const pdfBuffer = Buffer.from(doc.output("arraybuffer"));
+      const pdfBuffer = doc.output("arraybuffer");
       const fileName = `inscricoes_${new Date().toISOString().split("T")[0]}.pdf`;
 
       return new NextResponse(pdfBuffer, {
