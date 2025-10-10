@@ -10,10 +10,6 @@ export const siteConfig = {
       href: "/",
     },
     {
-      label: "Inscrição",
-      href: "/inscricao",
-    },
-    {
       label: "Regulamento",
       href: "/regulamento",
     },
@@ -26,10 +22,6 @@ export const siteConfig = {
     {
       label: "Home",
       href: "/",
-    },
-    {
-      label: "Inscrição",
-      href: "/inscricao",
     },
     {
       label: "Regulamento",

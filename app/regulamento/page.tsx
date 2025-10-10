@@ -5,6 +5,7 @@ import { Divider } from "@heroui/divider";
 import { Chip } from "@heroui/chip";
 
 import { BackgroundWrapper } from "@/components/background-wrapper";
+import { eventConfig } from "@/config/event";
 import { title, subtitle } from "@/components/primitives";
 import { DocumentIcon } from "@/components/icons";
 import { formatarMoeda } from "@/lib/utils";
@@ -78,11 +79,10 @@ export default function RegulamentoPage() {
             <div>
               <h3 className="font-semibold text-lg mb-2">Data e Horário:</h3>
               <p>
-                <strong>26 de Outubro de 2025</strong>
+                <strong>{eventConfig.dataEvento}</strong>
               </p>
               <p>
-                Concentração a partir das <strong>06h00</strong> no Projeto
-                Jaíba/NS2 (Trevo do Eltinho)
+                Concentração a partir das <strong>{eventConfig.horarioConcentracao}</strong> no {eventConfig.local}
               </p>
             </div>
 
@@ -93,10 +93,10 @@ export default function RegulamentoPage() {
               <div className="space-y-2">
                 <div className="flex flex-wrap gap-2 mb-2">
                   <Chip color="secondary" variant="flat">
-                    🚶‍♀️ Caminhada 2,5km - 07h00
+                    🚶‍♀️ Caminhada 2,5km - {eventConfig.horarioCaminhada}
                   </Chip>
                   <Chip color="secondary" variant="flat">
-                    🏃‍♀️ Corrida 5km - 07h30
+                    🏃‍♀️ Corrida 5km - {eventConfig.horarioCorrida}
                   </Chip>
                 </div>
                 <p className="text-sm text-default-600">

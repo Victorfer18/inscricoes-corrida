@@ -7,6 +7,7 @@ import { Divider } from "@heroui/divider";
 import { Button } from "@heroui/button";
 
 import { siteConfig } from "@/config/site";
+import { eventConfig } from "@/config/event";
 import { title, subtitle } from "@/components/primitives";
 import { RunnerIcon, WhatsAppIcon, InstagramIcon } from "@/components/icons";
 import { EventLogo } from "../components/event-logo";
@@ -241,28 +242,32 @@ export default function Home() {
                 <div className="space-y-6">
                   <div className="text-center">
                     <h3 className="text-xl font-bold mb-4 text-green-700 dark:text-green-300">
-                      📊 Progresso das Inscrições
+                      📊 Total de Inscrições Realizadas
                     </h3>
                     <InscricaoStats />
+                  </div>
+
+                  {/* Mensagem de Inscrições Finalizadas */}
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-6 rounded-xl border-2 border-blue-300 dark:border-blue-700">
+                    <div className="text-center">
+                      <div className="text-4xl mb-4">✅</div>
+                      <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-3">
+                        Inscrições Encerradas!
+                      </h3>
+                      <p className="text-blue-600 dark:text-blue-400 mb-4">
+                        {eventConfig.mensagemInscricoesFinalizadas}
+                      </p>
+                      <p className="text-sm text-blue-500 dark:text-blue-400">
+                        Nos vemos no dia <strong>{eventConfig.dataEvento}</strong> no <strong>{eventConfig.local}</strong>!
+                      </p>
+                    </div>
                   </div>
 
                   <div className="flex flex-col gap-4">
                     <Button
                       as={Link}
-                      href="/inscricao"
-                      color="success"
-                      size="lg"
-                      className="font-bold text-white"
-                      startContent={<RunnerIcon />}
-                    >
-                      Fazer Inscrição Agora
-                    </Button>
-                    
-                    <Button
-                      as={Link}
                       href="/regulamento"
-                      variant="bordered"
-                      color="success"
+                      color="primary"
                       size="lg"
                       className="font-semibold"
                     >
