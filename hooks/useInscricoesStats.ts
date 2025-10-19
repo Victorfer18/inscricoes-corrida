@@ -18,14 +18,14 @@ export function useInscricoesStats(): InscricoesStats {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        setStats(prev => ({ ...prev, loading: true, error: null }));
+        setStats((prev) => ({ ...prev, loading: true, error: null }));
 
         // Buscar estatísticas básicas
-        const response = await fetch('/api/admin/stats');
+        const response = await fetch("/api/admin/stats");
         const result = await response.json();
 
         if (!result.success) {
-          throw new Error(result.error || 'Erro ao buscar estatísticas');
+          throw new Error(result.error || "Erro ao buscar estatísticas");
         }
 
         const { confirmadas, pendentes } = result.data;
@@ -37,10 +37,10 @@ export function useInscricoesStats(): InscricoesStats {
           error: null,
         });
       } catch (err) {
-        setStats(prev => ({
+        setStats((prev) => ({
           ...prev,
           loading: false,
-          error: err instanceof Error ? err.message : 'Erro desconhecido',
+          error: err instanceof Error ? err.message : "Erro desconhecido",
         }));
       }
     };

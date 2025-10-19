@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
 import { supabaseAdmin } from "@/lib/supabase";
 import { AdminUser, AdminSession } from "@/types/admin";
 
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
     if (!email || !password) {
       return NextResponse.json(
         { message: "Email e senha são obrigatórios" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -27,29 +28,32 @@ export async function POST(request: NextRequest) {
     if (error || !adminUser) {
       return NextResponse.json(
         { message: "Credenciais inválidas" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Verificar senha
-    const isValidPassword = await bcrypt.compare(password, adminUser.password_hash);
+    const isValidPassword = await bcrypt.compare(
+      password,
+      adminUser.password_hash,
+    );
 
     if (!isValidPassword) {
       return NextResponse.json(
         { message: "Credenciais inválidas" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Gerar token JWT
     const token = jwt.sign(
-      { 
-        userId: adminUser.id, 
+      {
+        userId: adminUser.id,
         email: adminUser.email,
-        role: adminUser.role 
+        role: adminUser.role,
       },
       JWT_SECRET,
-      { expiresIn: "24h" }
+      { expiresIn: "24h" },
     );
 
     // Preparar dados do usuário (sem senha)
@@ -73,7 +77,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { message: "Erro interno do servidor" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

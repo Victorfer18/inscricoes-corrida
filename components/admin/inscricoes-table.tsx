@@ -13,10 +13,7 @@ import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import { Pagination } from "@heroui/pagination";
 import { useDisclosure } from "@heroui/modal";
-import {
-  PencilIcon,
-  EyeIcon,
-} from "@heroicons/react/24/outline";
+import { PencilIcon, EyeIcon } from "@heroicons/react/24/outline";
 
 import { ComprovanteViewer } from "./comprovante-viewer";
 
@@ -73,7 +70,10 @@ export function InscricoesTable({
     nome: string;
   } | null>(null);
 
-  const handleViewComprovante = (comprovanteUrl: string, nomeCompleto: string) => {
+  const handleViewComprovante = (
+    comprovanteUrl: string,
+    nomeCompleto: string,
+  ) => {
     setSelectedComprovante({
       url: comprovanteUrl,
       nome: nomeCompleto,
@@ -109,7 +109,7 @@ export function InscricoesTable({
   if (loading) {
     return (
       <div className="p-8 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
         <p className="mt-4 text-gray-600">Carregando inscrições...</p>
       </div>
     );
@@ -135,9 +135,7 @@ export function InscricoesTable({
           <TableColumn>VALOR</TableColumn>
           <TableColumn>COMPROVANTE</TableColumn>
           <TableColumn>DATA</TableColumn>
-          <>
-            {canEdit && <TableColumn>AÇÕES</TableColumn>}
-          </>
+          <>{canEdit && <TableColumn>AÇÕES</TableColumn>}</>
         </TableHeader>
         <TableBody>
           {inscricoes.map((inscricao) => (
@@ -165,7 +163,7 @@ export function InscricoesTable({
               <TableCell>
                 {inscricao.lote_valor ? (
                   <span className="font-semibold text-green-600">
-                    R$ {inscricao.lote_valor.toFixed(2).replace('.', ',')}
+                    R$ {inscricao.lote_valor.toFixed(2).replace(".", ",")}
                   </span>
                 ) : (
                   <span className="text-gray-400">N/A</span>
@@ -176,11 +174,16 @@ export function InscricoesTable({
                   <div className="flex justify-center">
                     <Button
                       isIconOnly
-                      size="md"
-                      variant="light"
                       color="primary"
-                      onPress={() => handleViewComprovante(inscricao.comprovante_url!, inscricao.nome_completo)}
+                      size="md"
                       title="Visualizar comprovante"
+                      variant="light"
+                      onPress={() =>
+                        handleViewComprovante(
+                          inscricao.comprovante_url!,
+                          inscricao.nome_completo,
+                        )
+                      }
                     >
                       <EyeIcon className="w-5 h-5" />
                     </Button>
@@ -217,8 +220,8 @@ export function InscricoesTable({
       {pagination.totalPages > 1 && (
         <div className="flex justify-center p-4">
           <Pagination
-            total={pagination.totalPages}
             page={pagination.page}
+            total={pagination.totalPages}
             onChange={onPageChange}
           />
         </div>
@@ -227,10 +230,10 @@ export function InscricoesTable({
       {/* Modal de Visualização de Comprovante */}
       {selectedComprovante && (
         <ComprovanteViewer
-          isOpen={isOpen}
-          onClose={onClose}
           comprovanteUrl={selectedComprovante.url}
+          isOpen={isOpen}
           nomeParticipante={selectedComprovante.nome}
+          onClose={onClose}
         />
       )}
     </>

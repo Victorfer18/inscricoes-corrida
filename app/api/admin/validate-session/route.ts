@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+
 import { supabaseAdmin } from "@/lib/supabase";
 import { AdminUser } from "@/types/admin";
 
@@ -8,11 +9,11 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 export async function GET(request: NextRequest) {
   try {
     const authorization = request.headers.get("Authorization");
-    
+
     if (!authorization || !authorization.startsWith("Bearer ")) {
       return NextResponse.json(
         { message: "Token não fornecido" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -20,13 +21,11 @@ export async function GET(request: NextRequest) {
 
     // Verificar e decodificar token
     let decoded: any;
+
     try {
       decoded = jwt.verify(token, JWT_SECRET);
     } catch (error) {
-      return NextResponse.json(
-        { message: "Token inválido" },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "Token inválido" }, { status: 401 });
     }
 
     // Buscar usuário atualizado no banco
@@ -39,7 +38,7 @@ export async function GET(request: NextRequest) {
     if (error || !adminUser) {
       return NextResponse.json(
         { message: "Usuário não encontrado" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -56,7 +55,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { message: "Erro interno do servidor" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -36,7 +36,7 @@ export function validarCPF(cpf: string): boolean {
 // Formatação de CPF
 export function formatarCPF(cpf: string | null | undefined): string {
   if (!cpf) return "";
-  
+
   cpf = cpf.replace(/[^\d]/g, "");
 
   return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
@@ -45,7 +45,7 @@ export function formatarCPF(cpf: string | null | undefined): string {
 // Formatação de celular
 export function formatarCelular(celular: string | null | undefined): string {
   if (!celular) return "";
-  
+
   celular = celular.replace(/[^\d]/g, "");
 
   return celular.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");

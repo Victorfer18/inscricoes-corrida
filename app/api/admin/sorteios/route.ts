@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAuth } from "@/lib/auth-middleware";
 import { AdminUser } from "@/types/admin";
@@ -9,7 +10,14 @@ async function handleSalvarSorteio(request: NextRequest, user: AdminUser) {
   try {
     const body: SalvarSorteioRequest = await request.json();
 
-    const { titulo, descricao, lote_id, lote_nome, total_inscritos, sorteados } = body;
+    const {
+      titulo,
+      descricao,
+      lote_id,
+      lote_nome,
+      total_inscritos,
+      sorteados,
+    } = body;
 
     if (!titulo || !lote_nome || !sorteados || sorteados.length === 0) {
       return NextResponse.json(
@@ -17,7 +25,7 @@ async function handleSalvarSorteio(request: NextRequest, user: AdminUser) {
           success: false,
           error: "Dados incompletos para salvar o sorteio",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -70,9 +78,10 @@ async function handleSalvarSorteio(request: NextRequest, user: AdminUser) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Erro ao salvar sorteio",
+        error:
+          error instanceof Error ? error.message : "Erro ao salvar sorteio",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -89,9 +98,7 @@ async function handleListarSorteios(request: NextRequest) {
 
     const offset = (page - 1) * limit;
 
-    let query = supabaseAdmin
-      .from("sorteios")
-      .select("*", { count: "exact" });
+    let query = supabaseAdmin.from("sorteios").select("*", { count: "exact" });
 
     // Aplicar filtros
     if (loteId && loteId !== "todos") {
@@ -103,10 +110,16 @@ async function handleListarSorteios(request: NextRequest) {
     }
 
     if (search) {
-      query = query.or(`titulo.ilike.%${search}%,lote_nome.ilike.%${search}%,realizado_por_nome.ilike.%${search}%`);
+      query = query.or(
+        `titulo.ilike.%${search}%,lote_nome.ilike.%${search}%,realizado_por_nome.ilike.%${search}%`,
+      );
     }
 
-    const { data: sorteios, error, count } = await query
+    const {
+      data: sorteios,
+      error,
+      count,
+    } = await query
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -134,13 +147,13 @@ async function handleListarSorteios(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Erro ao listar sorteios",
+        error:
+          error instanceof Error ? error.message : "Erro ao listar sorteios",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export const POST = requireAuth(handleSalvarSorteio);
 export const GET = requireAuth(handleListarSorteios);
-

@@ -3,10 +3,5 @@ export default function SorteiosLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="sorteios-layout">
-      {children}
-    </div>
-  );
+  return <div className="sorteios-layout">{children}</div>;
 }
-

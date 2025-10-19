@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect, createContext, useContext } from "react";
-import { AdminUser, AdminSession, LoginCredentials, AdminPermissions, ROLE_PERMISSIONS } from "@/types/admin";
+
+import {
+  AdminUser,
+  AdminSession,
+  LoginCredentials,
+  AdminPermissions,
+  ROLE_PERMISSIONS,
+} from "@/types/admin";
 
 interface AuthContextType {
   user: AdminUser | null;
@@ -16,9 +23,11 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function useAuth() {
   const context = useContext(AuthContext);
+
   if (!context) {
     throw new Error("useAuth deve ser usado dentro de um AuthProvider");
   }
+
   return context;
 }
 
@@ -29,16 +38,16 @@ export function useAuthProvider() {
   const permissions = user ? ROLE_PERMISSIONS[user.role] : null;
   const isAuthenticated = !!user;
 
-
   // Verificar se há sessão salva
   useEffect(() => {
     const checkStoredSession = async () => {
       try {
         // Tentar obter token do localStorage
         const storedSession = localStorage.getItem("admin_session");
+
         if (storedSession) {
           const session: AdminSession = JSON.parse(storedSession);
-          
+
           // Verificar se a sessão não expirou
           if (new Date(session.expires_at) > new Date()) {
             // Validar sessão no servidor
@@ -50,6 +59,7 @@ export function useAuthProvider() {
 
             if (response.ok) {
               const userData = await response.json();
+
               setUser(userData.user);
             } else {
               localStorage.removeItem("admin_session");
@@ -71,7 +81,7 @@ export function useAuthProvider() {
   const login = async (credentials: LoginCredentials): Promise<boolean> => {
     try {
       setIsLoading(true);
-      
+
       const response = await fetch("/api/admin/login", {
         method: "POST",
         headers: {
@@ -82,11 +92,11 @@ export function useAuthProvider() {
 
       if (response.ok) {
         const session: AdminSession = await response.json();
-        
+
         // Salvar sessão no localStorage
         localStorage.setItem("admin_session", JSON.stringify(session));
         setUser(session.user);
-        
+
         return true;
       } else {
         return false;

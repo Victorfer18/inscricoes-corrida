@@ -33,7 +33,7 @@ export default function AdminLoginPage() {
 
     try {
       const success = await login({ email, password });
-      
+
       if (success) {
         router.replace("/admin/dashboard");
       } else {
@@ -50,7 +50,7 @@ export default function AdminLoginPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
           <p className="mt-4 text-gray-600">Verificando autenticação...</p>
         </div>
       </div>
@@ -62,9 +62,7 @@ export default function AdminLoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="pb-0">
           <div className="text-center w-full">
-            <h1 className={title({ size: "md", class: "mb-2" })}>
-              Login
-            </h1>
+            <h1 className={title({ size: "md", class: "mb-2" })}>Login</h1>
             <br />
             <p className="text-gray-600 dark:text-gray-400">
               Faça login para acessar o sistema
@@ -72,25 +70,19 @@ export default function AdminLoginPage() {
           </div>
         </CardHeader>
         <CardBody className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <Input
-              type="email"
+              isRequired
               label="Email"
               placeholder="admin@exemplo.com"
+              type="email"
               value={email}
+              variant="bordered"
               onChange={(e) => setEmail(e.target.value)}
-              isRequired
-              variant="bordered"
             />
-            
+
             <Input
-              type={showPassword ? "text" : "password"}
-              label="Senha"
-              placeholder="Digite sua senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               isRequired
-              variant="bordered"
               endContent={
                 <button
                   className="focus:outline-none"
@@ -104,6 +96,12 @@ export default function AdminLoginPage() {
                   )}
                 </button>
               }
+              label="Senha"
+              placeholder="Digite sua senha"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              variant="bordered"
+              onChange={(e) => setPassword(e.target.value)}
             />
 
             {error && (
@@ -115,12 +113,12 @@ export default function AdminLoginPage() {
             )}
 
             <Button
-              type="submit"
-              color="primary"
-              size="lg"
               className="w-full"
-              isLoading={isLoading}
+              color="primary"
               disabled={!email || !password}
+              isLoading={isLoading}
+              size="lg"
+              type="submit"
             >
               {isLoading ? "Entrando..." : "Entrar"}
             </Button>

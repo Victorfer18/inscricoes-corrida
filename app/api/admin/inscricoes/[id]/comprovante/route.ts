@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAuth } from "@/lib/auth-middleware";
 import { fileStorageService } from "@/lib/services/file-storage";
@@ -7,7 +8,7 @@ import { AdminUser } from "@/types/admin";
 async function handleUpdateComprovante(
   request: NextRequest,
   user: AdminUser,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await context.params;
@@ -17,7 +18,7 @@ async function handleUpdateComprovante(
     if (!file) {
       return NextResponse.json(
         { success: false, error: "Arquivo não fornecido" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,19 +37,21 @@ async function handleUpdateComprovante(
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
         { success: false, error: "Tipo de arquivo não permitido" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Validar tamanho (10MB para PDF, 5MB para imagens)
-    const maxSize = file.type === "application/pdf" ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+    const maxSize =
+      file.type === "application/pdf" ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+
     if (file.size > maxSize) {
       return NextResponse.json(
         {
           success: false,
           error: `Arquivo muito grande. Máximo permitido: ${file.type === "application/pdf" ? "10MB" : "5MB"}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -62,7 +65,7 @@ async function handleUpdateComprovante(
     if (fetchError || !inscricao) {
       return NextResponse.json(
         { success: false, error: "Inscrição não encontrada" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -71,13 +74,13 @@ async function handleUpdateComprovante(
     const uploadResult = await fileStorageService.uploadFile(
       fileBuffer,
       file.name,
-      file.type
+      file.type,
     );
 
     if (!uploadResult || !uploadResult.fileId) {
       return NextResponse.json(
         { success: false, error: "Erro ao fazer upload do arquivo" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -120,12 +123,13 @@ async function handleUpdateComprovante(
     });
   } catch (error) {
     console.error("Erro ao atualizar comprovante:", error);
+
     return NextResponse.json(
       {
         success: false,
         error: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

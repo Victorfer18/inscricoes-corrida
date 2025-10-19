@@ -3,9 +3,5 @@ export default function LoginLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="login-layout">
-      {children}
-    </div>
-  );
+  return <div className="login-layout">{children}</div>;
 }

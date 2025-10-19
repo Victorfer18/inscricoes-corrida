@@ -1,10 +1,11 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+
+import { NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
   // Middleware desabilitado - proteção é feita pelo AdminGuard
   // TODO: Implementar verificação via cookies se necessário
-  
+
   return NextResponse.next();
 }
 

@@ -2,10 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardHeader, CardBody } from "@heroui/card";
+import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@heroui/table";
 import {
   Modal,
   ModalContent,
@@ -17,14 +25,12 @@ import {
 import { Chip } from "@heroui/chip";
 import { Pagination } from "@heroui/pagination";
 import {
-  ArrowRightOnRectangleIcon,
   MagnifyingGlassIcon,
   EyeIcon,
   DocumentTextIcon,
   ArrowPathIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
-
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -66,7 +72,9 @@ export default function HistoricoSorteiosPage() {
   const [lotes, setLotes] = useState<Array<{ id: string; nome: string }>>([]);
 
   // Detalhes do sorteio
-  const [sorteioSelecionado, setSorteioSelecionado] = useState<Sorteio | null>(null);
+  const [sorteioSelecionado, setSorteioSelecionado] = useState<Sorteio | null>(
+    null,
+  );
   const [participantes, setParticipantes] = useState<SorteioParticipante[]>([]);
   const [loadingSorteioId, setLoadingSorteioId] = useState<string | null>(null);
 
@@ -79,8 +87,10 @@ export default function HistoricoSorteiosPage() {
     const fetchLotes = async () => {
       try {
         const response = await fetch("/api/lotes");
+
         if (response.ok) {
           const data = await response.json();
+
           setLotes(data.data.lotes || []);
         }
       } catch (error) {
@@ -95,8 +105,10 @@ export default function HistoricoSorteiosPage() {
   const fetchSorteios = async (page = 1) => {
     try {
       setLoading(true);
-      const token = JSON.parse(localStorage.getItem("admin_session") || "{}").token;
-      
+      const token = JSON.parse(
+        localStorage.getItem("admin_session") || "{}",
+      ).token;
+
       const params = new URLSearchParams({
         page: page.toString(),
         limit: pagination.limit.toString(),
@@ -114,6 +126,7 @@ export default function HistoricoSorteiosPage() {
 
       if (response.ok) {
         const data = await response.json();
+
         setSorteios(data.data.sorteios);
         setPagination(data.data.pagination);
       }
@@ -132,7 +145,9 @@ export default function HistoricoSorteiosPage() {
   const fetchDetalhesSorteio = async (sorteioId: string) => {
     try {
       setLoadingSorteioId(sorteioId);
-      const token = JSON.parse(localStorage.getItem("admin_session") || "{}").token;
+      const token = JSON.parse(
+        localStorage.getItem("admin_session") || "{}",
+      ).token;
 
       const response = await fetch(`/api/admin/sorteios/${sorteioId}`, {
         headers: {
@@ -142,6 +157,7 @@ export default function HistoricoSorteiosPage() {
 
       if (response.ok) {
         const data = await response.json();
+
         setSorteioSelecionado(data.data.sorteio);
         setParticipantes(data.data.participantes);
         onOpen();
@@ -154,7 +170,10 @@ export default function HistoricoSorteiosPage() {
   };
 
   // Exportar PDF
-  const exportarPDF = (sorteio: Sorteio, participantesList: SorteioParticipante[]) => {
+  const exportarPDF = (
+    sorteio: Sorteio,
+    participantesList: SorteioParticipante[],
+  ) => {
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "mm",
@@ -165,35 +184,40 @@ export default function HistoricoSorteiosPage() {
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
     doc.text("Sorteio - Corrida Solidária", 105, 20, { align: "center" });
-    
+
     // Informações do sorteio
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text(sorteio.titulo, 105, 30, { align: "center" });
-    
+
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    
+
     // Box com informações
     const infoY = 40;
+
     doc.setDrawColor(220, 20, 60); // Rosa
     doc.setLineWidth(0.5);
     doc.rect(15, infoY, 180, 30);
-    
+
     doc.text(`Lote: ${sorteio.lote_nome}`, 20, infoY + 8);
     doc.text(`Total de Inscritos: ${sorteio.total_inscritos}`, 20, infoY + 15);
     doc.text(`Total Sorteados: ${sorteio.total_sorteados}`, 20, infoY + 22);
-    
+
     doc.text(`Realizado por: ${sorteio.realizado_por_nome}`, 110, infoY + 8);
-    doc.text(`Data: ${new Date(sorteio.created_at).toLocaleString("pt-BR")}`, 110, infoY + 15);
-    
+    doc.text(
+      `Data: ${new Date(sorteio.created_at).toLocaleString("pt-BR")}`,
+      110,
+      infoY + 15,
+    );
+
     if (sorteio.descricao) {
       doc.setFontSize(9);
       doc.text(`Descrição: ${sorteio.descricao}`, 20, infoY + 27);
     }
 
     // Preparar dados da tabela - apenas informações relevantes
-    const tableData = participantesList.map(p => [
+    const tableData = participantesList.map((p) => [
       p.rodada.toString(),
       p.nome_completo || "",
       formatarCPF(p.cpf || ""),
@@ -229,6 +253,7 @@ export default function HistoricoSorteiosPage() {
 
     // Rodapé
     const pageCount = (doc as any).internal.getNumberOfPages();
+
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       doc.setFontSize(8);
@@ -237,12 +262,14 @@ export default function HistoricoSorteiosPage() {
         `Página ${i} de ${pageCount}`,
         105,
         doc.internal.pageSize.height - 10,
-        { align: "center" }
+        { align: "center" },
       );
     }
 
     // Salvar PDF
-    doc.save(`sorteio_${sorteio.titulo.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split("T")[0]}.pdf`);
+    doc.save(
+      `sorteio_${sorteio.titulo.replace(/[^a-z0-9]/gi, "_")}_${new Date().toISOString().split("T")[0]}.pdf`,
+    );
   };
 
   const handlePageChange = (page: number) => {
@@ -252,8 +279,8 @@ export default function HistoricoSorteiosPage() {
   return (
     <AdminPageLayout>
       <AdminHeader
-        titulo="Histórico de Sorteios"
         descricao="Visualize todos os sorteios realizados"
+        titulo="Histórico de Sorteios"
       >
         <AdminNavButtons currentPage="historico" />
       </AdminHeader>
@@ -263,36 +290,36 @@ export default function HistoricoSorteiosPage() {
         <CardBody>
           <div className="flex flex-col gap-3 md:flex-row md:gap-4 md:items-end">
             <Input
+              className="w-full md:flex-1"
               placeholder="Buscar por título, lote ou responsável..."
+              size="sm"
+              startContent={<MagnifyingGlassIcon className="w-4 h-4" />}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              startContent={<MagnifyingGlassIcon className="w-4 h-4" />}
-              className="w-full md:flex-1"
-              size="sm"
             />
-            
+
             <div className="grid grid-cols-2 gap-2 md:flex md:gap-4">
               <Select
+                className="w-full md:w-40"
+                items={[{ id: "todos", nome: "Todos os Lotes" }, ...lotes]}
                 placeholder="Lote"
                 selectedKeys={[loteFilter]}
-                onSelectionChange={(keys) => setLoteFilter(Array.from(keys)[0] as string)}
-                className="w-full md:w-40"
                 size="sm"
-                items={[{ id: "todos", nome: "Todos os Lotes" }, ...lotes]}
+                onSelectionChange={(keys) =>
+                  setLoteFilter(Array.from(keys)[0] as string)
+                }
               >
-                {(lote) => (
-                  <SelectItem key={lote.id}>
-                    {lote.nome}
-                  </SelectItem>
-                )}
+                {(lote) => <SelectItem key={lote.id}>{lote.nome}</SelectItem>}
               </Select>
 
               <Select
+                className="w-full md:w-40"
                 placeholder="Status"
                 selectedKeys={[statusFilter]}
-                onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string)}
-                className="w-full md:w-40"
                 size="sm"
+                onSelectionChange={(keys) =>
+                  setStatusFilter(Array.from(keys)[0] as string)
+                }
               >
                 <SelectItem key="todos">Todos</SelectItem>
                 <SelectItem key="finalizado">Finalizado</SelectItem>
@@ -300,13 +327,13 @@ export default function HistoricoSorteiosPage() {
               </Select>
 
               <Button
-                color="default"
-                variant="bordered"
-                size="sm"
                 className="col-span-2 md:col-span-1"
-                startContent={<ArrowPathIcon className="w-4 h-4" />}
-                onPress={() => fetchSorteios(pagination.page)}
+                color="default"
                 isLoading={loading}
+                size="sm"
+                startContent={<ArrowPathIcon className="w-4 h-4" />}
+                variant="bordered"
+                onPress={() => fetchSorteios(pagination.page)}
               >
                 <span className="hidden sm:inline">Recarregar</span>
               </Button>
@@ -317,21 +344,21 @@ export default function HistoricoSorteiosPage() {
 
       {/* Lista de Sorteios */}
       <Card>
-            <CardBody>
-              {loading ? (
-                <div className="py-12 text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-                  <p className="mt-4 text-gray-600">Carregando sorteios...</p>
-                </div>
-              ) : sorteios.length === 0 ? (
-                <div className="py-12 text-center">
-                  <ClockIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-lg text-gray-600 dark:text-gray-400">
-                    Nenhum sorteio encontrado
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
+        <CardBody>
+          {loading ? (
+            <div className="py-12 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
+              <p className="mt-4 text-gray-600">Carregando sorteios...</p>
+            </div>
+          ) : sorteios.length === 0 ? (
+            <div className="py-12 text-center">
+              <ClockIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-lg text-gray-600 dark:text-gray-400">
+                Nenhum sorteio encontrado
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
               {sorteios.map((sorteio) => (
                 <div
                   key={sorteio.id}
@@ -344,159 +371,190 @@ export default function HistoricoSorteiosPage() {
                           {sorteio.titulo}
                         </h3>
                         <Chip
-                          color={sorteio.status === "finalizado" ? "success" : "danger"}
+                          color={
+                            sorteio.status === "finalizado"
+                              ? "success"
+                              : "danger"
+                          }
                           size="sm"
                           variant="flat"
                         >
-                          {sorteio.status === "finalizado" ? "Finalizado" : "Cancelado"}
+                          {sorteio.status === "finalizado"
+                            ? "Finalizado"
+                            : "Cancelado"}
                         </Chip>
                       </div>
-                      
+
                       {sorteio.descricao && (
                         <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2">
                           {sorteio.descricao}
                         </p>
                       )}
-                      
+
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 text-xs md:text-sm">
-                            <div>
-                              <span className="text-gray-500">Lote:</span>
-                              <p className="font-medium">{sorteio.lote_nome}</p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500">Sorteados:</span>
-                              <p className="font-medium text-green-600">{sorteio.total_sorteados}</p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500">Total Inscritos:</span>
-                              <p className="font-medium">{sorteio.total_inscritos}</p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500">Realizado por:</span>
-                              <p className="font-medium">{sorteio.realizado_por_nome}</p>
-                            </div>
-                          </div>
-                          
-                          <p className="text-xs text-gray-500 mt-2">
-                            {new Date(sorteio.created_at).toLocaleString("pt-BR")}
+                        <div>
+                          <span className="text-gray-500">Lote:</span>
+                          <p className="font-medium">{sorteio.lote_nome}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Sorteados:</span>
+                          <p className="font-medium text-green-600">
+                            {sorteio.total_sorteados}
                           </p>
                         </div>
+                        <div>
+                          <span className="text-gray-500">
+                            Total Inscritos:
+                          </span>
+                          <p className="font-medium">
+                            {sorteio.total_inscritos}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Realizado por:</span>
+                          <p className="font-medium">
+                            {sorteio.realizado_por_nome}
+                          </p>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-gray-500 mt-2">
+                        {new Date(sorteio.created_at).toLocaleString("pt-BR")}
+                      </p>
+                    </div>
 
                     <Button
-                      color="primary"
-                      variant="flat"
-                      size="sm"
                       className="w-full md:w-auto"
-                      startContent={<EyeIcon className="w-4 h-4" />}
-                      onPress={() => fetchDetalhesSorteio(sorteio.id)}
+                      color="primary"
+                      isDisabled={
+                        loadingSorteioId !== null &&
+                        loadingSorteioId !== sorteio.id
+                      }
                       isLoading={loadingSorteioId === sorteio.id}
-                      isDisabled={loadingSorteioId !== null && loadingSorteioId !== sorteio.id}
+                      size="sm"
+                      startContent={<EyeIcon className="w-4 h-4" />}
+                      variant="flat"
+                      onPress={() => fetchDetalhesSorteio(sorteio.id)}
                     >
                       <span className="hidden sm:inline">Ver Detalhes</span>
                       <span className="sm:hidden">Detalhes</span>
                     </Button>
-                      </div>
-                    </div>
-                  ))}
+                  </div>
                 </div>
-              )}
+              ))}
+            </div>
+          )}
 
-              {/* Paginação */}
-              {pagination.totalPages > 1 && (
-                <div className="flex justify-center mt-6">
-                  <Pagination
-                    total={pagination.totalPages}
-                    page={pagination.page}
-                    onChange={handlePageChange}
-                  />
-                </div>
-              )}
+          {/* Paginação */}
+          {pagination.totalPages > 1 && (
+            <div className="flex justify-center mt-6">
+              <Pagination
+                page={pagination.page}
+                total={pagination.totalPages}
+                onChange={handlePageChange}
+              />
+            </div>
+          )}
         </CardBody>
       </Card>
 
       {/* Modal de Detalhes */}
-      <Modal isOpen={isOpen} onClose={onClose} size="4xl">
-            <ModalContent>
-              {(onClose) => (
-                <>
-                  <ModalHeader>
-                    <div>
-                      <h3 className="text-xl font-bold">{sorteioSelecionado?.titulo}</h3>
-                      <p className="text-sm text-gray-500 font-normal mt-1">
-                        {sorteioSelecionado?.lote_nome} • {sorteioSelecionado?.total_sorteados} sorteados
-                      </p>
-                    </div>
-                  </ModalHeader>
-                  <ModalBody>
-                    {sorteioSelecionado?.descricao && (
-                      <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                        <p className="text-sm">{sorteioSelecionado.descricao}</p>
-                      </div>
-                    )}
+      <Modal isOpen={isOpen} size="4xl" onClose={onClose}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>
+                <div>
+                  <h3 className="text-xl font-bold">
+                    {sorteioSelecionado?.titulo}
+                  </h3>
+                  <p className="text-sm text-gray-500 font-normal mt-1">
+                    {sorteioSelecionado?.lote_nome} •{" "}
+                    {sorteioSelecionado?.total_sorteados} sorteados
+                  </p>
+                </div>
+              </ModalHeader>
+              <ModalBody>
+                {sorteioSelecionado?.descricao && (
+                  <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                    <p className="text-sm">{sorteioSelecionado.descricao}</p>
+                  </div>
+                )}
 
-                    <div className="grid grid-cols-3 gap-4 mb-4">
-                      <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Total Inscritos</p>
-                        <p className="text-2xl font-bold text-blue-600">{sorteioSelecionado?.total_inscritos}</p>
-                      </div>
-                      <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Sorteados</p>
-                        <p className="text-2xl font-bold text-green-600">{sorteioSelecionado?.total_sorteados}</p>
-                      </div>
-                      <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Realizado por</p>
-                        <p className="text-sm font-semibold text-purple-900 dark:text-purple-100">
-                          {sorteioSelecionado?.realizado_por_nome}
-                        </p>
-                      </div>
-                    </div>
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Total Inscritos
+                    </p>
+                    <p className="text-2xl font-bold text-blue-600">
+                      {sorteioSelecionado?.total_inscritos}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Sorteados
+                    </p>
+                    <p className="text-2xl font-bold text-green-600">
+                      {sorteioSelecionado?.total_sorteados}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Realizado por
+                    </p>
+                    <p className="text-sm font-semibold text-purple-900 dark:text-purple-100">
+                      {sorteioSelecionado?.realizado_por_nome}
+                    </p>
+                  </div>
+                </div>
 
-                    <div className="max-h-[400px] overflow-y-auto">
-                      <table className="w-full text-sm">
-                        <thead className="bg-gray-100 dark:bg-gray-800 sticky top-0">
-                          <tr>
-                            <th className="p-2 text-left">Rodada</th>
-                            <th className="p-2 text-left">Nome</th>
-                            <th className="p-2 text-left">CPF</th>
-                            <th className="p-2 text-left">Email</th>
-                            <th className="p-2 text-left">Celular</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {participantes.map((participante) => (
-                            <tr key={participante.id} className="border-b dark:border-gray-700">
-                              <td className="p-2">{participante.rodada}</td>
-                              <td className="p-2">{participante.nome_completo}</td>
-                              <td className="p-2">{formatarCPF(participante.cpf)}</td>
-                              <td className="p-2 text-xs">{participante.email}</td>
-                              <td className="p-2">{participante.celular}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button variant="light" onPress={onClose}>
-                      Fechar
-                    </Button>
-                    <Button
-                      color="primary"
-                      startContent={<DocumentTextIcon className="w-4 h-4" />}
-                      onPress={() => {
-                        if (sorteioSelecionado) {
-                          exportarPDF(sorteioSelecionado, participantes);
-                        }
-                      }}
-                    >
-                      Exportar PDF
-                    </Button>
-                  </ModalFooter>
-                </>
-              )}
+                <div className="max-h-[400px] overflow-y-auto">
+                  <Table
+                    aria-label="Tabela de participantes do sorteio"
+                    className="text-sm"
+                    removeWrapper
+                  >
+                    <TableHeader>
+                      <TableColumn>RODADA</TableColumn>
+                      <TableColumn>NOME</TableColumn>
+                      <TableColumn>CPF</TableColumn>
+                      <TableColumn>EMAIL</TableColumn>
+                      <TableColumn>CELULAR</TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                      {participantes.map((participante) => (
+                        <TableRow key={participante.id}>
+                          <TableCell>{participante.rodada}</TableCell>
+                          <TableCell>{participante.nome_completo}</TableCell>
+                          <TableCell>{formatarCPF(participante.cpf)}</TableCell>
+                          <TableCell className="text-xs">{participante.email}</TableCell>
+                          <TableCell>{participante.celular}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  Fechar
+                </Button>
+                <Button
+                  color="primary"
+                  startContent={<DocumentTextIcon className="w-4 h-4" />}
+                  onPress={() => {
+                    if (sorteioSelecionado) {
+                      exportarPDF(sorteioSelecionado, participantes);
+                    }
+                  }}
+                >
+                  Exportar PDF
+                </Button>
+              </ModalFooter>
+            </>
+          )}
         </ModalContent>
       </Modal>
     </AdminPageLayout>
   );
 }
-

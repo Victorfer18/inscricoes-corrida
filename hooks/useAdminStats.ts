@@ -24,7 +24,10 @@ export function useAdminStats(): UseAdminStatsReturn {
       setLoading(true);
       setError(null);
 
-      const token = JSON.parse(localStorage.getItem("admin_session") || "{}").token;
+      const token = JSON.parse(
+        localStorage.getItem("admin_session") || "{}",
+      ).token;
+
       if (!token) {
         throw new Error("Token de autenticação não encontrado");
       }

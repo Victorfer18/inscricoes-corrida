@@ -28,8 +28,9 @@ export async function GET(
     }
 
     // Obter o tipo de conteúdo
-    const contentType = response.headers.get("content-type") || "application/octet-stream";
-    
+    const contentType =
+      response.headers.get("content-type") || "application/octet-stream";
+
     // Obter os bytes da imagem
     const imageBuffer = await response.arrayBuffer();
 
@@ -45,7 +46,7 @@ export async function GET(
     });
   } catch (error) {
     console.error("Erro ao carregar arquivo do Google Drive:", error);
-    
+
     return NextResponse.json(
       { error: "Erro interno do servidor" },
       { status: 500 },

@@ -11,12 +11,12 @@ import { Link } from "@heroui/link";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { WhatsAppIcon, InstagramIcon } from "@/components/icons";
 import { EventLogo } from "@/components/event-logo";
-import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 export const Navbar = () => {
   return (
@@ -42,12 +42,15 @@ export const Navbar = () => {
                 className={clsx(
                   linkStyles({ color: "foreground" }),
                   "data-[active=true]:text-primary data-[active=true]:font-medium",
-                  item.label === "Admin" && "flex items-center gap-1 text-xs opacity-70 hover:opacity-100"
+                  item.label === "Admin" &&
+                    "flex items-center gap-1 text-xs opacity-70 hover:opacity-100",
                 )}
                 color="foreground"
                 href={item.href}
               >
-                {item.label === "Admin" && <UserCircleIcon className="w-4 h-4" />}
+                {item.label === "Admin" && (
+                  <UserCircleIcon className="w-4 h-4" />
+                )}
                 {item.label}
               </NextLink>
             </NavbarItem>
@@ -94,12 +97,15 @@ export const Navbar = () => {
                 className={clsx(
                   linkStyles({ color: "foreground" }),
                   "data-[active=true]:text-primary data-[active=true]:font-medium w-full",
-                  item.label === "Admin" && "flex items-center gap-2 text-sm opacity-70"
+                  item.label === "Admin" &&
+                    "flex items-center gap-2 text-sm opacity-70",
                 )}
                 color="foreground"
                 href={item.href}
               >
-                {item.label === "Admin" && <UserCircleIcon className="w-4 h-4" />}
+                {item.label === "Admin" && (
+                  <UserCircleIcon className="w-4 h-4" />
+                )}
                 {item.label}
               </NextLink>
             </NavbarMenuItem>

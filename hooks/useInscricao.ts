@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { InscricaoCreateResponse, ApiResponse } from "@/types/database";
-import { limparCPF, limparCelular } from "@/lib/utils";
+import { limparCPF } from "@/lib/utils";
 
 interface InscricaoFormData {
   nomeCompleto: string;

@@ -2,6 +2,7 @@
 
 import { Button } from "@heroui/button";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+
 import { title } from "@/components/primitives";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -25,11 +26,11 @@ export function AdminHeader({ titulo, descricao, children }: AdminHeaderProps) {
       <div className="flex flex-wrap gap-2">
         {children}
         <Button
-          color="danger"
-          variant="light"
-          size="sm"
           className="md:size-md"
+          color="danger"
+          size="sm"
           startContent={<ArrowRightOnRectangleIcon className="w-4 h-4" />}
+          variant="light"
           onPress={logout}
         >
           Sair
@@ -38,4 +39,3 @@ export function AdminHeader({ titulo, descricao, children }: AdminHeaderProps) {
     </div>
   );
 }
-

@@ -1,4 +1,3 @@
-
 export interface KitItem {
   id: string;
   name: string;
@@ -24,28 +23,32 @@ export const KIT_ITEMS: Record<string, KitItem> = {
   camiseta: {
     id: "camiseta",
     name: "Camiseta Oficial",
-    description: "Camiseta exclusiva do evento com design Outubro Rosa em tecido dry-fit de alta qualidade",
+    description:
+      "Camiseta exclusiva do evento com design Outubro Rosa em tecido dry-fit de alta qualidade",
     image: "/kit/camiseta.png",
     icon: "👕",
   },
   medalha: {
     id: "medalha",
     name: "Medalha de Participação",
-    description: "Medalha comemorativa personalizada para todos os participantes da corrida",
+    description:
+      "Medalha comemorativa personalizada para todos os participantes da corrida",
     image: "/kit/medalha.png",
     icon: "🏅",
   },
   bolsa: {
     id: "bolsa",
     name: "Bolsa Esportiva",
-    description: "Bolsa prática e resistente para carregar seus pertences durante o evento",
+    description:
+      "Bolsa prática e resistente para carregar seus pertences durante o evento",
     image: "/kit/bolsa.png",
     icon: "🎒",
   },
   garrafa: {
     id: "garrafa",
     name: "Garrafa de Água",
-    description: "Garrafa reutilizável com logo do evento para hidratação durante a corrida",
+    description:
+      "Garrafa reutilizável com logo do evento para hidratação durante a corrida",
     image: "/kit/garrafa.png",
     icon: "💧",
   },
@@ -81,14 +84,12 @@ export const aplicarConfiguracaoLote = (loteBasico: LoteBasico): LoteComKit => {
         KIT_ITEMS.barra,
         KIT_ITEMS.medalha,
       ];
-      loteComKit.requisitos_especiais = "Para retirar o kit é necessário trazer 1kg de alimento não perecível";
+      loteComKit.requisitos_especiais =
+        "Para retirar o kit é necessário trazer 1kg de alimento não perecível";
       break;
 
     case "3º Lote":
-      loteComKit.kit_items = [
-        KIT_ITEMS.camiseta,
-        KIT_ITEMS.medalha,
-      ];
+      loteComKit.kit_items = [KIT_ITEMS.camiseta, KIT_ITEMS.medalha];
       break;
 
     default:
@@ -107,7 +108,7 @@ export const aplicarConfiguracaoLote = (loteBasico: LoteBasico): LoteComKit => {
 
 export const fetchLoteVigente = async (): Promise<LoteComKit | null> => {
   try {
-    const response = await fetch('/api/lotes');
+    const response = await fetch("/api/lotes");
     const result = await response.json();
 
     if (!result.success || !result.data.loteVigente) {
@@ -115,6 +116,7 @@ export const fetchLoteVigente = async (): Promise<LoteComKit | null> => {
     }
 
     const loteBasico = result.data.loteVigente;
+
     return aplicarConfiguracaoLote(loteBasico);
   } catch (error) {
     return null;
@@ -123,7 +125,7 @@ export const fetchLoteVigente = async (): Promise<LoteComKit | null> => {
 
 export const fetchAllLotes = async (): Promise<LoteComKit[]> => {
   try {
-    const response = await fetch('/api/lotes');
+    const response = await fetch("/api/lotes");
     const result = await response.json();
 
     if (!result.success || !result.data.lotes) {
@@ -131,7 +133,10 @@ export const fetchAllLotes = async (): Promise<LoteComKit[]> => {
     }
 
     const lotesBasicos = result.data.lotes;
-    return lotesBasicos.map((lote: LoteBasico) => aplicarConfiguracaoLote(lote));
+
+    return lotesBasicos.map((lote: LoteBasico) =>
+      aplicarConfiguracaoLote(lote),
+    );
   } catch (error) {
     return [];
   }

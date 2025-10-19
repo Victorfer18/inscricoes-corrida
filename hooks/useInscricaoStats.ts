@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
+
 import { Lote } from "@/types/inscricao";
 
 const supabase = createClient(
@@ -56,11 +57,17 @@ export function useInscricaoStats() {
 
       // Determinar se é o último lote e qual é o próximo
       // Ordenar por nome para manter consistência
-      const lotesOrdenados = lotes.sort((a: Lote, b: Lote) => a.nome.localeCompare(b.nome));
-      
-      const indexLoteAtual = lotesOrdenados.findIndex((lote: Lote) => lote.id === loteVigente.id);
+      const lotesOrdenados = lotes.sort((a: Lote, b: Lote) =>
+        a.nome.localeCompare(b.nome),
+      );
+
+      const indexLoteAtual = lotesOrdenados.findIndex(
+        (lote: Lote) => lote.id === loteVigente.id,
+      );
       const isUltimoLote = indexLoteAtual === lotesOrdenados.length - 1;
-      const proximoLote = isUltimoLote ? null : lotesOrdenados[indexLoteAtual + 1];
+      const proximoLote = isUltimoLote
+        ? null
+        : lotesOrdenados[indexLoteAtual + 1];
 
       // Buscar inscrições do lote vigente
       const { count: totalCount, error: totalError } = await supabase

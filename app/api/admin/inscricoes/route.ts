@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAuth } from "@/lib/auth-middleware";
 
@@ -30,9 +31,8 @@ async function handleGetInscricoes(request: NextRequest) {
 
     const offset = (page - 1) * limit;
 
-    let query = supabaseAdmin
-      .from("inscricoes")
-      .select(`
+    let query = supabaseAdmin.from("inscricoes").select(
+      `
         id,
         nome_completo,
         cpf,
@@ -49,7 +49,9 @@ async function handleGetInscricoes(request: NextRequest) {
           nome,
           valor
         )
-      `, { count: "exact" });
+      `,
+      { count: "exact" },
+    );
 
     if (status && status !== "todos") {
       query = query.eq("status", status);
@@ -60,10 +62,16 @@ async function handleGetInscricoes(request: NextRequest) {
     }
 
     if (search) {
-      query = query.or(`nome_completo.ilike.%${search}%,email.ilike.%${search}%,cpf.ilike.%${search}%`);
+      query = query.or(
+        `nome_completo.ilike.%${search}%,email.ilike.%${search}%,cpf.ilike.%${search}%`,
+      );
     }
 
-    const { data: inscricoes, error, count } = await query
+    const {
+      data: inscricoes,
+      error,
+      count,
+    } = await query
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -71,24 +79,25 @@ async function handleGetInscricoes(request: NextRequest) {
       throw new Error(error.message);
     }
 
-    const formattedInscricoes: InscricaoAdmin[] = inscricoes?.map((inscricao: any) => ({
-      id: inscricao.id,
-      nome_completo: inscricao.nome_completo,
-      cpf: inscricao.cpf,
-      email: inscricao.email,
-      celular: inscricao.celular,
-      idade: inscricao.idade,
-      sexo: inscricao.sexo,
-      tamanho_blusa: inscricao.tamanho_blusa,
-      status: inscricao.status,
-      comprovante_url: inscricao.comprovante_file_id 
-        ? `/api/files/${inscricao.comprovante_file_id}`
-        : undefined,
-      lote_nome: inscricao.lotes?.nome || "N/A",
-      lote_valor: inscricao.lotes?.valor || undefined,
-      created_at: inscricao.created_at,
-      updated_at: inscricao.updated_at,
-    })) || [];
+    const formattedInscricoes: InscricaoAdmin[] =
+      inscricoes?.map((inscricao: any) => ({
+        id: inscricao.id,
+        nome_completo: inscricao.nome_completo,
+        cpf: inscricao.cpf,
+        email: inscricao.email,
+        celular: inscricao.celular,
+        idade: inscricao.idade,
+        sexo: inscricao.sexo,
+        tamanho_blusa: inscricao.tamanho_blusa,
+        status: inscricao.status,
+        comprovante_url: inscricao.comprovante_file_id
+          ? `/api/files/${inscricao.comprovante_file_id}`
+          : undefined,
+        lote_nome: inscricao.lotes?.nome || "N/A",
+        lote_valor: inscricao.lotes?.valor || undefined,
+        created_at: inscricao.created_at,
+        updated_at: inscricao.updated_at,
+      })) || [];
 
     const totalPages = Math.ceil((count || 0) / limit);
 
@@ -112,7 +121,7 @@ async function handleGetInscricoes(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

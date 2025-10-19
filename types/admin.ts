@@ -2,7 +2,7 @@ export interface AdminUser {
   id: string;
   email: string;
   nome: string;
-  role: 'super_admin' | 'admin' | 'moderator';
+  role: "super_admin" | "admin" | "moderator";
   created_at?: string;
   updated_at?: string;
 }
@@ -26,7 +26,7 @@ export interface AdminPermissions {
   can_manage_lotes: boolean;
 }
 
-export const ROLE_PERMISSIONS: Record<AdminUser['role'], AdminPermissions> = {
+export const ROLE_PERMISSIONS: Record<AdminUser["role"], AdminPermissions> = {
   super_admin: {
     can_edit_inscricoes: true,
     can_delete_inscricoes: true,

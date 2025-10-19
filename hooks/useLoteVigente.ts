@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchLoteVigente, type LoteComKit, type KitItem } from "@/config/lotes";
+
+import {
+  fetchLoteVigente,
+  type LoteComKit,
+  type KitItem,
+} from "@/config/lotes";
 
 interface UseLoteVigenteReturn {
   loteVigente: LoteComKit | null;
@@ -22,6 +27,7 @@ export function useLoteVigente(): UseLoteVigenteReturn {
         setLoading(true);
         setError(null);
         const lote = await fetchLoteVigente();
+
         setLoteVigente(lote);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro desconhecido");

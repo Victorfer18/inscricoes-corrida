@@ -14,34 +14,34 @@ export function AdminNavButtons({ currentPage }: AdminNavButtonsProps) {
     <>
       {currentPage !== "dashboard" && (
         <Button
-          color="default"
-          variant="bordered"
-          size="sm"
           className="md:size-md"
+          color="default"
+          size="sm"
+          variant="bordered"
           onPress={() => router.push("/admin/dashboard")}
         >
           <span className="hidden sm:inline">Dashboard</span>
           <span className="sm:hidden">🏠</span>
         </Button>
       )}
-      
+
       {currentPage !== "sorteios" && currentPage !== "historico" && (
         <>
           <Button
-            color="secondary"
-            variant="flat"
-            size="sm"
             className="md:size-md"
+            color="secondary"
+            size="sm"
+            variant="flat"
             onPress={() => router.push("/admin/sorteios")}
           >
             <span className="hidden sm:inline">Sorteios</span>
             <span className="sm:hidden">🎲</span>
           </Button>
           <Button
-            color="default"
-            variant="flat"
-            size="sm"
             className="md:size-md"
+            color="default"
+            size="sm"
+            variant="flat"
             onPress={() => router.push("/admin/sorteios/historico")}
           >
             <span className="hidden sm:inline">Histórico</span>
@@ -49,26 +49,26 @@ export function AdminNavButtons({ currentPage }: AdminNavButtonsProps) {
           </Button>
         </>
       )}
-      
+
       {currentPage === "historico" && (
         <Button
-          color="primary"
-          variant="flat"
-          size="sm"
           className="md:size-md"
+          color="primary"
+          size="sm"
+          variant="flat"
           onPress={() => router.push("/admin/sorteios")}
         >
           <span className="hidden sm:inline">Novo Sorteio</span>
           <span className="sm:hidden">➕ Sorteio</span>
         </Button>
       )}
-      
+
       {currentPage === "sorteios" && (
         <Button
-          color="primary"
-          variant="flat"
-          size="sm"
           className="md:size-md"
+          color="primary"
+          size="sm"
+          variant="flat"
           onPress={() => router.push("/admin/sorteios/historico")}
         >
           <span className="hidden sm:inline">Ver Histórico</span>
@@ -78,4 +78,3 @@ export function AdminNavButtons({ currentPage }: AdminNavButtonsProps) {
     </>
   );
 }
-

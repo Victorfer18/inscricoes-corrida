@@ -5,6 +5,7 @@ import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Image } from "@heroui/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+
 import { formatarMoeda } from "@/lib/utils";
 import { useLoteVigente } from "@/hooks/useLoteVigente";
 
@@ -44,8 +45,10 @@ export function KitSlider() {
     return (
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Carregando itens do kit...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">
+            Carregando itens do kit...
+          </p>
         </div>
       </div>
     );
@@ -83,7 +86,9 @@ export function KitSlider() {
                         className="object-contain w-full h-full"
                         fallbackSrc={`data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180"><rect width="180" height="180" fill="%23f3f4f6"/><text x="90" y="110" text-anchor="middle" font-size="60">${kitItems[currentIndex]?.icon || "📦"}</text></svg>`}
                         height={180}
-                        src={kitItems[currentIndex]?.image || "/kit/kit-all.png"}
+                        src={
+                          kitItems[currentIndex]?.image || "/kit/kit-all.png"
+                        }
                         width={180}
                       />
                     </div>
@@ -100,7 +105,8 @@ export function KitSlider() {
                   {kitItems[currentIndex]?.name || "Item do Kit"}
                 </h3>
                 <p className="text-sm sm:text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed px-2 md:px-0">
-                  {kitItems[currentIndex]?.description || "Descrição não disponível"}
+                  {kitItems[currentIndex]?.description ||
+                    "Descrição não disponível"}
                 </p>
 
                 <div className="flex items-center justify-center md:justify-start gap-2 mt-4 sm:mt-6">

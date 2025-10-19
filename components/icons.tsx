@@ -297,4 +297,3 @@ export const InstagramIcon = (props: IconSvgProps) => (
     />
   </svg>
 );
-

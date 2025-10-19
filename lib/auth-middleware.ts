@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
+
 import { supabaseAdmin } from "@/lib/supabase";
 import { AdminUser } from "@/types/admin";
 
@@ -9,10 +10,12 @@ export interface AuthenticatedRequest extends NextRequest {
   user?: AdminUser;
 }
 
-export async function authenticateAdmin(request: NextRequest): Promise<AdminUser | null> {
+export async function authenticateAdmin(
+  request: NextRequest,
+): Promise<AdminUser | null> {
   try {
     const authorization = request.headers.get("Authorization");
-    
+
     if (!authorization || !authorization.startsWith("Bearer ")) {
       return null;
     }
@@ -21,6 +24,7 @@ export async function authenticateAdmin(request: NextRequest): Promise<AdminUser
 
     // Verificar e decodificar token
     let decoded: any;
+
     try {
       decoded = jwt.verify(token, JWT_SECRET);
     } catch (error) {
@@ -48,22 +52,26 @@ export async function authenticateAdmin(request: NextRequest): Promise<AdminUser
     };
   } catch (error) {
     console.error("Erro na autenticação:", error);
+
     return null;
   }
 }
 
-export function requireAuth(handler: (request: NextRequest, user: AdminUser, context?: any) => Promise<Response>) {
+export function requireAuth(
+  handler: (
+    request: NextRequest,
+    user: AdminUser,
+    context?: any,
+  ) => Promise<Response>,
+) {
   return async (request: NextRequest, context?: any) => {
     const user = await authenticateAdmin(request);
-    
+
     if (!user) {
-      return new Response(
-        JSON.stringify({ message: "Acesso negado" }),
-        {
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ message: "Acesso negado" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     return handler(request, user, context);

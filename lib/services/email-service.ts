@@ -41,8 +41,7 @@ class EmailService {
   private initializeTransporter() {
     try {
       this.transporter = nodemailer.createTransport(this.config);
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   private async verifyConnection(): Promise<boolean> {
@@ -88,6 +87,7 @@ class EmailService {
       };
 
       const result = await this.transporter.sendMail(mailOptions);
+
       return true;
     } catch (error) {
       return false;
@@ -101,7 +101,10 @@ class EmailService {
       .trim();
   }
 
-  async sendConfirmationEmail(inscricaoData: InscricaoData, valor?: number): Promise<boolean> {
+  async sendConfirmationEmail(
+    inscricaoData: InscricaoData,
+    valor?: number,
+  ): Promise<boolean> {
     if (!inscricaoData.email) {
       return false;
     }
@@ -117,7 +120,10 @@ class EmailService {
     });
   }
 
-  private generateConfirmationEmailTemplate(inscricao: InscricaoData, valor?: number): string {
+  private generateConfirmationEmailTemplate(
+    inscricao: InscricaoData,
+    valor?: number,
+  ): string {
     const dataEvento = "26 de Outubro de 2025";
     const horaEvento = "06h00 (Concentração)";
     const localEvento = "Trevo do Eltinho - Projeto Jaíba/NS2";

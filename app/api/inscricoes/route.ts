@@ -129,8 +129,7 @@ export async function POST(
     if (inscricao && inscricao.email) {
       try {
         await emailService.sendConfirmationEmail(inscricao, loteVigente.valor);
-      } catch (emailError) {
-      }
+      } catch (emailError) {}
     }
 
     return NextResponse.json({

@@ -10,11 +10,11 @@ import {
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Spinner } from "@heroui/spinner";
-import { 
-  DocumentIcon, 
-  XMarkIcon, 
+import {
+  DocumentIcon,
+  XMarkIcon,
   ArrowsPointingOutIcon,
-  ArrowsPointingInIcon 
+  ArrowsPointingInIcon,
 } from "@heroicons/react/24/outline";
 
 interface ComprovanteViewerProps {
@@ -36,59 +36,78 @@ export function ComprovanteViewer({
   const [isMaximized, setIsMaximized] = useState(false);
 
   // Função para obter a URL real do arquivo
-  const fetchActualUrl = useCallback(async (url: string) => {
-    try {
-      setLoading(true);
-      setError(false);
+  const fetchActualUrl = useCallback(
+    async (url: string) => {
+      try {
+        setLoading(true);
+        setError(false);
 
-      // Se já é uma URL completa do Google Drive, usar diretamente
-      if (url.includes('drive.google.com/uc?id=')) {
-        const fileId = url.split('id=')[1];
-        setActualUrl(`/api/files/${fileId}/view`);
-        return;
-      }
+        // Se já é uma URL completa do Google Drive, usar diretamente
+        if (url.includes("drive.google.com/uc?id=")) {
+          const fileId = url.split("id=")[1];
 
-      // Se é uma URL da nossa API (/api/files/fileId), buscar a URL real
-      if (url.startsWith('/api/files/') && !url.includes('/view')) {
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.data.url.includes('drive.google.com/uc?id=')) {
-            const fileId = data.data.url.split('id=')[1];
-            setActualUrl(`/api/files/${fileId}/view`);
-          } else {
-            setActualUrl(data.data.url);
-          }
-        } else {
-          throw new Error('Falha ao carregar URL do arquivo');
+          setActualUrl(`/api/files/${fileId}/view`);
+
+          return;
         }
-        return;
-      }
 
-      // Se é apenas um fileId, buscar a URL na API
-      if (!url.includes('http') && !url.startsWith('/')) {
-        const response = await fetch(`/api/files/${url}`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.data.url.includes('drive.google.com/uc?id=')) {
-            const fileId = data.data.url.split('id=')[1];
-            setActualUrl(`/api/files/${fileId}/view`);
+        // Se é uma URL da nossa API (/api/files/fileId), buscar a URL real
+        if (url.startsWith("/api/files/") && !url.includes("/view")) {
+          const response = await fetch(url);
+
+          if (response.ok) {
+            const data = await response.json();
+
+            if (
+              data.success &&
+              data.data.url.includes("drive.google.com/uc?id=")
+            ) {
+              const fileId = data.data.url.split("id=")[1];
+
+              setActualUrl(`/api/files/${fileId}/view`);
+            } else {
+              setActualUrl(data.data.url);
+            }
           } else {
-            setActualUrl(data.data.url);
+            throw new Error("Falha ao carregar URL do arquivo");
           }
-        } else {
-          throw new Error('Falha ao carregar URL do arquivo');
-        }
-        return;
-      }
 
-      // URL externa normal
-      setActualUrl(url);
-    } catch (err) {
-      console.error('Erro ao buscar URL do arquivo:', err);
-      setError(true);
-    }
-  }, [setLoading, setError, setActualUrl]);
+          return;
+        }
+
+        // Se é apenas um fileId, buscar a URL na API
+        if (!url.includes("http") && !url.startsWith("/")) {
+          const response = await fetch(`/api/files/${url}`);
+
+          if (response.ok) {
+            const data = await response.json();
+
+            if (
+              data.success &&
+              data.data.url.includes("drive.google.com/uc?id=")
+            ) {
+              const fileId = data.data.url.split("id=")[1];
+
+              setActualUrl(`/api/files/${fileId}/view`);
+            } else {
+              setActualUrl(data.data.url);
+            }
+          } else {
+            throw new Error("Falha ao carregar URL do arquivo");
+          }
+
+          return;
+        }
+
+        // URL externa normal
+        setActualUrl(url);
+      } catch (err) {
+        console.error("Erro ao buscar URL do arquivo:", err);
+        setError(true);
+      }
+    },
+    [setLoading, setError, setActualUrl],
+  );
 
   // Buscar URL quando o modal abrir e limpar quando fechar
   useEffect(() => {
@@ -103,7 +122,8 @@ export function ComprovanteViewer({
     }
   }, [isOpen, comprovanteUrl, fetchActualUrl]);
 
-  const isPDF = comprovanteUrl.includes('.pdf') || comprovanteUrl.includes('pdf');
+  const isPDF =
+    comprovanteUrl.includes(".pdf") || comprovanteUrl.includes("pdf");
 
   const handleImageLoad = () => {
     setLoading(false);
@@ -122,48 +142,57 @@ export function ComprovanteViewer({
   const openInNewTab = async () => {
     try {
       // Se é uma URL da nossa API, buscar a URL original do Google Drive
-      if (comprovanteUrl.startsWith('/api/files/') && !comprovanteUrl.includes('/view')) {
+      if (
+        comprovanteUrl.startsWith("/api/files/") &&
+        !comprovanteUrl.includes("/view")
+      ) {
         const response = await fetch(comprovanteUrl);
+
         if (response.ok) {
           const data = await response.json();
+
           if (data.success) {
-            window.open(data.data.url, '_blank');
+            window.open(data.data.url, "_blank");
+
             return;
           }
         }
       }
-      
+
       // Se é apenas um fileId, buscar a URL original
-      if (!comprovanteUrl.includes('http') && !comprovanteUrl.startsWith('/')) {
+      if (!comprovanteUrl.includes("http") && !comprovanteUrl.startsWith("/")) {
         const response = await fetch(`/api/files/${comprovanteUrl}`);
+
         if (response.ok) {
           const data = await response.json();
+
           if (data.success) {
-            window.open(data.data.url, '_blank');
+            window.open(data.data.url, "_blank");
+
             return;
           }
         }
       }
-      
+
       // Usar URL direta se já for uma URL completa
-      window.open(comprovanteUrl, '_blank');
+      window.open(comprovanteUrl, "_blank");
     } catch (error) {
-      console.error('Erro ao abrir arquivo:', error);
+      console.error("Erro ao abrir arquivo:", error);
       // Fallback para URL original
-      window.open(comprovanteUrl, '_blank');
+      window.open(comprovanteUrl, "_blank");
     }
   };
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onClose={onClose}
-      size={isMaximized ? "full" : "2xl"}
-      scrollBehavior="inside"
+    <Modal
       classNames={{
         base: isMaximized ? "h-screen w-screen max-h-screen" : "max-h-[90vh]",
         body: "p-0",
       }}
+      isOpen={isOpen}
+      scrollBehavior="inside"
+      size={isMaximized ? "full" : "2xl"}
+      onClose={onClose}
     >
       <ModalContent>
         {(onClose) => (
@@ -179,9 +208,9 @@ export function ComprovanteViewer({
               </div>
               <Button
                 isIconOnly
+                title={isMaximized ? "Minimizar" : "Maximizar"}
                 variant="light"
                 onPress={toggleMaximized}
-                title={isMaximized ? "Minimizar" : "Maximizar"}
               >
                 {isMaximized ? (
                   <ArrowsPointingInIcon className="w-5 h-5" />
@@ -190,9 +219,11 @@ export function ComprovanteViewer({
                 )}
               </Button>
             </ModalHeader>
-            
+
             <ModalBody className="px-0 py-0">
-              <div className={`relative w-full ${isMaximized ? 'min-h-[calc(100vh-120px)]' : 'min-h-[400px]'} bg-gray-50 dark:bg-gray-800 flex items-center justify-center`}>
+              <div
+                className={`relative w-full ${isMaximized ? "min-h-[calc(100vh-120px)]" : "min-h-[400px]"} bg-gray-50 dark:bg-gray-800 flex items-center justify-center`}
+              >
                 {loading && (
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700">
                     <div className="text-center">
@@ -232,8 +263,8 @@ export function ComprovanteViewer({
                       </p>
                       <Button
                         color="primary"
-                        onPress={openInNewTab}
                         startContent={<DocumentIcon className="w-4 h-4" />}
+                        onPress={openInNewTab}
                       >
                         Abrir PDF
                       </Button>
@@ -242,23 +273,23 @@ export function ComprovanteViewer({
                 ) : (
                   actualUrl && (
                     <img
-                      src={actualUrl}
                       alt={`Comprovante de ${nomeParticipante}`}
-                      className={`max-w-full ${isMaximized ? 'max-h-[calc(100vh-140px)]' : 'max-h-[70vh]'} object-contain ${loading ? 'opacity-0' : 'opacity-100'}`}
-                      onLoad={handleImageLoad}
+                      className={`max-w-full ${isMaximized ? "max-h-[calc(100vh-140px)]" : "max-h-[70vh]"} object-contain ${loading ? "opacity-0" : "opacity-100"}`}
+                      src={actualUrl}
                       onError={handleImageError}
+                      onLoad={handleImageLoad}
                     />
                   )
                 )}
               </div>
             </ModalBody>
-            
+
             <ModalFooter className="px-6 py-4">
               <Button
                 color="danger"
+                startContent={<XMarkIcon className="w-4 h-4" />}
                 variant="light"
                 onPress={onClose}
-                startContent={<XMarkIcon className="w-4 h-4" />}
               >
                 Fechar
               </Button>

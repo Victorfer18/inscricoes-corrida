@@ -44,4 +44,3 @@ export interface SalvarSorteioRequest {
     rodada: number;
   }>;
 }
-

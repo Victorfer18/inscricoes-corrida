@@ -14,7 +14,9 @@ import { useInscricoesStats } from "@/hooks/useInscricoesStats";
 
 export default function RegulamentoPage() {
   const { valor, loading, loteVigente } = useLoteVigente();
-  const { total: totalInscricoes, loading: loadingStats } = useInscricoesStats();
+  const { total: totalInscricoes, loading: loadingStats } =
+    useInscricoesStats();
+
   return (
     <BackgroundWrapper intensity="strong" showAnimation={false}>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -47,8 +49,8 @@ export default function RegulamentoPage() {
             <div>
               <h3 className="font-semibold text-lg mb-2">Evento:</h3>
               <p>
-            Corrida Solidária Outubro Rosa - &ldquo;Eles e Elas Correndo Pela
-            Vida&rdquo;
+                Corrida Solidária Outubro Rosa - &ldquo;Eles e Elas Correndo
+                Pela Vida&rdquo;
               </p>
             </div>
 
@@ -82,7 +84,9 @@ export default function RegulamentoPage() {
                 <strong>{eventConfig.dataEvento}</strong>
               </p>
               <p>
-                Concentração a partir das <strong>{eventConfig.horarioConcentracao}</strong> no {eventConfig.local}
+                Concentração a partir das{" "}
+                <strong>{eventConfig.horarioConcentracao}</strong> no{" "}
+                {eventConfig.local}
               </p>
             </div>
 
@@ -217,12 +221,14 @@ export default function RegulamentoPage() {
               </p>
               {loteVigente && (
                 <p className="text-sm text-default-600 mt-1">
-                  <strong>{loteVigente.nome}</strong> - {loteVigente.total_vagas} vagas disponíveis
+                  <strong>{loteVigente.nome}</strong> -{" "}
+                  {loteVigente.total_vagas} vagas disponíveis
                 </p>
               )}
               {loteVigente?.requisitos_especiais && (
                 <p className="text-sm text-orange-600 dark:text-orange-400 mt-2 font-medium">
-                  ⚠️ <strong>Requisito especial:</strong> {loteVigente.requisitos_especiais}
+                  ⚠️ <strong>Requisito especial:</strong>{" "}
+                  {loteVigente.requisitos_especiais}
                 </p>
               )}
             </div>
@@ -239,7 +245,8 @@ export default function RegulamentoPage() {
               <h3 className="font-semibold mb-2">Confirmação:</h3>
               <p>
                 A inscrição só será efetivada após a confirmação do pagamento.
-                Deverá ser encaminhado o comprovante de pagamento no preenchimento do formulário.
+                Deverá ser encaminhado o comprovante de pagamento no
+                preenchimento do formulário.
               </p>
             </div>
 
@@ -247,14 +254,11 @@ export default function RegulamentoPage() {
               <h3 className="font-semibold mb-2">Limite de Vagas:</h3>
               <p>
                 O número de vagas será limitado a{" "}
-                <strong>
-                  {loteVigente?.total_vagas || 200} participantes
-                </strong>{" "}
+                <strong>{loteVigente?.total_vagas || 200} participantes</strong>{" "}
                 no {loteVigente?.nome || "lote atual"}, respeitando a ordem de
                 inscrição.
               </p>
             </div>
-
           </CardBody>
         </Card>
 

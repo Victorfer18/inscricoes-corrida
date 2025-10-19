@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAuth } from "@/lib/auth-middleware";
 
@@ -24,7 +25,8 @@ async function handleGetInscricoesConfirmadas(request: NextRequest) {
     // Construir query base
     let query = supabaseAdmin
       .from("inscricoes")
-      .select(`
+      .select(
+        `
         id,
         nome_completo,
         cpf,
@@ -38,7 +40,8 @@ async function handleGetInscricoesConfirmadas(request: NextRequest) {
           nome,
           valor
         )
-      `)
+      `,
+      )
       .eq("status", "confirmado");
 
     // Se não for "todos", filtrar por lote específico
@@ -47,26 +50,28 @@ async function handleGetInscricoesConfirmadas(request: NextRequest) {
     }
 
     // Buscar inscrições confirmadas
-    const { data: inscricoes, error } = await query
-      .order("nome_completo", { ascending: true });
+    const { data: inscricoes, error } = await query.order("nome_completo", {
+      ascending: true,
+    });
 
     if (error) {
       throw new Error(error.message);
     }
 
-    const formattedInscricoes: InscricaoConfirmada[] = inscricoes?.map((inscricao: any) => ({
-      id: inscricao.id,
-      nome_completo: inscricao.nome_completo,
-      cpf: inscricao.cpf,
-      email: inscricao.email,
-      celular: inscricao.celular,
-      idade: inscricao.idade,
-      sexo: inscricao.sexo,
-      tamanho_blusa: inscricao.tamanho_blusa,
-      lote_nome: inscricao.lotes?.nome || "N/A",
-      lote_valor: inscricao.lotes?.valor || 0,
-      created_at: inscricao.created_at,
-    })) || [];
+    const formattedInscricoes: InscricaoConfirmada[] =
+      inscricoes?.map((inscricao: any) => ({
+        id: inscricao.id,
+        nome_completo: inscricao.nome_completo,
+        cpf: inscricao.cpf,
+        email: inscricao.email,
+        celular: inscricao.celular,
+        idade: inscricao.idade,
+        sexo: inscricao.sexo,
+        tamanho_blusa: inscricao.tamanho_blusa,
+        lote_nome: inscricao.lotes?.nome || "N/A",
+        lote_valor: inscricao.lotes?.valor || 0,
+        created_at: inscricao.created_at,
+      })) || [];
 
     return NextResponse.json({
       success: true,
@@ -81,10 +86,9 @@ async function handleGetInscricoesConfirmadas(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export const GET = requireAuth(handleGetInscricoesConfirmadas);
-

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireAuth } from "@/lib/auth-middleware";
 import { AdminUser } from "@/types/admin";
 
 async function handleUpdateInscricao(
-  request: NextRequest, 
+  request: NextRequest,
   user: AdminUser,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await context.params;
@@ -16,16 +17,17 @@ async function handleUpdateInscricao(
     if (!status) {
       return NextResponse.json(
         { success: false, error: "Status é obrigatório" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Validar status
     const validStatuses = ["pendente", "confirmado", "cancelada"];
+
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
         { success: false, error: "Status inválido" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -59,12 +61,13 @@ async function handleUpdateInscricao(
     });
   } catch (error) {
     console.error("Erro ao atualizar inscrição:", error);
+
     return NextResponse.json(
       {
         success: false,
         error: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -72,21 +75,23 @@ async function handleUpdateInscricao(
 async function handleGetInscricao(
   request: NextRequest,
   user: AdminUser,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await context.params;
 
     const { data: inscricao, error } = await supabaseAdmin
       .from("inscricoes")
-      .select(`
+      .select(
+        `
         *,
         lotes (
           nome,
           total_vagas,
           valor
         )
-      `)
+      `,
+      )
       .eq("id", id)
       .single();
 
@@ -97,7 +102,7 @@ async function handleGetInscricao(
     if (!inscricao) {
       return NextResponse.json(
         { success: false, error: "Inscrição não encontrada" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -107,12 +112,13 @@ async function handleGetInscricao(
     });
   } catch (error) {
     console.error("Erro ao buscar inscrição:", error);
+
     return NextResponse.json(
       {
         success: false,
         error: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
