@@ -394,6 +394,31 @@ export default function AdminDashboardPage() {
           </Card>
         </div>
 
+        {/* Ações Rápidas */}
+        <Card className="mb-6">
+          <CardBody>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                color="secondary"
+                size="lg"
+                className="flex-1"
+                onPress={() => router.push("/admin/sorteios")}
+              >
+                🎲 Realizar Sorteios de Inscritos
+              </Button>
+              <Button
+                color="default"
+                variant="bordered"
+                size="lg"
+                className="flex-1"
+                onPress={() => router.push("/admin/sorteios/historico")}
+              >
+                📋 Histórico de Sorteios
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
+
         {/* Filtros e Ações */}
         <Card className="mb-6">
           <CardBody>

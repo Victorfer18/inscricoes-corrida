@@ -48,7 +48,7 @@ export default function InscricaoPage() {
                   className="font-semibold"
                   startContent={<RunnerIcon />}
                 >
-                  Voltar ao Início
+                  Início
                 </Button>
                 
                 <Button
