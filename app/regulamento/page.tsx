@@ -115,13 +115,10 @@ export default function RegulamentoPage() {
             <div>
               <h3 className="font-semibold text-lg mb-2">Percurso:</h3>
               <p>
-                Saída do Trevo do Eltinho, virando à esquerda em direção à ponte
-                do Jaibão, seguindo pela estrada de terra até a região do
-                Cardoso Society, com retorno ao trevo de Eltinho, NS2.
+                O percurso da <strong>Caminhada 2,5km</strong> terá início na estrada ao lado da Quadra Poliesportiva do NS2, no Projeto Jaíba. Os participantes seguirão em direção à área rural, entrando na primeira rua à direita (Rua A) em direção à comunidade NS2. O trajeto continua com uma curva à esquerda, passando por uma ponte pequena que conecta à área rural. Em seguida, será feita uma nova curva à direita para retornar à comunidade NS2, onde os inscritos completarão duas voltas pelas ruas internas da comunidade. O percurso termina na linha de chegada localizada na quadra poliesportiva.
               </p>
               <p className="text-sm text-default-600 mt-2">
-                O trajeto será sinalizado com cones e contará com orientadores e
-                equipe de apoio.
+                Todo o trajeto será devidamente sinalizado com cones e contará com orientadores e equipe de apoio para garantir a segurança dos participantes.
               </p>
             </div>
 

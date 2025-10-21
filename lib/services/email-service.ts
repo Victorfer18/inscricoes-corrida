@@ -126,7 +126,7 @@ class EmailService {
   ): string {
     const dataEvento = "26 de Outubro de 2025";
     const horaEvento = "06h00 (Concentração)";
-    const localEvento = "Trevo do Eltinho - Projeto Jaíba/NS2";
+    const localEvento = "NS2 QUADRA POLIESPORTIVA";
 
     return `
 <!DOCTYPE html>

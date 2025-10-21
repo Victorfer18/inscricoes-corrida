@@ -132,7 +132,7 @@ export default function Home() {
                       Local
                     </h4>
                     <p className="text-lg sm:text-xl font-semibold">
-                      Trevo do Eltinho
+                    QUADRA POLIESPORTIVA
                     </p>
                     <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                       Projeto Jaíba/NS2
@@ -264,110 +264,150 @@ export default function Home() {
       <section className="py-12">
         <div className="max-w-4xl mx-auto px-4">
           <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-300 dark:border-green-700 shadow-2xl">
-            <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-white text-center">
-              <div>
-                <h2 className="text-3xl font-bold mb-2">
-                  💳 Inscrições Abertas!
-                </h2>
-                <p className="text-green-100">
-                  Garante já sua vaga nesta causa importante
-                </p>
-              </div>
-            </CardHeader>
-            <CardBody className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div className="space-y-6">
-                  <div className="text-center">
-                    <div className="text-3xl sm:text-4xl md:text-6xl font-bold text-green-600 mb-2 break-words leading-tight">
-                      {loading ? "Carregando..." : formatarMoeda(valor)}
-                    </div>
-                    <p className="text-lg text-gray-600 dark:text-gray-400">
-                      {loteVigente?.nome || "Lote Atual"} - Kit completo incluso
-                      na inscrição
+            {loteVigente ? (
+              <>
+                <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-white text-center">
+                  <div>
+                    <h2 className="text-3xl font-bold mb-2">
+                      💳 Inscrições Abertas!
+                    </h2>
+                    <p className="text-green-100">
+                      Garante já sua vaga nesta causa importante
                     </p>
                   </div>
+                </CardHeader>
+                <CardBody className="p-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div className="space-y-6">
+                      <div className="text-center">
+                        <div className="text-3xl sm:text-4xl md:text-6xl font-bold text-green-600 mb-2 break-words leading-tight">
+                          {loading ? "Carregando..." : formatarMoeda(valor)}
+                        </div>
+                        <p className="text-lg text-gray-600 dark:text-gray-400">
+                          {loteVigente?.nome || "Lote Atual"} - Kit completo incluso
+                          na inscrição
+                        </p>
+                      </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-green-500 text-xl">✅</span>
-                      <span>Kit completo incluso</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-green-500 text-xl">✅</span>
-                      <span>Medalha de participação</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-green-500 text-xl">✅</span>
-                      <span>Camiseta oficial do evento</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-green-500 text-xl">✅</span>
-                      <span>Hidratação durante o percurso</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-green-500 text-xl">✅</span>
-                      <span>Apoio médico e segurança</span>
-                    </div>
-                  </div>
-
-                  {/* Requisitos Especiais */}
-                  {loteVigente?.requisitos_especiais && (
-                    <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
-                      <div className="flex items-start gap-3">
-                        <span className="text-orange-500 text-xl">⚠️</span>
-                        <div>
-                          <p className="font-semibold text-orange-700 dark:text-orange-300 mb-1">
-                            Requisito Especial:
-                          </p>
-                          <p className="text-sm text-orange-600 dark:text-orange-400">
-                            {loteVigente.requisitos_especiais}
-                          </p>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <span className="text-green-500 text-xl">✅</span>
+                          <span>Kit completo incluso</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-green-500 text-xl">✅</span>
+                          <span>Medalha de participação</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-green-500 text-xl">✅</span>
+                          <span>Camiseta oficial do evento</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-green-500 text-xl">✅</span>
+                          <span>Hidratação durante o percurso</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-green-500 text-xl">✅</span>
+                          <span>Apoio médico e segurança</span>
                         </div>
                       </div>
+
+                      {/* Requisitos Especiais */}
+                      {loteVigente?.requisitos_especiais && (
+                        <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
+                          <div className="flex items-start gap-3">
+                            <span className="text-orange-500 text-xl">⚠️</span>
+                            <div>
+                              <p className="font-semibold text-orange-700 dark:text-orange-300 mb-1">
+                                Requisito Especial:
+                              </p>
+                              <p className="text-sm text-orange-600 dark:text-orange-400">
+                                {loteVigente.requisitos_especiais}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
 
-                <div className="space-y-6">
-                  <div className="text-center">
-                    <h3 className="text-xl font-bold mb-4 text-green-700 dark:text-green-300">
-                      📊 Total de Inscrições Realizadas
-                    </h3>
-                    <InscricaoStats />
-                  </div>
+                    <div className="space-y-6">
+                      <div className="text-center">
+                        <h3 className="text-xl font-bold mb-4 text-green-700 dark:text-green-300">
+                          📊 Total de Inscrições Realizadas
+                        </h3>
+                        <InscricaoStats />
+                      </div>
 
-                  {/* Mensagem de Inscrições Finalizadas */}
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-6 rounded-xl border-2 border-blue-300 dark:border-blue-700">
-                    <div className="text-center">
-                      <div className="text-4xl mb-4">✅</div>
-                      <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-3">
-                        Inscrições Encerradas!
-                      </h3>
-                      <p className="text-blue-600 dark:text-blue-400 mb-4">
-                        {eventConfig.mensagemInscricoesFinalizadas}
-                      </p>
-                      <p className="text-sm text-blue-500 dark:text-blue-400">
-                        Nos vemos no dia{" "}
-                        <strong>{eventConfig.dataEvento}</strong> no{" "}
-                        <strong>{eventConfig.local}</strong>!
-                      </p>
+                      <div className="flex flex-col gap-4">
+                        <Button
+                          as={Link}
+                          className="font-semibold"
+                          color="primary"
+                          href="/regulamento"
+                          size="lg"
+                        >
+                          Ver Regulamento Completo
+                        </Button>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="flex flex-col gap-4">
-                    <Button
-                      as={Link}
-                      className="font-semibold"
-                      color="primary"
-                      href="/regulamento"
-                      size="lg"
-                    >
-                      Ver Regulamento Completo
-                    </Button>
+                </CardBody>
+              </>
+            ) : (
+              <>
+                <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-center">
+                  <div>
+                    <h2 className="text-3xl font-bold mb-2">
+                      ✅ Inscrições Encerradas!
+                    </h2>
+                    <p className="text-blue-100">
+                      Obrigado pelo interesse em participar desta causa importante
+                    </p>
                   </div>
-                </div>
-              </div>
-            </CardBody>
+                </CardHeader>
+                <CardBody className="p-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div className="space-y-6">
+                      <div className="text-center">
+                        <div className="text-4xl mb-4">🎉</div>
+                        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-3">
+                          Evento Confirmado!
+                        </h3>
+                        <p className="text-blue-600 dark:text-blue-400 mb-4">
+                          {eventConfig.mensagemInscricoesFinalizadas}
+                        </p>
+                        <p className="text-sm text-blue-500 dark:text-blue-400">
+                          Nos vemos no dia{" "}
+                          <strong>{eventConfig.dataEvento}</strong> no{" "}
+                          <strong>{eventConfig.local}</strong>!
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div className="text-center">
+                        <h3 className="text-xl font-bold mb-4 text-blue-700 dark:text-blue-300">
+                          📊 Total de Inscrições Realizadas
+                        </h3>
+                        <InscricaoStats />
+                      </div>
+
+                      <div className="flex flex-col gap-4">
+                        <Button
+                          as={Link}
+                          className="font-semibold"
+                          color="primary"
+                          href="/regulamento"
+                          size="lg"
+                        >
+                          Ver Regulamento Completo
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardBody>
+              </>
+            )}
           </Card>
         </div>
       </section>
