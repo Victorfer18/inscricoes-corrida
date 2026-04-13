@@ -106,18 +106,26 @@ export const aplicarConfiguracaoLote = (loteBasico: LoteBasico): LoteComKit => {
   return loteComKit;
 };
 
-export const fetchLoteVigente = async (): Promise<LoteComKit | null> => {
+export const fetchLoteVigente = async (): Promise<{evento: any, loteVigente: LoteComKit | null} | null> => {
   try {
-    const response = await fetch("/api/lotes");
+    const response = await fetch("/api/evento-vigente");
     const result = await response.json();
 
-    if (!result.success || !result.data.loteVigente) {
+    if (!result.success || !result.data.evento) {
       return null;
     }
 
-    const loteBasico = result.data.loteVigente;
+    const { evento, loteVigente } = result.data;
+    
+    // Tratando o caso de ter evento, mas não ter lote vigente
+    if (!loteVigente) {
+      return { evento, loteVigente: null };
+    }
 
-    return aplicarConfiguracaoLote(loteBasico);
+    return { 
+      evento, 
+      loteVigente: aplicarConfiguracaoLote(loteVigente) 
+    };
   } catch (error) {
     return null;
   }
@@ -125,18 +133,9 @@ export const fetchLoteVigente = async (): Promise<LoteComKit | null> => {
 
 export const fetchAllLotes = async (): Promise<LoteComKit[]> => {
   try {
-    const response = await fetch("/api/lotes");
-    const result = await response.json();
-
-    if (!result.success || !result.data.lotes) {
-      return [];
-    }
-
-    const lotesBasicos = result.data.lotes;
-
-    return lotesBasicos.map((lote: LoteBasico) =>
-      aplicarConfiguracaoLote(lote),
-    );
+    // Para recuperar todos os lotes agora passamos por um evento em especifico no admin. 
+    // Na tela pública, não listamos "todos os lotes" abertos a não ser os do evento vigente (já fetcheado na linha de cima).
+    return [];
   } catch (error) {
     return [];
   }

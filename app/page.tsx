@@ -9,7 +9,6 @@ import { Button } from "@heroui/button";
 import { EventLogo } from "../components/event-logo";
 
 import { siteConfig } from "@/config/site";
-import { eventConfig } from "@/config/event";
 import { title, subtitle } from "@/components/primitives";
 import { WhatsAppIcon, InstagramIcon } from "@/components/icons";
 import { KitSlider } from "@/components/kit-slider";
@@ -19,7 +18,13 @@ import { formatarMoeda } from "@/lib/utils";
 import { useLoteVigente } from "@/hooks/useLoteVigente";
 
 export default function Home() {
-  const { valor, loading, loteVigente } = useLoteVigente();
+  const { valor, evento, loading, loteVigente } = useLoteVigente();
+
+  const dataApresentavel = evento?.data_evento 
+    ? new Date(evento.data_evento + "T00:00:00").toLocaleDateString("pt-BR") 
+    : "Data a definir";
+  const localApresentavel = evento?.local || "Local a definir";
+  const nomeApresentavel = evento?.nome || "Corrida Solidária";
 
   return (
     <BackgroundWrapper intensity="medium" showAnimation={true}>
@@ -51,19 +56,9 @@ export default function Home() {
                 })}
               >
                 <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
-                  1ª CORRIDA SOLIDÁRIA
+                  {nomeApresentavel.toUpperCase()}
                 </span>
               </h1>
-              <h2
-                className={title({
-                  size: "md",
-                  class: "text-center mb-3 sm:mb-4",
-                })}
-              >
-                <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
-                  OUTUBRO ROSA
-                </span>
-              </h2>
               <div className="flex justify-center items-center gap-2 sm:gap-4 my-4 sm:my-6">
                 <Chip
                   className="text-sm sm:text-lg md:text-xl font-bold px-4 sm:px-6 md:px-8 py-2 sm:py-3 bg-gradient-to-r from-pink-500 to-purple-600"
@@ -110,10 +105,7 @@ export default function Home() {
                       Data
                     </h4>
                     <p className="text-lg sm:text-xl font-semibold">
-                      26 de Outubro
-                    </p>
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                      2025
+                      {dataApresentavel}
                     </p>
                   </div>
                   <div className="space-y-2">
@@ -121,7 +113,7 @@ export default function Home() {
                     <h4 className="font-bold text-base sm:text-lg text-purple-700 dark:text-purple-300">
                       Horário
                     </h4>
-                    <p className="text-lg sm:text-xl font-semibold">06h00</p>
+                    <p className="text-lg sm:text-xl font-semibold">A Confirmar</p>
                     <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                       Concentração
                     </p>
@@ -132,10 +124,7 @@ export default function Home() {
                       Local
                     </h4>
                     <p className="text-lg sm:text-xl font-semibold">
-                    QUADRA POLIESPORTIVA
-                    </p>
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                      Projeto Jaíba/NS2
+                      {localApresentavel}
                     </p>
                   </div>
                 </div>
@@ -264,7 +253,7 @@ export default function Home() {
       <section className="py-12">
         <div className="max-w-4xl mx-auto px-4">
           <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-300 dark:border-green-700 shadow-2xl">
-            {loteVigente ? (
+            {evento && loteVigente ? (
               <>
                 <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-white text-center">
                   <div>
@@ -333,7 +322,7 @@ export default function Home() {
                     <div className="space-y-6">
                       <div className="text-center">
                         <h3 className="text-xl font-bold mb-4 text-green-700 dark:text-green-300">
-                          📊 Total de Inscrições Realizadas
+                          📊 Inscrições Realizadas
                         </h3>
                         <InscricaoStats />
                       </div>
@@ -374,20 +363,25 @@ export default function Home() {
                           Evento Confirmado!
                         </h3>
                         <p className="text-blue-600 dark:text-blue-400 mb-4">
-                          {eventConfig.mensagemInscricoesFinalizadas}
+                          Não há inscrições abertas no momento.
                         </p>
-                        <p className="text-sm text-blue-500 dark:text-blue-400">
-                          Nos vemos no dia{" "}
-                          <strong>{eventConfig.dataEvento}</strong> no{" "}
-                          <strong>{eventConfig.local}</strong>!
-                        </p>
+                        {evento ? (
+                          <p className="text-sm text-blue-500 dark:text-blue-400 leading-relaxed">
+                            Fique de olho na <strong>{nomeApresentavel}</strong>!<br />
+                            Aguardamos você no dia <strong>{dataApresentavel}</strong> no local <strong>{localApresentavel}</strong>.
+                          </p>
+                        ) : (
+                          <p className="text-sm text-blue-500 dark:text-blue-400 leading-relaxed">
+                            No momento não temos nenhuma corrida ativa cadastrada. Volte em breve!
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     <div className="space-y-6">
                       <div className="text-center">
                         <h3 className="text-xl font-bold mb-4 text-blue-700 dark:text-blue-300">
-                          📊 Total de Inscrições Realizadas
+                          📊 Inscrições Realizadas
                         </h3>
                         <InscricaoStats />
                       </div>

@@ -60,10 +60,26 @@ export async function POST(
       );
     }
 
-    // Buscar lote vigente (status = true)
+    // Buscar lote vigente do evento ativo
+    const { data: eventoAtivo } = await supabaseAdmin
+      .from("eventos")
+      .select("id")
+      .eq("status", "ativo")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!eventoAtivo) {
+      return NextResponse.json(
+        { success: false, error: "As inscrições estão encerradas no momento." },
+        { status: 400 }
+      );
+    }
+
     const { data: loteVigente, error: loteError } = await supabaseAdmin
       .from("lotes")
       .select("*")
+      .eq("evento_id", eventoAtivo.id)
       .eq("status", true)
       .single();
 

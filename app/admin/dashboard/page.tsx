@@ -503,6 +503,14 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   className="flex-1"
+                  color="primary"
+                  size="lg"
+                  onPress={() => router.push("/admin/eventos")}
+                >
+                  ⚙️ Gerenciar Eventos / Lotes
+                </Button>
+                <Button
+                  className="flex-1"
                   color="secondary"
                   size="lg"
                   onPress={() => router.push("/admin/sorteios")}

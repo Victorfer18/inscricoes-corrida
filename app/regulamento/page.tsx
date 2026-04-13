@@ -5,7 +5,6 @@ import { Divider } from "@heroui/divider";
 import { Chip } from "@heroui/chip";
 
 import { BackgroundWrapper } from "@/components/background-wrapper";
-import { eventConfig } from "@/config/event";
 import { title, subtitle } from "@/components/primitives";
 import { DocumentIcon } from "@/components/icons";
 import { formatarMoeda } from "@/lib/utils";
@@ -13,9 +12,15 @@ import { useLoteVigente } from "@/hooks/useLoteVigente";
 import { useInscricoesStats } from "@/hooks/useInscricoesStats";
 
 export default function RegulamentoPage() {
-  const { valor, loading, loteVigente } = useLoteVigente();
+  const { valor, loading, loteVigente, evento } = useLoteVigente();
   const { total: totalInscricoes, loading: loadingStats } =
     useInscricoesStats();
+
+  const dataApresentavel = evento?.data_evento 
+    ? new Date(evento.data_evento + "T00:00:00").toLocaleDateString("pt-BR") 
+    : "Data a definir";
+  const localApresentavel = evento?.local || "Local a definir";
+  const nomeApresentavel = evento?.nome || "Corrida de Rua";
 
   return (
     <BackgroundWrapper intensity="strong" showAnimation={false}>
@@ -35,8 +40,7 @@ export default function RegulamentoPage() {
           </h1>
 
           <div className={subtitle({ class: "max-w-2xl mx-auto" })}>
-            Leia atentamente todas as regras e disposições para participar da 1ª
-            Corrida e Caminhada Outubro Rosa
+            Leia atentamente todas as regras e disposições para participar da {nomeApresentavel}
           </div>
         </div>
 
@@ -49,8 +53,7 @@ export default function RegulamentoPage() {
             <div>
               <h3 className="font-semibold text-lg mb-2">Evento:</h3>
               <p>
-                Corrida Solidária Outubro Rosa - &ldquo;Eles e Elas Correndo
-                Pela Vida&rdquo;
+                {nomeApresentavel}
               </p>
             </div>
 
@@ -81,12 +84,10 @@ export default function RegulamentoPage() {
             <div>
               <h3 className="font-semibold text-lg mb-2">Data e Horário:</h3>
               <p>
-                <strong>{eventConfig.dataEvento}</strong>
+                <strong>{dataApresentavel}</strong>
               </p>
               <p>
-                Concentração a partir das{" "}
-                <strong>{eventConfig.horarioConcentracao}</strong> no{" "}
-                {eventConfig.local}
+                Atenção à Concentração no local: <strong>{localApresentavel}</strong>
               </p>
             </div>
 
@@ -97,10 +98,10 @@ export default function RegulamentoPage() {
               <div className="space-y-2">
                 <div className="flex flex-wrap gap-2 mb-2">
                   <Chip color="secondary" variant="flat">
-                    🚶‍♀️ Caminhada 2,5km - {eventConfig.horarioCaminhada}
+                    🚶‍♀️ Caminhada
                   </Chip>
                   <Chip color="secondary" variant="flat">
-                    🏃‍♀️ Corrida 5km - {eventConfig.horarioCorrida}
+                    🏃‍♀️ Corrida
                   </Chip>
                 </div>
                 <p className="text-sm text-default-600">
@@ -418,10 +419,7 @@ export default function RegulamentoPage() {
 
         <div className="text-center">
           <p className="text-sm text-default-600">
-            Projeto Jaíba - 1ª Corrida e Caminhada Outubro Rosa
-          </p>
-          <p className="text-sm text-default-600">
-            Região do Jaíba - Minas Gerais
+            {nomeApresentavel} - {localApresentavel}
           </p>
         </div>
       </div>

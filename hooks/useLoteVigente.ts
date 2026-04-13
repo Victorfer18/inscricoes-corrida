@@ -9,6 +9,7 @@ import {
 } from "@/config/lotes";
 
 interface UseLoteVigenteReturn {
+  evento: any | null;
   loteVigente: LoteComKit | null;
   valor: number;
   kitItems: KitItem[];
@@ -17,6 +18,7 @@ interface UseLoteVigenteReturn {
 }
 
 export function useLoteVigente(): UseLoteVigenteReturn {
+  const [evento, setEvento] = useState<any | null>(null);
   const [loteVigente, setLoteVigente] = useState<LoteComKit | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,9 +28,15 @@ export function useLoteVigente(): UseLoteVigenteReturn {
       try {
         setLoading(true);
         setError(null);
-        const lote = await fetchLoteVigente();
+        const data = await fetchLoteVigente();
 
-        setLoteVigente(lote);
+        if (data) {
+          setEvento(data.evento);
+          setLoteVigente(data.loteVigente);
+        } else {
+          setEvento(null);
+          setLoteVigente(null);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro desconhecido");
       } finally {
@@ -40,8 +48,9 @@ export function useLoteVigente(): UseLoteVigenteReturn {
   }, []);
 
   return {
+    evento,
     loteVigente,
-    valor: loteVigente?.valor || 79.9,
+    valor: loteVigente?.valor || 0,
     kitItems: loteVigente?.kit_items || [],
     loading,
     error,

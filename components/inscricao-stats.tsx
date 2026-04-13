@@ -9,7 +9,7 @@ interface InscricaoStatsProps {
 
 export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
   const { loteVigente, valor, loading, error } = useLoteVigente();
-
+  
   if (loading) {
     return (
       <div className={`text-center ${className}`}>

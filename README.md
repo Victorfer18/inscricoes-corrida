@@ -277,84 +277,145 @@ npm run dev
 ```sql
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
+-- ========================================
+-- 1. EVENTOS (CONFIG + BASE)
+-- ========================================
 
-CREATE TABLE public.admin_users (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  email character varying NOT NULL UNIQUE,
-  nome character varying NOT NULL,
-  password_hash text NOT NULL,
-  role character varying DEFAULT 'moderator'::character varying,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT admin_users_pkey PRIMARY KEY (id)
+CREATE TABLE IF NOT EXISTS public.eventos (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome VARCHAR NOT NULL,
+  descricao TEXT,
+  data_evento DATE,
+  local TEXT,
+
+  -- ENUM STATUS
+  status VARCHAR DEFAULT 'ativo',
+
+  -- CONFIGURAÇÃO VISUAL (UI DINÂMICA)
+  config JSONB,
+
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
-CREATE TABLE public.eventos (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  nome character varying NOT NULL,
-  descricao text,
-  data_evento date,
-  local text,
-  status USER-DEFINED DEFAULT 'ativo'::status_evento,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT eventos_pkey PRIMARY KEY (id)
+
+-- ========================================
+-- 2. LOTES (ADICIONAR COLUNAS)
+-- ========================================
+
+ALTER TABLE public.lotes
+ADD COLUMN IF NOT EXISTS evento_id uuid,
+ADD COLUMN IF NOT EXISTS descricao TEXT,
+ADD COLUMN IF NOT EXISTS data_inicio TIMESTAMP,
+ADD COLUMN IF NOT EXISTS data_fim TIMESTAMP,
+ADD COLUMN IF NOT EXISTS limite_por_pessoa INTEGER DEFAULT 1,
+ADD COLUMN IF NOT EXISTS vendas_ativas BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS kit_id uuid;
+
+-- FK evento → lotes
+ALTER TABLE public.lotes
+ADD CONSTRAINT IF NOT EXISTS lotes_evento_fkey
+FOREIGN KEY (evento_id)
+REFERENCES public.eventos(id)
+ON DELETE CASCADE;
+
+-- ========================================
+-- 3. ITENS (KIT ITEMS)
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS public.itens (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome VARCHAR NOT NULL,
+  descricao TEXT,
+  imagem_url TEXT,
+  created_at TIMESTAMP DEFAULT now()
 );
-CREATE TABLE public.inscricoes (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  nome_completo text NOT NULL,
-  cpf text NOT NULL,
-  idade integer NOT NULL,
-  sexo text NOT NULL CHECK (sexo = ANY (ARRAY['Masculino'::text, 'Feminino'::text])),
-  celular text,
-  email text,
-  tamanho_blusa text NOT NULL,
-  comprovante_file_id text,
-  status text DEFAULT 'pendente'::text CHECK (status = ANY (ARRAY['confirmado'::text, 'pendente'::text, 'cancelada'::text])),
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  number_shirt integer NOT NULL,
-  lote_id uuid,
-  CONSTRAINT inscricoes_pkey PRIMARY KEY (id),
-  CONSTRAINT inscricoes_lote_id_fkey FOREIGN KEY (lote_id) REFERENCES public.lotes(id)
+
+-- ========================================
+-- 4. KITS
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS public.kits (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome VARCHAR NOT NULL,
+  descricao TEXT,
+  created_at TIMESTAMP DEFAULT now()
 );
-CREATE TABLE public.lotes (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  nome character varying NOT NULL,
-  valor numeric NOT NULL,
-  total_vagas integer NOT NULL,
-  status boolean DEFAULT true,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  evento_id uuid,
-  CONSTRAINT lotes_pkey PRIMARY KEY (id),
-  CONSTRAINT lotes_evento_fkey FOREIGN KEY (evento_id) REFERENCES public.eventos(id)
+
+-- ========================================
+-- 5. RELAÇÃO KIT → ITENS (N:N)
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS public.kit_itens (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  kit_id uuid NOT NULL,
+  item_id uuid NOT NULL,
+  quantidade INTEGER DEFAULT 1,
+
+  CONSTRAINT fk_kit FOREIGN KEY (kit_id) REFERENCES public.kits(id) ON DELETE CASCADE,
+  CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES public.itens(id) ON DELETE CASCADE
 );
-CREATE TABLE public.sorteio_participantes (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  sorteio_id uuid NOT NULL,
-  inscricao_id uuid NOT NULL,
-  rodada integer NOT NULL,
-  created_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT sp_sorteio_fkey FOREIGN KEY (sorteio_id) REFERENCES public.sorteios(id),
-  CONSTRAINT sp_inscricao_fkey FOREIGN KEY (inscricao_id) REFERENCES public.inscricoes(id)
+
+-- FK lote → kit
+ALTER TABLE public.lotes
+ADD CONSTRAINT IF NOT EXISTS lotes_kit_fkey
+FOREIGN KEY (kit_id)
+REFERENCES public.kits(id);
+
+-- ========================================
+-- 6. PREMIOS (🏆 NOVO)
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS public.premios (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  evento_id uuid NOT NULL,
+  posicao INTEGER NOT NULL,
+  titulo VARCHAR,
+  valor NUMERIC,
+  descricao TEXT,
+  cor VARCHAR,
+  icone VARCHAR,
+  created_at TIMESTAMP DEFAULT now(),
+
+  CONSTRAINT premios_evento_fkey
+  FOREIGN KEY (evento_id)
+  REFERENCES public.eventos(id)
+  ON DELETE CASCADE
 );
-CREATE TABLE public.sorteios (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  titulo character varying NOT NULL,
-  descricao text,
-  lote_id uuid,
-  lote_nome character varying NOT NULL,
-  total_inscritos integer NOT NULL DEFAULT 0,
-  total_sorteados integer NOT NULL DEFAULT 0,
-  realizado_por uuid NOT NULL,
-  realizado_por_nome character varying NOT NULL,
-  status character varying NOT NULL DEFAULT 'finalizado'::character varying CHECK (status::text = ANY (ARRAY['finalizado'::character varying::text, 'cancelado'::character varying::text])),
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  evento_id uuid,
-  CONSTRAINT sorteios_pkey PRIMARY KEY (id),
-  CONSTRAINT sorteios_evento_fkey FOREIGN KEY (evento_id) REFERENCES public.eventos(id)
-);
+
+-- ========================================
+-- 7. GARANTIR PKs (caso falte)
+-- ========================================
+
+ALTER TABLE public.inscricoes
+ADD CONSTRAINT IF NOT EXISTS inscricoes_pkey PRIMARY KEY (id);
+
+ALTER TABLE public.sorteios
+ADD CONSTRAINT IF NOT EXISTS sorteios_pkey PRIMARY KEY (id);
+
+ALTER TABLE public.sorteio_participantes
+ADD CONSTRAINT IF NOT EXISTS sorteio_participantes_pkey PRIMARY KEY (id);
+
+-- ========================================
+-- 8. RELAÇÕES IMPORTANTES
+-- ========================================
+
+-- inscrição → lote
+ALTER TABLE public.inscricoes
+ADD CONSTRAINT IF NOT EXISTS inscricoes_lote_id_fkey
+FOREIGN KEY (lote_id)
+REFERENCES public.lotes(id);
+
+-- sorteio_participantes → sorteios
+ALTER TABLE public.sorteio_participantes
+ADD CONSTRAINT IF NOT EXISTS sp_sorteio_fkey
+FOREIGN KEY (sorteio_id)
+REFERENCES public.sorteios(id);
+
+-- sorteio_participantes → inscricoes
+ALTER TABLE public.sorteio_participantes
+ADD CONSTRAINT IF NOT EXISTS sp_inscricao_fkey
+FOREIGN KEY (inscricao_id)
+REFERENCES public.inscricoes(id);
 
 -- Índices para performance
 CREATE INDEX idx_inscricoes_cpf ON inscricoes(cpf);
