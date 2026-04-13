@@ -32,6 +32,8 @@ export interface InscricaoTableData {
   comprovante_url?: string;
   lote_nome?: string;
   lote_valor?: number;
+  evento_nome?: string;
+  evento_data?: string;
   created_at: string;
   updated_at: string;
 }
@@ -131,6 +133,8 @@ export function InscricoesTable({
           <TableColumn>CPF</TableColumn>
           <TableColumn>EMAIL</TableColumn>
           <TableColumn>STATUS</TableColumn>
+          <TableColumn>EVENTO</TableColumn>
+          <TableColumn>DATA EVENTO</TableColumn>
           <TableColumn>LOTE</TableColumn>
           <TableColumn>VALOR</TableColumn>
           <TableColumn>COMPROVANTE</TableColumn>
@@ -158,6 +162,12 @@ export function InscricoesTable({
                 >
                   {getStatusLabel(inscricao.status)}
                 </Chip>
+              </TableCell>
+              <TableCell>{inscricao.evento_nome || "N/A"}</TableCell>
+              <TableCell>
+                {inscricao.evento_data
+                  ? new Date(inscricao.evento_data + "T00:00:00").toLocaleDateString("pt-BR")
+                  : "N/A"}
               </TableCell>
               <TableCell>{inscricao.lote_nome}</TableCell>
               <TableCell>

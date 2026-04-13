@@ -24,6 +24,7 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
     const format = searchParams.get("format") || "xlsx";
     const status = searchParams.get("status");
     const loteId = searchParams.get("lote_id");
+    const eventoId = searchParams.get("evento_id");
 
     // Construir query
     let query = supabaseAdmin.from("inscricoes").select(`
@@ -39,9 +40,14 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
         number_shirt,
         created_at,
         updated_at,
-        lotes (
+        ${eventoId && eventoId !== "todos" ? "lotes!inner" : "lotes"} (
           nome,
-          valor
+          valor,
+          ${eventoId && eventoId !== "todos" ? "evento_id," : ""}
+          eventos (
+            nome,
+            data_evento
+          )
         )
       `);
 
@@ -52,6 +58,10 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
 
     if (loteId && loteId !== "todos") {
       query = query.eq("lote_id", loteId);
+    }
+
+    if (eventoId && eventoId !== "todos") {
+      query = query.eq("lotes.evento_id", eventoId);
     }
 
     const { data: inscricoes, error } = await query.order("created_at", {
@@ -75,6 +85,8 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
         Sexo: inscricao.sexo || "",
         "Tamanho da Blusa": inscricao.tamanho_blusa || "",
         Status: inscricao.status || "",
+        Evento: inscricao.lotes?.eventos?.nome || "N/A",
+        "Data do Evento": inscricao.lotes?.eventos?.data_evento ? new Date(inscricao.lotes.eventos.data_evento + "T00:00:00").toLocaleDateString("pt-BR") : "N/A",
         Lote: inscricao.lotes?.nome || "N/A",
         Valor: inscricao.lotes?.valor
           ? `R$ ${inscricao.lotes.valor.toFixed(2).replace(".", ",")}`
@@ -106,6 +118,8 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
         { wch: 10 }, // Sexo
         { wch: 15 }, // Tamanho
         { wch: 12 }, // Status
+        { wch: 20 }, // Evento
+        { wch: 15 }, // Data do Evento
         { wch: 15 }, // Lote
         { wch: 12 }, // Valor
         { wch: 20 }, // Data Inscrição
@@ -179,6 +193,8 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
         item["Sexo"] || "",
         item["Tamanho da Blusa"] || "",
         item["Status"] || "",
+        item["Evento"] || "",
+        item["Data do Evento"] || "",
         item["Lote"] || "",
         item["Valor"] || "",
         item["Data de Inscrição"] || "",
@@ -197,6 +213,8 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
             "Sexo",
             "Tamanho",
             "Status",
+            "Evento",
+            "Data Ev",
             "Lote",
             "Valor",
             "Data",
@@ -217,18 +235,20 @@ async function handleExportInscricoes(request: NextRequest, user: AdminUser) {
           fillColor: [245, 245, 245],
         },
         columnStyles: {
-          0: { cellWidth: 30 }, // Nome
+          0: { cellWidth: 25 }, // Nome
           1: { cellWidth: 15 }, // Nº Camisa
           2: { cellWidth: 20 }, // CPF
           3: { cellWidth: 35 }, // Email
-          4: { cellWidth: 20 }, // Celular
+          4: { cellWidth: 15 }, // Celular
           5: { cellWidth: 12 }, // Idade
           6: { cellWidth: 15 }, // Sexo
           7: { cellWidth: 15 }, // Tamanho
           8: { cellWidth: 15 }, // Status
-          9: { cellWidth: 15 }, // Lote
-          10: { cellWidth: 12 }, // Valor
-          11: { cellWidth: 30 }, // Data
+          9: { cellWidth: 15 }, // Evento
+          10: { cellWidth: 15 }, // Data Evento
+          11: { cellWidth: 15 }, // Lote
+          12: { cellWidth: 12 }, // Valor
+          13: { cellWidth: 20 }, // Data
         },
         margin: { top: 45, left: 14, right: 14 },
       });

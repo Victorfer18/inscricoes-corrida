@@ -275,70 +275,85 @@ npm run dev
 **Criar projeto e tabelas:**
 
 ```sql
--- Tabela de lotes
-CREATE TABLE lotes (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  nome VARCHAR(100) NOT NULL,
-  valor DECIMAL(10,2) NOT NULL,
-  total_vagas INTEGER NOT NULL,
-  status BOOLEAN DEFAULT true,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
 
--- Tabela de inscrições
-CREATE TABLE inscricoes (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  nome_completo VARCHAR(255) NOT NULL,
-  cpf VARCHAR(11) UNIQUE NOT NULL,
-  idade INTEGER NOT NULL,
-  sexo VARCHAR(20) NOT NULL,
-  celular VARCHAR(20) NOT NULL,
-  email VARCHAR(255),
-  tamanho_blusa VARCHAR(10) NOT NULL,
-  comprovante_file_id VARCHAR(255) NOT NULL,
-  lote_id UUID REFERENCES lotes(id),
-  status VARCHAR(20) DEFAULT 'pendente',
-  number_shirt VARCHAR(10),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE public.admin_users (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  email character varying NOT NULL UNIQUE,
+  nome character varying NOT NULL,
+  password_hash text NOT NULL,
+  role character varying DEFAULT 'moderator'::character varying,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT admin_users_pkey PRIMARY KEY (id)
 );
-
--- Tabela de administradores
-CREATE TABLE admin_users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email VARCHAR(255) UNIQUE NOT NULL,
-  nome VARCHAR(255) NOT NULL,
-  password_hash TEXT NOT NULL,
-  role VARCHAR(50) DEFAULT 'moderator',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE public.eventos (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  nome character varying NOT NULL,
+  descricao text,
+  data_evento date,
+  local text,
+  status USER-DEFINED DEFAULT 'ativo'::status_evento,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT eventos_pkey PRIMARY KEY (id)
 );
-
--- Tabela de sorteios
-CREATE TABLE sorteios (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  titulo VARCHAR(255) NOT NULL,
-  descricao TEXT,
-  lote_id UUID REFERENCES lotes(id) ON DELETE CASCADE,
-  lote_nome VARCHAR(100) NOT NULL,
-  total_inscritos INTEGER NOT NULL,
-  total_sorteados INTEGER NOT NULL,
-  realizado_por UUID REFERENCES admin_users(id),
-  realizado_por_nome VARCHAR(255) NOT NULL,
-  status VARCHAR(20) DEFAULT 'finalizado',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE public.inscricoes (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  nome_completo text NOT NULL,
+  cpf text NOT NULL,
+  idade integer NOT NULL,
+  sexo text NOT NULL CHECK (sexo = ANY (ARRAY['Masculino'::text, 'Feminino'::text])),
+  celular text,
+  email text,
+  tamanho_blusa text NOT NULL,
+  comprovante_file_id text,
+  status text DEFAULT 'pendente'::text CHECK (status = ANY (ARRAY['confirmado'::text, 'pendente'::text, 'cancelada'::text])),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  number_shirt integer NOT NULL,
+  lote_id uuid,
+  CONSTRAINT inscricoes_pkey PRIMARY KEY (id),
+  CONSTRAINT inscricoes_lote_id_fkey FOREIGN KEY (lote_id) REFERENCES public.lotes(id)
 );
-
--- Tabela de participantes dos sorteios
-CREATE TABLE sorteio_participantes (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  sorteio_id UUID NOT NULL REFERENCES sorteios(id) ON DELETE CASCADE,
-  inscricao_id UUID NOT NULL REFERENCES inscricoes(id) ON DELETE CASCADE,
-  rodada INTEGER NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(sorteio_id, inscricao_id)
+CREATE TABLE public.lotes (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  nome character varying NOT NULL,
+  valor numeric NOT NULL,
+  total_vagas integer NOT NULL,
+  status boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  evento_id uuid,
+  CONSTRAINT lotes_pkey PRIMARY KEY (id),
+  CONSTRAINT lotes_evento_fkey FOREIGN KEY (evento_id) REFERENCES public.eventos(id)
+);
+CREATE TABLE public.sorteio_participantes (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  sorteio_id uuid NOT NULL,
+  inscricao_id uuid NOT NULL,
+  rodada integer NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT sp_sorteio_fkey FOREIGN KEY (sorteio_id) REFERENCES public.sorteios(id),
+  CONSTRAINT sp_inscricao_fkey FOREIGN KEY (inscricao_id) REFERENCES public.inscricoes(id)
+);
+CREATE TABLE public.sorteios (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  titulo character varying NOT NULL,
+  descricao text,
+  lote_id uuid,
+  lote_nome character varying NOT NULL,
+  total_inscritos integer NOT NULL DEFAULT 0,
+  total_sorteados integer NOT NULL DEFAULT 0,
+  realizado_por uuid NOT NULL,
+  realizado_por_nome character varying NOT NULL,
+  status character varying NOT NULL DEFAULT 'finalizado'::character varying CHECK (status::text = ANY (ARRAY['finalizado'::character varying::text, 'cancelado'::character varying::text])),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  evento_id uuid,
+  CONSTRAINT sorteios_pkey PRIMARY KEY (id),
+  CONSTRAINT sorteios_evento_fkey FOREIGN KEY (evento_id) REFERENCES public.eventos(id)
 );
 
 -- Índices para performance

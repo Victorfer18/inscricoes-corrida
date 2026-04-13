@@ -16,6 +16,8 @@ interface InscricaoAdmin {
   comprovante_url?: string;
   lote_nome?: string;
   lote_valor?: number;
+  evento_nome?: string;
+  evento_data?: string;
   created_at: string;
   updated_at: string;
 }
@@ -28,6 +30,7 @@ async function handleGetInscricoes(request: NextRequest) {
     const status = searchParams.get("status");
     const search = searchParams.get("search");
     const loteId = searchParams.get("lote_id");
+    const eventoId = searchParams.get("evento_id");
 
     const offset = (page - 1) * limit;
 
@@ -45,9 +48,14 @@ async function handleGetInscricoes(request: NextRequest) {
         comprovante_file_id,
         created_at,
         updated_at,
-        lotes (
+        ${eventoId && eventoId !== "todos" ? "lotes!inner" : "lotes"} (
           nome,
-          valor
+          valor,
+          ${eventoId && eventoId !== "todos" ? "evento_id," : ""}
+          eventos (
+            nome,
+            data_evento
+          )
         )
       `,
       { count: "exact" },
@@ -59,6 +67,10 @@ async function handleGetInscricoes(request: NextRequest) {
 
     if (loteId && loteId !== "todos") {
       query = query.eq("lote_id", loteId);
+    }
+
+    if (eventoId && eventoId !== "todos") {
+      query = query.eq("lotes.evento_id", eventoId);
     }
 
     if (search) {
@@ -95,6 +107,8 @@ async function handleGetInscricoes(request: NextRequest) {
           : undefined,
         lote_nome: inscricao.lotes?.nome || "N/A",
         lote_valor: inscricao.lotes?.valor || undefined,
+        evento_nome: inscricao.lotes?.eventos?.nome || undefined,
+        evento_data: inscricao.lotes?.eventos?.data_evento || undefined,
         created_at: inscricao.created_at,
         updated_at: inscricao.updated_at,
       })) || [];

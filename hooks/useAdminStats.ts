@@ -14,7 +14,7 @@ interface UseAdminStatsReturn {
   refetch: () => void;
 }
 
-export function useAdminStats(): UseAdminStatsReturn {
+export function useAdminStats(eventoId?: string): UseAdminStatsReturn {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,13 @@ export function useAdminStats(): UseAdminStatsReturn {
         throw new Error("Token de autenticação não encontrado");
       }
 
-      const response = await fetch("/api/admin/stats", {
+      const queryParams = new URLSearchParams();
+      
+      if (eventoId && eventoId !== "todos") {
+        queryParams.append("evento_id", eventoId);
+      }
+
+      const response = await fetch(`/api/admin/stats?${queryParams.toString()}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -57,7 +63,7 @@ export function useAdminStats(): UseAdminStatsReturn {
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [eventoId]);
 
   return {
     stats,

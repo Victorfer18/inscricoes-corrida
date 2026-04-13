@@ -11,26 +11,40 @@ interface LoteBasico {
   valor: number;
 }
 
-export async function GET(): Promise<
+export async function GET(request: Request): Promise<
   NextResponse<
     ApiResponse<{ lotes: LoteBasico[]; loteVigente: LoteBasico | null }>
   >
 > {
   try {
-    const { data: lotes, error: lotesError } = await supabaseAdmin
+    const { searchParams } = new URL(request.url);
+    const eventoId = searchParams.get("evento_id");
+
+    let lotesQuery = supabaseAdmin
       .from("lotes")
       .select("id, nome, total_vagas, status, valor")
       .order("nome", { ascending: true });
+
+    if (eventoId && eventoId !== "todos") {
+      lotesQuery = lotesQuery.eq("evento_id", eventoId);
+    }
+
+    const { data: lotes, error: lotesError } = await lotesQuery;
 
     if (lotesError) {
       throw new Error(lotesError.message);
     }
 
-    const { data: loteVigente, error: loteVigenteError } = await supabaseAdmin
+    let loteVigenteQuery = supabaseAdmin
       .from("lotes")
       .select("id, nome, total_vagas, status, valor")
-      .eq("status", true)
-      .single();
+      .eq("status", true);
+
+    if (eventoId && eventoId !== "todos") {
+      loteVigenteQuery = loteVigenteQuery.eq("evento_id", eventoId);
+    }
+
+    const { data: loteVigente, error: loteVigenteError } = await loteVigenteQuery.maybeSingle();
 
     const loteVizenteResult = loteVigenteError ? null : loteVigente;
 

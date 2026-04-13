@@ -6,6 +6,7 @@ import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
+import { Chip } from "@heroui/chip";
 import {
   Modal,
   ModalContent,
@@ -48,12 +49,15 @@ type PaginationInfo = PaginationData;
 
 export default function AdminDashboardPage() {
   const { user, permissions, isAuthenticated, isLoading, logout } = useAuth();
+  // Filtros Globais
+  const [eventoFilter, setEventoFilter] = useState("todos");
+
   const {
     stats,
     loading: statsLoading,
     error: statsError,
     refetch: refetchStats,
-  } = useAdminStats();
+  } = useAdminStats(eventoFilter);
   const router = useRouter();
 
   const [inscricoes, setInscricoes] = useState<InscricaoAdmin[]>([]);
@@ -86,25 +90,67 @@ export default function AdminDashboardPage() {
 
   // Lotes disponíveis
   const [lotes, setLotes] = useState<Array<{ id: string; nome: string }>>([]);
+  
+  // Eventos disponíveis
+  const [eventos, setEventos] = useState<Array<{ id: string; nome: string; data_evento: string | null; status: string }>>([]);
 
   // Lógica de autenticação agora é gerenciada pelo AdminGuard
+
+  // Buscar eventos
+  useEffect(() => {
+    const fetchEventos = async () => {
+      try {
+        const token = JSON.parse(localStorage.getItem("admin_session") || "{}").token;
+        const response = await fetch("/api/admin/eventos", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setEventos(data.data.eventos || []);
+        }
+      } catch (error) {}
+    };
+    if (isAuthenticated) fetchEventos();
+  }, [isAuthenticated]);
 
   // Buscar lotes
   useEffect(() => {
     const fetchLotes = async () => {
       try {
-        const response = await fetch("/api/lotes");
+        const queryParams = new URLSearchParams();
+        if (eventoFilter && eventoFilter !== "todos") {
+          queryParams.append("evento_id", eventoFilter);
+        }
+        
+        const response = await fetch(`/api/lotes?${queryParams.toString()}`);
 
         if (response.ok) {
           const data = await response.json();
-
           setLotes(data.data.lotes || []);
         }
       } catch (error) {}
     };
 
     fetchLotes();
-  }, []);
+  }, [eventoFilter]);
+
+  // Cálculos de Status do Evento
+  const getEventoStatusInfo = (evento: any) => {
+    if (!evento || !evento.data_evento) return null;
+    
+    const [ano, mes, dia] = evento.data_evento.split('-');
+    const eventDate = new Date(Number(ano), Number(mes) - 1, Number(dia));
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (eventDate > today) return { label: "Vai Acontecer", color: "primary" };
+    if (eventDate.getTime() === today.getTime()) return { label: "Acontecendo Hoje", color: "success" };
+    return { label: "Já Passou", color: "default" };
+  };
+
+  const selectedEvento = eventos.find((e) => e.id === eventoFilter);
+  const eventoStatus = selectedEvento ? getEventoStatusInfo(selectedEvento) : null;
 
   // Buscar inscrições
   const fetchInscricoes = async (page = 1) => {
@@ -123,6 +169,7 @@ export default function AdminDashboardPage() {
       if (debouncedSearchTerm) params.append("search", debouncedSearchTerm);
       if (statusFilter !== "todos") params.append("status", statusFilter);
       if (loteFilter !== "todos") params.append("lote_id", loteFilter);
+      if (eventoFilter !== "todos") params.append("evento_id", eventoFilter);
 
       const response = await fetch(`/api/admin/inscricoes?${params}`, {
         headers: {
@@ -149,7 +196,7 @@ export default function AdminDashboardPage() {
     if (isAuthenticated) {
       fetchInscricoes();
     }
-  }, [isAuthenticated, debouncedSearchTerm, statusFilter, loteFilter]);
+  }, [isAuthenticated, debouncedSearchTerm, statusFilter, loteFilter, eventoFilter]);
 
   const handlePageChange = (page: number) => {
     fetchInscricoes(page);
@@ -281,6 +328,7 @@ export default function AdminDashboardPage() {
 
       if (statusFilter !== "todos") params.append("status", statusFilter);
       if (loteFilter !== "todos") params.append("lote_id", loteFilter);
+      if (eventoFilter !== "todos") params.append("evento_id", eventoFilter);
 
       const response = await fetch(`/api/admin/export?${params}`, {
         headers: {
@@ -380,9 +428,28 @@ export default function AdminDashboardPage() {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className={title({ size: "lg" })}>Painel Administrativo</h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Bem-vindo, {user?.nome}
-              </p>
+              
+              <div className="flex flex-col gap-2 mt-2">
+                <p className="text-gray-600 dark:text-gray-400">
+                  Bem-vindo, {user?.nome}
+                </p>
+
+                {selectedEvento && eventoStatus && (
+                  <div className="flex items-center gap-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-1.5 rounded-lg w-fit shadow-sm">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">
+                      Visão: {selectedEvento.nome}
+                    </span>
+                    {selectedEvento.data_evento && (
+                      <span className="text-gray-500">
+                        • {new Date(selectedEvento.data_evento + "T00:00:00").toLocaleDateString("pt-BR")}
+                      </span>
+                    )}
+                    <Chip color={eventoStatus.color as any} size="sm" variant="flat" className="ml-1">
+                      {eventoStatus.label}
+                    </Chip>
+                  </div>
+                )}
+              </div>
             </div>
             <Button
               color="danger"
@@ -459,6 +526,23 @@ export default function AdminDashboardPage() {
           <Card className="mb-6">
             <CardBody>
               <div className="flex flex-col md:flex-row gap-4 items-end">
+                <Select
+                  className="w-full md:w-56"
+                  placeholder="Evento"
+                  selectedKeys={[eventoFilter]}
+                  onSelectionChange={(keys) => {
+                    setEventoFilter(Array.from(keys)[0] as string);
+                    setLoteFilter("todos");
+                  }}
+                >
+                  {[
+                    <SelectItem key="todos">Todos os Eventos</SelectItem>,
+                    ...eventos.map((evento) => (
+                      <SelectItem key={evento.id}>{evento.nome}</SelectItem>
+                    )),
+                  ]}
+                </Select>
+
                 <Input
                   className="flex-1"
                   placeholder="Buscar por nome, email ou CPF..."
@@ -489,12 +573,12 @@ export default function AdminDashboardPage() {
                     setLoteFilter(Array.from(keys)[0] as string)
                   }
                 >
-                  <SelectItem key="todos">Todos os Lotes</SelectItem>
-                  <>
-                    {lotes.map((lote) => (
+                  {[
+                    <SelectItem key="todos">Todos os Lotes</SelectItem>,
+                    ...lotes.map((lote) => (
                       <SelectItem key={lote.id}>{lote.nome}</SelectItem>
-                    ))}
-                  </>
+                    )),
+                  ]}
                 </Select>
 
                 <Button

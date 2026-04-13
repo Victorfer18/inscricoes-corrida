@@ -12,10 +12,19 @@ interface StatsResponse {
 
 async function handleGetStats(request: NextRequest): Promise<Response> {
   try {
-    // Buscar todas as inscrições com contagem por status
-    const { data: inscricoes, error } = await supabaseAdmin
+    const { searchParams } = new URL(request.url);
+    const eventoId = searchParams.get("evento_id");
+
+    let query = supabaseAdmin
       .from("inscricoes")
-      .select("status");
+      .select(eventoId && eventoId !== "todos" ? "status, lotes!inner(evento_id)" : "status");
+
+    if (eventoId && eventoId !== "todos") {
+      query = query.eq("lotes.evento_id", eventoId);
+    }
+
+    // Buscar todas as inscrições com contagem por status
+    const { data: inscricoes, error } = await query;
 
     if (error) {
       console.error("Erro ao buscar estatísticas:", error);
