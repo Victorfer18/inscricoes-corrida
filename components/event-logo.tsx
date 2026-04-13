@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Image } from "@heroui/image";
+
 import { LogoPlaceholder } from "./logo-placeholder";
 
 interface EventLogoProps {
@@ -9,63 +10,67 @@ interface EventLogoProps {
   height?: number;
   className?: string;
   variant?: "rosa" | "branca" | "auto";
+  imageUrl?: string | null;
+  alt?: string;
 }
 
-export function EventLogo({ 
-  width = 300, 
-  height = 300, 
+export function EventLogo({
+  width = 300,
+  height = 300,
   className = "",
-  variant = "rosa" 
+  variant = "rosa",
+  imageUrl,
+  alt = "Logo do Evento - Corrida Solidária Outubro Rosa",
 }: EventLogoProps) {
+  const [customFailed, setCustomFailed] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [fallbackError, setFallbackError] = useState(false);
 
-  const handleImageError = () => {
-    setImageError(true);
-  };
-
-  const handleFallbackError = () => {
-    setFallbackError(true);
-  };
-
-  // Se ambas as imagens falharam, mostrar placeholder
-  if (imageError && fallbackError) {
-    return (
-      <LogoPlaceholder 
-        width={width} 
-        height={height} 
-        className={className}
-      />
-    );
-  }
-
-  // Se a imagem principal falhou, tentar a alternativa
-  if (imageError) {
-    const fallbackSrc = variant === "rosa" ? "/logo-branca.png" : "/logo-rosa.png";
-    
+  if (imageUrl && !customFailed) {
     return (
       <Image
-        src={fallbackSrc}
-        alt="Logo do Evento - Corrida Solidária Outubro Rosa"
-        width={width}
-        height={height}
+        alt={alt}
         className={className}
-        onError={handleFallbackError}
+        height={height}
+        src={imageUrl}
+        width={width}
+        onError={() => setCustomFailed(true)}
       />
     );
   }
 
-  // Tentar carregar a imagem principal
+  if (imageError && fallbackError) {
+    return (
+      <LogoPlaceholder className={className} height={height} width={width} />
+    );
+  }
+
+  if (imageError) {
+    const fallbackSrc =
+      variant === "rosa" ? "/logo-branca.png" : "/logo-rosa.png";
+
+    return (
+      <Image
+        alt={alt}
+        className={className}
+        height={height}
+        src={fallbackSrc}
+        width={width}
+        onError={() => setFallbackError(true)}
+      />
+    );
+  }
+
   const primarySrc = variant === "rosa" ? "/logo-rosa.png" : "/logo-branca.png";
-  
+
   return (
     <Image
-      src={primarySrc}
-      alt="Logo do Evento - Corrida Solidária Outubro Rosa"
-      width={width}
-      height={height}
+      alt={alt}
       className={className}
-      onError={handleImageError}
+      height={height}
+      src={primarySrc}
+      width={width}
+      onError={() => setImageError(true)}
     />
   );
 }

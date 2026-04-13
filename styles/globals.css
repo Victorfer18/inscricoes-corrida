@@ -1,3 +1,43 @@
 @import "tailwindcss";
 
-@config "../tailwind.config.js"
+@config "../tailwind.config.js";
+
+/* Tema do evento (sobrescrito em runtime por EventoPublicProvider) */
+:root {
+  /* Corrida 4.4 da Gil — roxo/violeta → azul marinho (camisa) */
+  --event-gradient-from: #8b5cf6;
+  --event-gradient-to: #1e1b4b;
+  --event-primary: #6366f1;
+  --event-inscription-from: #7c3aed;
+  --event-inscription-to: #1e1b4b;
+}
+
+/* Prevent horizontal overflow */
+html,
+body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+/* Fix for mobile scroll issues */
+* {
+    box-sizing: border-box;
+}
+
+/* Ensure all containers respect viewport width */
+.container {
+    max-width: 100%;
+}
+
+/* Fix for elements that might cause horizontal scroll */
+pre,
+code {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+/* Responsive images */
+img {
+    max-width: 100%;
+    height: auto;
+}

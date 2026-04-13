@@ -2,17 +2,19 @@ import { z } from "zod";
 
 // Função para validar CPF
 function validarCPF(cpf: string): boolean {
-  cpf = cpf.replace(/[^\d]/g, '');
-  
+  cpf = cpf.replace(/[^\d]/g, "");
+
   if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
     return false;
   }
 
   let soma = 0;
+
   for (let i = 0; i < 9; i++) {
     soma += parseInt(cpf.charAt(i)) * (10 - i);
   }
   let resto = 11 - (soma % 11);
+
   if (resto === 10 || resto === 11) resto = 0;
   if (resto !== parseInt(cpf.charAt(9))) return false;
 
@@ -54,11 +56,7 @@ export const inscricaoSchema = z.object({
     .min(1, "Celular é obrigatório")
     .regex(/^\(\d{2}\)\s\d{5}-\d{4}$/, "Formato de celular inválido"),
 
-  email: z
-    .string()
-    .email("Email inválido")
-    .optional()
-    .or(z.literal("")),
+  email: z.string().email("Email inválido").optional().or(z.literal("")),
 
   tamanhoBlusa: z.enum(["P", "M", "G", "GG"], {
     message: "Tamanho da blusa é obrigatório",
@@ -69,11 +67,14 @@ export const inscricaoSchema = z.object({
     .refine((file) => file.size > 0, "Comprovante de pagamento é obrigatório")
     .refine(
       (file) => file.size <= 5 * 1024 * 1024,
-      "Arquivo deve ter no máximo 5MB"
+      "Arquivo deve ter no máximo 5MB",
     )
     .refine(
-      (file) => ["image/jpeg", "image/png", "image/jpg", "image/gif"].includes(file.type),
-      "Apenas arquivos de imagem são aceitos (JPG, PNG, GIF)"
+      (file) =>
+        ["image/jpeg", "image/png", "image/jpg", "image/gif"].includes(
+          file.type,
+        ),
+      "Apenas arquivos de imagem são aceitos (JPG, PNG, GIF)",
     ),
 });
 
