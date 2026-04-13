@@ -51,8 +51,16 @@ export function BackgroundWrapper({
         {/* Principal White Blur Overlay */}
         <div className={`absolute inset-0 ${whiteOverlay} backdrop-blur-md`} />
 
-        {/* Subtle Color Tint */}
-        <div className="absolute inset-0 bg-gradient-to-br from-pink-50/20 via-transparent to-purple-50/20 dark:from-pink-900/10 dark:via-transparent dark:to-purple-900/10" />
+        {/* Tonalidade alinhada ao tema do evento (variáveis CSS) */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(to bottom right,
+              color-mix(in srgb, var(--event-gradient-from) 14%, transparent),
+              transparent,
+              color-mix(in srgb, var(--event-gradient-to) 12%, transparent))`,
+          }}
+        />
 
         {/* Soft Vignette */}
         <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-gray-200/30 dark:to-gray-700/30" />

@@ -3,40 +3,58 @@ import { supabaseAdmin } from "@/lib/supabase";
 
 export async function GET() {
   try {
-    // 1. Encontrar o Evento mais recente que esteja "ativo"
-    const { data: eventoAtivo, error: eventoError } = await supabaseAdmin
+    // select('*') evita 500 quando o schema no Supabase ainda não tem alguma coluna listada
+    // (ex.: kit_items); o PostgREST só devolve colunas que existem na tabela.
+    const { data: eventosRows, error: eventoError } = await supabaseAdmin
       .from("eventos")
-      .select("id, nome, descricao, data_evento, local, status")
+      .select("*")
       .eq("status", "ativo")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      // Sem .order("created_at"): evita erro se a coluna não existir no Supabase
+      .limit(1);
 
     if (eventoError) {
       throw new Error(eventoError.message);
     }
 
+    const eventoAtivo = eventosRows?.[0] ?? null;
+
     if (!eventoAtivo) {
-      // Nenhum evento ativo
       return NextResponse.json({
         success: true,
         data: {
           evento: null,
           loteVigente: null,
+          premios: [],
         },
       });
     }
 
-    // 2. Encontrar o lote vigente atrelado a este evento
-    const { data: loteVigente, error: loteError } = await supabaseAdmin
+    // Lote vigente: status boolean true (schema README); limit(1) evita erro com vários ativos
+    const { data: lotesRows, error: loteError } = await supabaseAdmin
       .from("lotes")
-      .select("id, nome, total_vagas, status, valor, evento_id, kit_items, requisitos_especiais")
+      .select("*")
       .eq("evento_id", eventoAtivo.id)
       .eq("status", true)
-      .maybeSingle();
+      .order("nome", { ascending: true })
+      .limit(1);
 
     if (loteError) {
       throw new Error(loteError.message);
+    }
+
+    const loteVigente = lotesRows?.[0] ?? null;
+
+    let premios: unknown[] = [];
+    const premRes = await supabaseAdmin
+      .from("premios")
+      .select("id, posicao, titulo, valor, descricao, icone, cor")
+      .eq("evento_id", eventoAtivo.id)
+      .order("posicao", { ascending: true });
+
+    if (premRes.error) {
+      console.warn("[evento-vigente] premios:", premRes.error.message);
+    } else {
+      premios = premRes.data ?? [];
     }
 
     return NextResponse.json({
@@ -44,6 +62,7 @@ export async function GET() {
       data: {
         evento: eventoAtivo,
         loteVigente: loteVigente || null,
+        premios,
       },
     });
   } catch (error) {

@@ -27,7 +27,13 @@ import { Select, SelectItem } from "@heroui/select";
 import { AdminGuard } from "@/components/admin-guard";
 import { title } from "@/components/primitives";
 import { AdminNavButtons } from "@/components/admin/admin-nav-buttons";
-import { PlusIcon, PencilIcon, TrashIcon, LinkIcon } from "@heroicons/react/24/outline";
+import {
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+  LinkIcon,
+  TrophyIcon,
+} from "@heroicons/react/24/outline";
 
 interface Evento {
   id: string;
@@ -189,7 +195,7 @@ export default function EventosPage() {
                         </Chip>
                       </TableCell>
                       <TableCell>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                           <Button
                             size="sm"
                             title="Gerenciar Lotes"
@@ -199,6 +205,16 @@ export default function EventosPage() {
                             onPress={() => router.push(`/admin/eventos/${ev.id}/lotes`)}
                           >
                             Lotes
+                          </Button>
+                          <Button
+                            size="sm"
+                            title="Prêmios exibidos na home (classificação)"
+                            variant="flat"
+                            color="warning"
+                            startContent={<TrophyIcon className="w-4 h-4" />}
+                            onPress={() => router.push(`/admin/eventos/${ev.id}/premios`)}
+                          >
+                            Prêmios
                           </Button>
                           <Button
                             isIconOnly

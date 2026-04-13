@@ -19,18 +19,23 @@ export async function handlePutEvento(
     }
 
     const body = await request.json();
-    const { nome, descricao, data_evento, local, status } = body;
+    const { nome, descricao, data_evento, local, status, config } = body;
+
+    const updatePayload: Record<string, unknown> = {
+      nome,
+      descricao,
+      data_evento: data_evento || null,
+      local,
+      status,
+      updated_at: new Date().toISOString(),
+    };
+    if (config !== undefined) {
+      updatePayload.config = config;
+    }
 
     const { data: evento, error } = await supabaseAdmin
       .from("eventos")
-      .update({
-        nome,
-        descricao,
-        data_evento: data_evento || null,
-        local,
-        status,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updatePayload)
       .eq("id", id)
       .select()
       .single();

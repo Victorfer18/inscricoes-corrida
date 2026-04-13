@@ -44,17 +44,22 @@ async function handlePostEvento(request: NextRequest) {
     
     // Se "status" enviado não existir, forcar "ativo" ou o padrão banco.
     // Mas no caso é seguro tratar tudo o que vier validado do frontend.
-    const { nome, descricao, data_evento, local, status } = body;
+    const { nome, descricao, data_evento, local, status, config } = body;
+
+    const insertRow: Record<string, unknown> = {
+      nome,
+      descricao,
+      data_evento: data_evento || null,
+      local,
+      status: status || "ativo",
+    };
+    if (config !== undefined) {
+      insertRow.config = config;
+    }
 
     const { data: evento, error } = await supabaseAdmin
       .from("eventos")
-      .insert([{ 
-        nome, 
-        descricao, 
-        data_evento: data_evento || null, 
-        local, 
-        status: status || 'ativo' 
-      }])
+      .insert([insertRow])
       .select()
       .single();
 

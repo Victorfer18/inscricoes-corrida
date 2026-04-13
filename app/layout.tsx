@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
-import { Navbar } from "@/components/navbar";
+import { AppShell } from "@/components/app-shell";
 
 export const metadata: Metadata = {
   title: {
@@ -41,12 +41,7 @@ export default function RootLayout({
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
-          <div className="relative flex flex-col h-screen overflow-x-hidden">
-            <Navbar />
-            <main className="container mx-auto max-w-7xl pt-16 px-4 sm:px-6 flex-grow overflow-x-hidden">
-              {children}
-            </main>
-          </div>
+          <AppShell>{children}</AppShell>
         </Providers>
       </body>
     </html>

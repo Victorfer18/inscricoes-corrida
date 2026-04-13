@@ -7,9 +7,10 @@ export async function handleGetLotes(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const eventoId = searchParams.get("evento_id");
 
+    // `select('*')` evita 500 se o schema ainda não tiver colunas opcionais (ex.: kit_items).
     let query = supabaseAdmin
       .from("lotes")
-      .select("id, nome, valor, total_vagas, status, evento_id, created_at, kit_items, requisitos_especiais")
+      .select("*")
       .order("created_at", { ascending: true });
 
     if (eventoId) {

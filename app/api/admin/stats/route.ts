@@ -23,8 +23,7 @@ async function handleGetStats(request: NextRequest): Promise<Response> {
       query = query.eq("lotes.evento_id", eventoId);
     }
 
-    // Buscar todas as inscrições com contagem por status
-    const { data: inscricoes, error } = await query;
+    const { data: rawInscricoes, error } = await query;
 
     if (error) {
       console.error("Erro ao buscar estatísticas:", error);
@@ -41,7 +40,8 @@ async function handleGetStats(request: NextRequest): Promise<Response> {
       );
     }
 
-    // Calcular estatísticas
+    const inscricoes = rawInscricoes as unknown as { status: string }[] | null;
+
     const stats: StatsResponse = {
       total: inscricoes?.length || 0,
       confirmados:

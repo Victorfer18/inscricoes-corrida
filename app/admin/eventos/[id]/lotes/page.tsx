@@ -49,6 +49,7 @@ export default function LotesPage() {
   
   const [lotes, setLotes] = useState<Lote[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isEditing, setIsEditing] = useState(false);
@@ -63,13 +64,25 @@ export default function LotesPage() {
       const response = await fetch(`/api/admin/lotes?evento_id=${eventoId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
+      const data = await response.json().catch(() => ({}));
       if (response.ok) {
-        const data = await response.json();
-        setLotes(data.data.lotes || []);
+        setLoadError(null);
+        setLotes(data.data?.lotes || []);
+      } else {
+        setLoadError(
+          typeof data.error === "string"
+            ? data.error
+            : typeof data.message === "string"
+              ? data.message
+              : `Erro ${response.status} ao carregar lotes`,
+        );
+        setLotes([]);
       }
     } catch (error) {
       console.error("Erro ao carregar lotes", error);
+      setLoadError("Falha de rede ao carregar lotes.");
+      setLotes([]);
     } finally {
       setLoading(false);
     }
@@ -194,6 +207,11 @@ export default function LotesPage() {
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+            {loadError ? (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
+                {loadError}
+              </div>
+            ) : null}
             {loading ? (
               <div className="p-8 text-center">Carregando...</div>
             ) : (
@@ -260,9 +278,10 @@ export default function LotesPage() {
                 </TableBody>
               </Table>
             )}
-            {lotes.length === 0 && !loading && (
+            {lotes.length === 0 && !loading && !loadError && (
               <div className="mt-4 text-center text-gray-500">
-                Nenhum lote criado para este evento.
+                Nenhum lote criado para este evento. Use &quot;Novo Lote&quot; para
+                cadastrar.
               </div>
             )}
           </div>

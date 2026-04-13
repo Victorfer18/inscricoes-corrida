@@ -1,3 +1,6 @@
+import { getKitItemsByIds } from "@/constants/kits";
+import type { PremioPublic } from "@/types/evento-home";
+
 export interface KitItem {
   id: string;
   name: string;
@@ -12,6 +15,9 @@ export interface LoteBasico {
   total_vagas: number;
   status: boolean;
   valor: number;
+  /** IDs cadastrados no admin (ex.: camiseta, medalha) ou objetos completos, se vierem do banco */
+  kit_items?: string[] | KitItem[];
+  requisitos_especiais?: string;
 }
 
 export interface LoteComKit extends LoteBasico {
@@ -62,9 +68,31 @@ export const KIT_ITEMS: Record<string, KitItem> = {
 };
 
 export const aplicarConfiguracaoLote = (loteBasico: LoteBasico): LoteComKit => {
+  const raw = loteBasico.kit_items;
+  if (Array.isArray(raw) && raw.length > 0) {
+    const head = raw[0];
+    if (typeof head === "string") {
+      const resolved = getKitItemsByIds(raw as string[]);
+      if (resolved.length > 0) {
+        return {
+          ...loteBasico,
+          kit_items: resolved,
+          requisitos_especiais: loteBasico.requisitos_especiais,
+        };
+      }
+    } else if (typeof head === "object" && head !== null && "name" in head) {
+      return {
+        ...loteBasico,
+        kit_items: raw as KitItem[],
+        requisitos_especiais: loteBasico.requisitos_especiais,
+      };
+    }
+  }
+
   const loteComKit: LoteComKit = {
     ...loteBasico,
     kit_items: [],
+    requisitos_especiais: loteBasico.requisitos_especiais,
   };
 
   switch (loteBasico.nome) {
@@ -106,27 +134,40 @@ export const aplicarConfiguracaoLote = (loteBasico: LoteBasico): LoteComKit => {
   return loteComKit;
 };
 
-export const fetchLoteVigente = async (): Promise<{evento: any, loteVigente: LoteComKit | null} | null> => {
+export const fetchLoteVigente = async (): Promise<{
+  evento: Record<string, unknown> | null;
+  loteVigente: LoteComKit | null;
+  premios: PremioPublic[];
+} | null> => {
   try {
     const response = await fetch("/api/evento-vigente");
     const result = await response.json();
 
-    if (!result.success || !result.data.evento) {
+    if (!result.success) {
       return null;
     }
 
-    const { evento, loteVigente } = result.data;
-    
-    // Tratando o caso de ter evento, mas não ter lote vigente
-    if (!loteVigente) {
-      return { evento, loteVigente: null };
+    const { evento, loteVigente, premios } = result.data;
+    const premiosList = (premios as PremioPublic[]) ?? [];
+
+    if (!evento) {
+      return { evento: null, loteVigente: null, premios: premiosList };
     }
 
-    return { 
-      evento, 
-      loteVigente: aplicarConfiguracaoLote(loteVigente) 
+    if (!loteVigente) {
+      return {
+        evento: evento as Record<string, unknown>,
+        loteVigente: null,
+        premios: premiosList,
+      };
+    }
+
+    return {
+      evento: evento as Record<string, unknown>,
+      loteVigente: aplicarConfiguracaoLote(loteVigente),
+      premios: premiosList,
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 };

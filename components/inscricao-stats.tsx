@@ -8,7 +8,7 @@ interface InscricaoStatsProps {
 }
 
 export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
-  const { loteVigente, valor, loading, error } = useLoteVigente();
+  const { loteVigente, valor, loading, error, homeConfig } = useLoteVigente();
   
   if (loading) {
     return (
@@ -58,24 +58,35 @@ export function InscricaoStats({ className = "" }: InscricaoStatsProps) {
   return (
     <div className={`text-center ${className}`}>
       <div className="space-y-3">
-        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
-          <p className="text-lg text-green-700 dark:text-green-300 font-semibold break-words leading-relaxed">
+        <div className="bg-violet-50/90 dark:bg-violet-950/25 p-4 rounded-lg border border-violet-200 dark:border-indigo-800">
+          <p
+            className="text-lg font-semibold break-words leading-relaxed"
+            style={{ color: "var(--event-gradient-from)" }}
+          >
             🎁{" "}
             <span className="inline-block">
               {loteVigente?.nome || "Lote Atual"}
             </span>
           </p>
-          <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-2">
+          <p
+            className="text-2xl font-bold mt-2"
+            style={{ color: "var(--event-primary)" }}
+          >
             {formatarMoeda(valor)}
           </p>
-          <p className="text-sm text-green-600 dark:text-green-400 mt-2">
+          <p
+            className="text-sm mt-2"
+            style={{ color: "var(--event-primary)" }}
+          >
             {loteVigente?.total_vagas
               ? `${loteVigente.total_vagas} vagas disponíveis`
               : "Vagas limitadas"}
           </p>
-          <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-            📝 Inscrições abertas! Kit completo incluso + concorre a uma cesta
-            básica!
+          <p
+            className="text-xs mt-1 whitespace-pre-line opacity-90"
+            style={{ color: "var(--event-primary)" }}
+          >
+            {homeConfig.inscricao.statsBlurb}
           </p>
           {loteVigente?.requisitos_especiais && (
             <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">

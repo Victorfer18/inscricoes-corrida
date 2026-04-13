@@ -16,11 +16,14 @@ export default function RegulamentoPage() {
   const { total: totalInscricoes, loading: loadingStats } =
     useInscricoesStats();
 
-  const dataApresentavel = evento?.data_evento 
-    ? new Date(evento.data_evento + "T00:00:00").toLocaleDateString("pt-BR") 
-    : "Data a definir";
-  const localApresentavel = evento?.local || "Local a definir";
-  const nomeApresentavel = evento?.nome || "Corrida de Rua";
+  const dataApresentavel =
+    typeof evento?.data_evento === "string"
+      ? new Date(evento.data_evento + "T00:00:00").toLocaleDateString("pt-BR")
+      : "Data a definir";
+  const localApresentavel =
+    typeof evento?.local === "string" ? evento.local : "Local a definir";
+  const nomeApresentavel =
+    typeof evento?.nome === "string" ? evento.nome : "Corrida de Rua";
 
   return (
     <BackgroundWrapper intensity="strong" showAnimation={false}>

@@ -20,10 +20,12 @@ export default function InscricaoPage() {
 
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const dataApresentavel = evento?.data_evento 
-    ? new Date(evento.data_evento + "T00:00:00").toLocaleDateString("pt-BR") 
-    : "Data a definir";
-  const localApresentavel = evento?.local || "Local a definir";
+  const dataApresentavel =
+    typeof evento?.data_evento === "string"
+      ? new Date(evento.data_evento + "T00:00:00").toLocaleDateString("pt-BR")
+      : "Data a definir";
+  const localApresentavel =
+    typeof evento?.local === "string" ? evento.local : "Local a definir";
 
   const handleFormSubmit = async (formData: any, file: File) => {
     try {
@@ -100,7 +102,8 @@ export default function InscricaoPage() {
                 {evento && (
                   <div className="bg-white/60 dark:bg-gray-800/60 p-6 rounded-xl border border-blue-200 dark:border-blue-800 mb-6">
                     <h3 className="font-bold text-lg mb-2 text-blue-800 dark:text-blue-200">
-                      📅 Informações do Evento: {evento.nome}
+                      📅 Informações do Evento:{" "}
+                      {typeof evento.nome === "string" ? evento.nome : ""}
                     </h3>
                     <p className="text-blue-700 dark:text-blue-300">
                       <strong>Data:</strong> {dataApresentavel}

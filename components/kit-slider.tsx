@@ -11,7 +11,11 @@ import { useLoteVigente } from "@/hooks/useLoteVigente";
 
 export function KitSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { valor, loading, kitItems } = useLoteVigente();
+  const { valor, loading, kitItems, homeConfig } = useLoteVigente();
+
+  const footerLinha = homeConfig.kit.footerLinhaTemplate
+    .replace("{count}", String(kitItems.length))
+    .replace("{valor}", loading ? "…" : formatarMoeda(valor));
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   useEffect(() => {
@@ -45,7 +49,10 @@ export function KitSlider() {
     return (
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4" />
+          <div
+            className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4"
+            style={{ borderColor: "var(--event-gradient-from)" }}
+          />
           <p className="text-gray-600 dark:text-gray-400">
             Carregando itens do kit...
           </p>
@@ -73,13 +80,18 @@ export function KitSlider() {
   return (
     <div className="max-w-4xl mx-auto px-4">
       <div className="relative">
-        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 border-2 border-pink-200 dark:border-pink-800 shadow-2xl">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-violet-50 to-indigo-50 dark:from-violet-950/25 dark:to-indigo-950/30 border-2 border-violet-200 dark:border-indigo-800 shadow-2xl">
           <div className="p-4 sm:p-6 md:p-8 lg:p-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 items-center">
               <div className="flex justify-center order-1 md:order-none">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-500 rounded-2xl blur-lg opacity-20 animate-pulse" />
-                  <div className="relative bg-white/90 dark:bg-gray-800/90 p-4 sm:p-6 rounded-2xl shadow-xl backdrop-blur-sm border border-pink-200/50 dark:border-pink-700/50">
+                  <div
+                    className="absolute inset-0 rounded-2xl blur-lg opacity-25 animate-pulse"
+                    style={{
+                      background: `linear-gradient(to right, var(--event-gradient-from), var(--event-gradient-to))`,
+                    }}
+                  />
+                  <div className="relative bg-white/90 dark:bg-gray-800/90 p-4 sm:p-6 rounded-2xl shadow-xl backdrop-blur-sm border border-violet-200/60 dark:border-indigo-700/50">
                     <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 flex items-center justify-center">
                       <Image
                         alt={kitItems[currentIndex]?.name || "Item do kit"}
@@ -96,12 +108,14 @@ export function KitSlider() {
                 </div>
               </div>
 
-              {/* Informações do Item */}
               <div className="text-center md:text-left space-y-3 sm:space-y-4 order-2 md:order-none">
                 <div className="text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-4">
                   {kitItems[currentIndex]?.icon || "📦"}
                 </div>
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-pink-600 dark:text-pink-400">
+                <h3
+                  className="text-xl sm:text-2xl md:text-3xl font-bold"
+                  style={{ color: "var(--event-gradient-from)" }}
+                >
                   {kitItems[currentIndex]?.name || "Item do Kit"}
                 </h3>
                 <p className="text-sm sm:text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed px-2 md:px-0">
@@ -110,18 +124,28 @@ export function KitSlider() {
                 </p>
 
                 <div className="flex items-center justify-center md:justify-start gap-2 mt-4 sm:mt-6">
-                  <span className="text-xs sm:text-sm font-semibold text-pink-600 dark:text-pink-400">
+                  <span
+                    className="text-xs sm:text-sm font-semibold"
+                    style={{ color: "var(--event-primary)" }}
+                  >
                     {currentIndex + 1} de {kitItems.length}
                   </span>
                   <div className="flex gap-1">
                     {kitItems.map((_, index) => (
                       <div
                         key={index}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        className={`h-2 rounded-full transition-all duration-300 ${
                           index === currentIndex
-                            ? "bg-pink-500 w-4 sm:w-6"
-                            : "bg-pink-200 dark:bg-pink-800"
+                            ? "w-4 sm:w-6"
+                            : "w-2 bg-violet-200 dark:bg-violet-800"
                         }`}
+                        style={
+                          index === currentIndex
+                            ? {
+                                background: `linear-gradient(to right, var(--event-gradient-from), var(--event-gradient-to))`,
+                              }
+                            : undefined
+                        }
                       />
                     ))}
                   </div>
@@ -132,22 +156,28 @@ export function KitSlider() {
 
           <Button
             isIconOnly
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-pink-200 dark:border-pink-700 hover:bg-pink-50 dark:hover:bg-pink-900/20 z-10"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-violet-200 dark:border-indigo-700 hover:bg-violet-50 dark:hover:bg-indigo-950/30 z-10"
             size="sm"
             variant="flat"
             onPress={prevSlide}
           >
-            <ChevronLeftIcon className="w-4 h-4 sm:w-5 sm:h-5 text-pink-600" />
+            <ChevronLeftIcon
+              className="w-4 h-4 sm:w-5 sm:h-5"
+              style={{ color: "var(--event-primary)" }}
+            />
           </Button>
 
           <Button
             isIconOnly
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-pink-200 dark:border-pink-700 hover:bg-pink-50 dark:hover:bg-pink-900/20 z-10"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-violet-200 dark:border-indigo-700 hover:bg-violet-50 dark:hover:bg-indigo-950/30 z-10"
             size="sm"
             variant="flat"
             onPress={nextSlide}
           >
-            <ChevronRightIcon className="w-4 h-4 sm:w-5 sm:h-5 text-pink-600" />
+            <ChevronRightIcon
+              className="w-4 h-4 sm:w-5 sm:h-5"
+              style={{ color: "var(--event-primary)" }}
+            />
           </Button>
         </div>
 
@@ -157,8 +187,8 @@ export function KitSlider() {
               key={item.id}
               className={`p-2 sm:p-3 rounded-lg sm:rounded-xl transition-all duration-300 border-2 ${
                 index === currentIndex
-                  ? "bg-pink-100 dark:bg-pink-900/30 border-pink-400 dark:border-pink-600 scale-105 sm:scale-110"
-                  : "bg-white/60 dark:bg-gray-800/60 border-pink-200 dark:border-pink-800 hover:bg-pink-50 dark:hover:bg-pink-900/20"
+                  ? "bg-violet-100 dark:bg-violet-900/30 border-violet-500 dark:border-violet-500 scale-105 sm:scale-110"
+                  : "bg-white/60 dark:bg-gray-800/60 border-violet-200 dark:border-violet-800 hover:bg-violet-50 dark:hover:bg-violet-950/20"
               }`}
               onClick={() => goToSlide(index)}
             >
@@ -166,9 +196,14 @@ export function KitSlider() {
               <div
                 className={`text-xs font-semibold mt-1 hidden sm:block ${
                   index === currentIndex
-                    ? "text-pink-600 dark:text-pink-400"
+                    ? ""
                     : "text-gray-600 dark:text-gray-400"
                 }`}
+                style={
+                  index === currentIndex
+                    ? { color: "var(--event-primary)" }
+                    : undefined
+                }
               >
                 {item.name.split(" ")[0]}
               </div>
@@ -176,17 +211,24 @@ export function KitSlider() {
           ))}
         </div>
 
-        {/* Resumo do Kit */}
-        <Card className="mt-6 sm:mt-8 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-300 dark:border-green-700">
+        <Card className="mt-6 sm:mt-8 bg-gradient-to-r from-violet-50 to-indigo-50 dark:from-violet-950/25 dark:to-indigo-950/30 border-2 border-violet-200/80 dark:border-indigo-700/60">
           <CardBody className="text-center p-4 sm:p-6">
-            <h4 className="text-lg sm:text-xl font-bold text-green-700 dark:text-green-300 mb-3">
-              🎁 Kit Completo Incluso na Inscrição
+            <h4
+              className="text-lg sm:text-xl font-bold mb-3"
+              style={{ color: "var(--event-gradient-from)" }}
+            >
+              {homeConfig.kit.footerTitulo}
             </h4>
-            <p className="text-sm sm:text-base text-green-600 dark:text-green-400 font-semibold px-2">
-              Todos os {kitItems.length} itens acima + hidratação durante o
-              percurso + apoio médico
+            <p
+              className="text-sm sm:text-base font-semibold px-2"
+              style={{ color: "var(--event-primary)" }}
+            >
+              {footerLinha}
             </p>
-            <div className="text-2xl sm:text-3xl font-bold text-green-600 mt-2">
+            <div
+              className="text-2xl sm:text-3xl font-bold mt-2"
+              style={{ color: "var(--event-primary)" }}
+            >
               Tudo por apenas {loading ? "Carregando..." : formatarMoeda(valor)}
             </div>
           </CardBody>
